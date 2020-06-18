@@ -38,6 +38,7 @@ phenotypes <- phenotypes %>%
     cols = c(`Plaque #`:`Plasma AB 42`),
     names_to = "Phenotype",
     values_to = "value"
-  )
+  ) %>%
+  select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line_full = `Mouse Line`, mouse_line, age = Age, phenotype = Phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)

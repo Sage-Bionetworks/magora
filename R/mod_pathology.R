@@ -15,7 +15,7 @@ mod_pathology_ui <- function(id) {
         shinyWidgets::pickerInput(
           ns("phenotype"),
           "Select a phenotype",
-          choices = unique(phenotypes[["Phenotype"]])
+          choices = unique(phenotypes[["phenotype"]])
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
@@ -27,7 +27,7 @@ mod_pathology_ui <- function(id) {
         shinyWidgets::pickerInput(
           ns("tissue"),
           "Select tissue",
-          choices = unique(phenotypes[["Tissue"]])
+          choices = unique(phenotypes[["tissue"]])
         )
       ),
       shiny::mainPanel(
