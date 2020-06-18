@@ -30,3 +30,5 @@ URL: https://github.com/Sage-Bionetworks/mouse-agora
 BugReports: https://github.com/Sage-Bionetworks/mouse-agora/issues
 Remotes: 
     Sage-Bionetworks/sagethemes@main
+Suggests: 
+    testthat

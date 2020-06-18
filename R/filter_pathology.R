@@ -3,9 +3,9 @@
 #' Filter pathology data to only include data from the specified \code{.phenotype}, \code{.mouse_line}, and \code{.tissue} values.
 #'
 #' @param .data Input data (e.g. \code{\link{phenotypes}})
-#' @param .phenotype Phenotype to filter by. Keeps data where \code{.data[["phenotype"]] == .phenotype}
+#' @param .phenotype Phenotype to filter by. Keeps data where \code{.data[["phenotype"]] %in% .phenotype}
 #' @param .mouse_line Mouse lines to filter by. Keeps data where \code{.data[["mouse_line"]] \%in\% .mouse_line}
-#' @param .tissue Tissue to filter by. Keeps data where \code{.data[["tissue"]] == .tissue}
+#' @param .tissue Tissue to filter by. Keeps data where \code{.data[["tissue"]] %in% .tissue}
 #' @param na.rm Whether to remove NA values of \code{data[["value"]]}. Defaults to TRUE.
 #'
 #' @export
@@ -16,9 +16,9 @@
 filter_pathology <- function(.data, .phenotype, .mouse_line, .tissue, na.rm = TRUE) {
   .data <- .data %>%
     dplyr::filter(
-      .data$phenotype == .phenotype,
+      .data$phenotype %in% .phenotype,
       .data$mouse_line %in% .mouse_line,
-      .data$tissue == .tissue
+      .data$tissue %in% .tissue
     )
 
   if (na.rm) {
