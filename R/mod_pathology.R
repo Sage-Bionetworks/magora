@@ -53,7 +53,9 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   output$phenotype_plot <- shiny::renderPlot({
-    plot_phenotypes(filtered_phenotypes())
+    filtered_phenotypes() %>%
+      refactor_mouse_line(input$mouse_line, phenotypes) %>%
+      plot_phenotypes()
   })
 }
 
