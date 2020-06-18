@@ -4,16 +4,21 @@
 \alias{plot_phenotypes}
 \title{Plot phenotype data}
 \usage{
-plot_phenotypes(.data, .phenotype)
+plot_phenotypes(.data)
 }
 \arguments{
-\item{.data}{Input data}
-
-\item{.phenotype}{}
+\item{.data}{Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).}
 }
 \value{
-
+A ggplot2 object.
 }
 \description{
 Plot phenotype data
+}
+\examples{
+\donttest{
+phenotypes \%>\%
+  filter_pathology(.phenotype = "Plaque #", .mouse_line = "BL6", .tissue = "hippocampus") \%>\%
+  plot_phenotypes()
+}
 }

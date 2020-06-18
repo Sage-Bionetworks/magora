@@ -1,11 +1,12 @@
 #' Plot phenotype data
 #'
-#' @param .data Input data (the result of \code{\code{filter_pathology}} with \code{\link{phenotypes}} as input).
+#' @param .data Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).
 #'
 #' @return A ggplot2 object.
 #' @export
 #'
-#' @examples {
+#' @examples
+#' \donttest{
 #' phenotypes %>%
 #'   filter_pathology(.phenotype = "Plaque #", .mouse_line = "BL6", .tissue = "hippocampus") %>%
 #'   plot_phenotypes()
