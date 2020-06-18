@@ -12,7 +12,8 @@ phenotypes <- phenotypes_raw %>%
   remove_empty("rows") %>%
   mutate(
     Age = gsub("mon", "", Age),
-    Age = as.numeric(Age)) %>%
+    Age = as.numeric(Age)
+  ) %>%
   arrange(Age) %>%
   mutate(
     Age = as_factor(Age)
@@ -29,8 +30,10 @@ mouse_line_order <- phenotypes %>%
 
 phenotypes <- phenotypes %>%
   left_join(mouse_line_order, by = "mouse_line") %>%
-  mutate(mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
-         `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)) %>%
+  mutate(
+    mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
+    `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
+  ) %>%
   pivot_longer(
     cols = c(`Plaque #`:`Plasma AB 42`),
     names_to = "Phenotype",

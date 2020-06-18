@@ -6,7 +6,6 @@
 #'
 #' @noRd
 mod_pathology_ui <- function(id) {
-
   ns <- shiny::NS(id)
   shiny::tabPanel(
     "Pathology",
@@ -37,14 +36,12 @@ mod_pathology_ui <- function(id) {
       )
     )
   )
-
 }
 
 #' Pathology page server function
 #'
 #' @noRd
 mod_pathology_server <- function(input, output, session) {
-
   ns <- session$ns
 
   filtered_phenotypes <- shiny::reactive({
@@ -58,7 +55,6 @@ mod_pathology_server <- function(input, output, session) {
   output$phenotype_plot <- shiny::renderPlot({
     plot_phenotypes(filtered_phenotypes(), input$phenotype)
   })
-
 }
 
 ## To be copied in the UI
