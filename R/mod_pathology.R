@@ -48,12 +48,12 @@ mod_pathology_server <- function(input, output, session) {
     shiny::validate(
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
     )
-    phenotypes %>%
-      filter_phenotypes(input$phenotype, input$mouse_line, input$tissue)
+
+    filter_phenotypes(phenotypes, input$phenotype, input$mouse_line, input$tissue)
   })
 
   output$phenotype_plot <- shiny::renderPlot({
-    plot_phenotypes(filtered_phenotypes(), input$phenotype)
+    plot_phenotypes(filtered_phenotypes())
   })
 }
 
