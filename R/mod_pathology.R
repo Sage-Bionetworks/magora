@@ -48,8 +48,11 @@ mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
   filtered_phenotypes <- reactive({
+    validate(
+      need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+    )
     phenotypes %>%
-      filter_phenotypes(input$phenotype, input$mouse_line, input$tissue, na.rm = TRUE)
+      filter_phenotypes(input$phenotype, input$mouse_line, input$tissue)
   })
 
   output$phenotype_plot <- renderPlot({
