@@ -24,7 +24,7 @@ df <- df %>%
     value = ifelse(dplyr::row_number() %in% sample(1:nrow(df), 10), NA_real_, value)
   )
 
-test_that("filter_pathology filters according to .phenotype, .mouse_line, and .tissue arguments", {
+test_that("filter_pathology filters according to phenotype, mouse_line, and tissue arguments", {
   output <- filter_pathology(df, "Plaque #", "BL5", "cortex")
   expect_equal(unique(output[["phenotype"]]), "Plaque #")
   expect_equal(unique(output[["mouse_line"]]), "BL5")
