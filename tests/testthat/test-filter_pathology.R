@@ -14,13 +14,15 @@ df <- expand.grid(
 df <- dplyr::bind_rows(df, df) %>%
   dplyr::rowwise() %>%
   dplyr::mutate(
-    mouse_line_full = paste0("5XfAD;", mouse_line),
     value = runif(1, 0, 10)
   ) %>%
   dplyr::ungroup()
 
 df <- df %>%
-  dplyr::mutate(value = ifelse(dplyr::row_number() %in% sample(1:nrow(df), 10), NA_real_, value))
+  dplyr::mutate(
+    mouse_line_full = ifelse(dplyr::row_number() %in% sample(1:nrow(df), round(nrow(df) / 2)), paste0("5XfAD;", mouse_line), mouse_line),
+    value = ifelse(dplyr::row_number() %in% sample(1:nrow(df), 10), NA_real_, value)
+  )
 
 test_that("filter_pathology filters according to .phenotype, .mouse_line, and .tissue arguments", {
   output <- filter_pathology(df, "Plaque #", "BL5", "cortex")
@@ -49,4 +51,4 @@ test_that("filter_pathology removes NA `value` by default, but does not if na.rm
     dplyr::filter(is.na(value)) %>%
     nrow()
   expect_true(na_rows > 0)
-  })
+})
