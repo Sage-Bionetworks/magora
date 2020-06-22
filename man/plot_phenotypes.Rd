@@ -7,7 +7,7 @@
 plot_phenotypes(data)
 }
 \arguments{
-\item{data}{Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).}
+\item{data}{Input data (the result of \code{\link{filter_pathology}} and \code{\link{expand_mouse_line_factor}} with \code{\link{phenotypes}} as input).}
 }
 \value{
 A ggplot2 object.

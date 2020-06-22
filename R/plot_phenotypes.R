@@ -1,6 +1,6 @@
 #' Plot phenotype data
 #'
-#' @param data Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).
+#' @param data Input data (the result of \code{\link{filter_pathology}} and \code{\link{expand_mouse_line_factor}} with \code{\link{phenotypes}} as input).
 #'
 #' @return A ggplot2 object.
 #' @export
@@ -14,7 +14,7 @@ plot_phenotypes <- function(data) {
 
   p <- ggplot2::ggplot() +
     ggplot2::facet_wrap(ggplot2::vars(.data$mouse_line_full), ncol = 2, drop = FALSE) +
-    ggplot2::geom_boxplot(data = data, ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex)), position = ggplot2::position_dodge2(width = 0.5, preserve = "single"))
+    ggplot2::geom_boxplot(data = data, ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex)), position = ggplot2::position_dodge2(preserve = "single"))
 
   if (nrow(measured_annotation) > 0) {
     y_range <- ggplot2::layer_scales(p)$y$range$range
