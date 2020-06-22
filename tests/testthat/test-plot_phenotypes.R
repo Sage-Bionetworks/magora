@@ -69,4 +69,11 @@ test_that("plot_phenotypes adds text to any facet without data", {
     expand_mouse_line_factor(c("BL5", "BL6"), df) %>%
     plot_phenotypes()
   expect_doppelganger("no-data-interaction", p)
+
+  p <- df %>%
+    dplyr::filter(mouse_line_full %in% c("5XfAD;BL6", "BL6")) %>%
+    filter_pathology("Plaque #", c("BL5", "BL6"), "cortex") %>%
+    expand_mouse_line_factor(c("BL5", "BL6"), df) %>%
+    plot_phenotypes()
+  expect_doppelganger("no-data-both", p)
 })
