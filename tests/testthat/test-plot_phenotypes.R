@@ -1,3 +1,5 @@
+context("plot_phenotypes") # Context required by vdiffr still
+
 library(vdiffr)
 
 # Set up fake data for testing on
