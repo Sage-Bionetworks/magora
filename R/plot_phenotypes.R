@@ -9,7 +9,7 @@ plot_phenotypes <- function(data) {
   # Generate annotation for mouse lines (facets) that won't have any data
   measured_annotation <- data %>%
     dplyr::count(.data$mouse_line_full, .drop = FALSE) %>%
-    dplyr::filter(n == 0) %>%
+    dplyr::filter(.data$n == 0) %>%
     dplyr::mutate(label = "This phenotype cannot be\nmeasured in this mouse line.")
 
   p <- ggplot2::ggplot(data) +
