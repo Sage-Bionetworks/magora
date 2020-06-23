@@ -1,4 +1,4 @@
 library(testthat)
-library(mouseagora)
+library(magora)
 
-test_check("mouseagora")
+test_check("magora")
