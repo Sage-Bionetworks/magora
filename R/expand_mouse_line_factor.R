@@ -5,7 +5,7 @@
 #' @param data Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).
 #' @param mouse_line Mouse line(s) to expand factor for.
 #' @param phenotype_data Phenotype data to pull original mouse line factors from. Defaults to \code{link{phenotypes}}.
-expand_mouse_line_factor <- function(data, mouse_line, phenotype_data = phenotypes) {
+expand_mouse_line_factor <- function(data, mouse_line, phenotype_data = magora::phenotypes) {
   mouse_line_experiment_control <- phenotype_data %>%
     dplyr::filter(.data$mouse_line %in% !!mouse_line) %>%
     dplyr::arrange(.data$mouse_line_full) %>%

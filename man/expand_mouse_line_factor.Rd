@@ -4,7 +4,7 @@
 \alias{expand_mouse_line_factor}
 \title{Expand mouse line factor}
 \usage{
-expand_mouse_line_factor(data, mouse_line, phenotype_data = phenotypes)
+expand_mouse_line_factor(data, mouse_line, phenotype_data = magora::phenotypes)
 }
 \arguments{
 \item{data}{Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).}
