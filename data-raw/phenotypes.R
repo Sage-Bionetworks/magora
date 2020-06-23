@@ -9,7 +9,7 @@ phenotypes_raw <- read_excel("data-raw/5xfAD-Phenotyping Sheet.xlsx",
 )
 
 phenotypes <- phenotypes_raw %>%
-  remove_empty("rows") %>%
+  remove_empty(c("rows", "cols")) %>%
   mutate(
     Age = gsub("mon", "", Age),
     Age = as.numeric(Age)
@@ -35,10 +35,10 @@ phenotypes <- phenotypes %>%
     `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
   ) %>%
   pivot_longer(
-    cols = c(`Plaque #`:`Plasma AB 42`),
-    names_to = "Phenotype",
+    cols = c(`Plaque #`:`Tau Levels`),
+    names_to = "phenotype",
     values_to = "value"
   ) %>%
-  select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line_full = `Mouse Line`, mouse_line, age = Age, phenotype = Phenotype, value)
+  select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line_full = `Mouse Line`, mouse_line, age = Age, phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)
