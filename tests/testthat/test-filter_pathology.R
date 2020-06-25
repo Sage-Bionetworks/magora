@@ -12,17 +12,3 @@ test_that("filter_pathology filters according to phenotype, mouse_line, and tiss
   output <- filter_pathology(phenotypes, "Plaque Number", "BL6", "cortex")
   expect_true(nrow(output) == 0)
 })
-
-test_that("filter_pathology removes NA `value` by default, but does not if na.rm = FALSE", {
-  output <- filter_pathology(df, c("Plaque #", "Plaque Size"), c("BL5", "BL6"), c("cortex", "hippocampus"))
-  na_rows <- output %>%
-    dplyr::filter(is.na(value)) %>%
-    nrow()
-  expect_true(na_rows == 0)
-
-  output <- filter_pathology(df, c("Plaque #", "Plaque Size"), c("BL5", "BL6"), c("cortex", "hippocampus"), na.rm = FALSE)
-  na_rows <- output %>%
-    dplyr::filter(is.na(value)) %>%
-    nrow()
-  expect_true(na_rows > 0)
-})
