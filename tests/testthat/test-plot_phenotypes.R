@@ -77,3 +77,11 @@ test_that("plot_phenotypes adds text to any facet without data", {
     plot_phenotypes()
   expect_doppelganger("no-data-both", p)
 })
+
+test_that("All levels of age are shown in the plot even if not present in the filtered data", {
+  p <- phenotypes %>%
+    filter_pathology("Plasma AB 40", "BL6", "plasma") %>%
+    expand_mouse_line_factor("BL6") %>%
+    plot_phenotypes()
+  expect_doppelganger("not-all-ages", p)
+})
