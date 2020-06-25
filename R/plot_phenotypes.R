@@ -18,13 +18,15 @@ plot_phenotypes <- function(data) {
 
   if (nrow(measured_annotation) > 0) {
     y_range <- ggplot2::layer_scales(p)$y$range$range
-    y_mid <- (y_range[[2]] - y_range[[1]]) / 2
+    y_mid <- (y_range[[2]] + y_range[[1]]) / 2
+    x_mid <- length(levels(data[["age"]]))/2 + 0.5
 
     p <- p +
-      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = 2.5, y = y_mid, label = .data$label), size = 4, vjust = 0.5)
+      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = 2.5, y = y_mid, label = .data$label), size = 5, vjust = 0.5)
   }
 
   p +
+    ggplot2::scale_x_discrete(drop = FALSE) +
     ggplot2::labs(x = "Age", y = unique(data[["phenotype"]])) +
     sagethemes::scale_fill_sage_d() +
     sagethemes::theme_sage(base_size = 16) +
