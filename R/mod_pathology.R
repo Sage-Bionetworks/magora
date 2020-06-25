@@ -15,19 +15,19 @@ mod_pathology_ui <- function(id) {
         shinyWidgets::pickerInput(
           ns("phenotype"),
           "Select a phenotype",
-          choices = unique(phenotypes[["phenotype"]])
+          choices = unique(magora::phenotypes[["phenotype"]])
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
           "Select mouse lines",
-          choices = unique(phenotypes[["mouse_line"]]),
+          choices = unique(magora::phenotypes[["mouse_line"]]),
           multiple = TRUE,
           selected = "BL6"
         ),
         shinyWidgets::pickerInput(
           ns("tissue"),
           "Select tissue",
-          choices = unique(phenotypes[["tissue"]])
+          choices = unique(magora::phenotypes[["tissue"]])
         )
       ),
       shiny::mainPanel(
@@ -49,7 +49,7 @@ mod_pathology_server <- function(input, output, session) {
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
     )
 
-    filter_pathology(phenotypes, input$phenotype, input$mouse_line, input$tissue)
+    filter_pathology(magora::phenotypes, input$phenotype, input$mouse_line, input$tissue)
   })
 
   output$phenotype_plot <- shiny::renderPlot({
