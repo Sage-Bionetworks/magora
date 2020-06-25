@@ -4,12 +4,12 @@ library(tidyr)
 library(janitor)
 library(forcats)
 
-phenotypes_raw <- read_excel("data-raw/5xfAD-Phenotyping Sheet.xlsx",
-  sheet = "Old phenotype sheet wo plasma"
+phenotypes_raw <- read_excel(here::here("data-raw", "5xfAD Phenotyping Sheet - Finalized - 06-17-2020 - JP.xlsx"),
+  sheet = "5xfAD 4-18mo phenotype sheet "
 )
 
 phenotypes <- phenotypes_raw %>%
-  remove_empty(c("rows", "cols")) %>%
+  remove_empty("rows") %>%
   mutate(
     Age = gsub("mon", "", Age),
     Age = as.numeric(Age)
@@ -35,10 +35,11 @@ phenotypes <- phenotypes %>%
     `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
   ) %>%
   pivot_longer(
-    cols = c(`Plaque #`:`Tau Levels`),
+    cols = c(`Plaque #`:`Plasma AB 42`),
     names_to = "phenotype",
     values_to = "value"
   ) %>%
+  filter(!is.na(value)) %>%
   select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line_full = `Mouse Line`, mouse_line, age = Age, phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)

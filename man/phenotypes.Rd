@@ -5,7 +5,7 @@
 \alias{phenotypes}
 \title{Phenotypes data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4760 rows and 8 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1732 rows and 8 columns.
 }
 \usage{
 phenotypes

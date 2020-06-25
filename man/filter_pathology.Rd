@@ -4,7 +4,7 @@
 \alias{filter_pathology}
 \title{Filter pathology data}
 \usage{
-filter_pathology(data, phenotype, mouse_line, tissue, na.rm = TRUE)
+filter_pathology(data, phenotype, mouse_line, tissue)
 }
 \arguments{
 \item{data}{Input data (e.g. \code{\link{phenotypes}})}
@@ -14,8 +14,6 @@ filter_pathology(data, phenotype, mouse_line, tissue, na.rm = TRUE)
 \item{mouse_line}{Mouse lines to filter by. Keeps data where \code{.data[["mouse_line"]] \%in\% mouse_line}}
 
 \item{tissue}{Tissue to filter by. Keeps data where \code{.data[["tissue"]] \%in\% tissue}}
-
-\item{na.rm}{Whether to remove NA values of \code{data[["value"]]}. Defaults to TRUE.}
 }
 \description{
 Filter pathology data to only include data from the specified \code{phenotype}, \code{mouse_line}, and \code{tissue} values.
