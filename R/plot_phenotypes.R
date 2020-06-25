@@ -25,6 +25,7 @@ plot_phenotypes <- function(data) {
   }
 
   p +
+    ggplot2::scale_x_discrete(drop = FALSE) +
     ggplot2::labs(x = "Age", y = unique(data[["phenotype"]])) +
     sagethemes::scale_fill_sage_d() +
     sagethemes::theme_sage(base_size = 16) +
