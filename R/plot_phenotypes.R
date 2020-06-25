@@ -22,7 +22,7 @@ plot_phenotypes <- function(data) {
     x_mid <- length(levels(data[["age"]]))/2 + 0.5
 
     p <- p +
-      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = 2.5, y = y_mid, label = .data$label), size = 4, vjust = 0.5)
+      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = 2.5, y = y_mid, label = .data$label), size = 5, vjust = 0.5)
   }
 
   p +
