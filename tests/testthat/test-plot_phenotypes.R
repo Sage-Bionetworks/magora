@@ -33,9 +33,9 @@ df <- df %>%
   dplyr::mutate(mouse_line_full = forcats::fct_relevel(mouse_line_full, c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")))
 
 test_that("plot_phenotypes produces box plots comparing the phenotype by mouse line (experiment/control, in facets), age, and sex", {
-  p <- df %>%
-    filter_pathology("Plaque #", "BL5", "cortex") %>%
-    expand_mouse_line_factor("BL5", df) %>%
+  p <- phenotypes %>%
+    filter_pathology("Plaque #", "BL6", "cortex") %>%
+    expand_mouse_line_factor("BL6") %>%
     plot_phenotypes()
   expect_doppelganger("faceted-box-plots", p)
 })
@@ -49,17 +49,17 @@ test_that("plot_phenotypes produces two rows of facets when two mouse lines are 
 })
 
 test_that("plot_phenotypes adds text to any facet without data", {
-  p <- df %>%
-    dplyr::filter(mouse_line_full != "5XfAD;BL5") %>%
-    filter_pathology("Plaque #", "BL5", "cortex") %>%
-    expand_mouse_line_factor("BL5", df) %>%
+  p <- phenotypes %>%
+    dplyr::filter(mouse_line_full != "5XfAD;BL6") %>%
+    filter_pathology("Microglia #", "BL6", "cortex") %>%
+    expand_mouse_line_factor("BL6") %>%
     plot_phenotypes()
   expect_doppelganger("no-data-experiment", p)
 
-  p <- df %>%
-    dplyr::filter(mouse_line_full != "BL5") %>%
-    filter_pathology("Plaque #", "BL5", "cortex") %>%
-    expand_mouse_line_factor("BL5", df) %>%
+  p <- phenotypes %>%
+    dplyr::filter(mouse_line_full != "BL6") %>%
+    filter_pathology("Microglia #", "BL6", "cortex") %>%
+    expand_mouse_line_factor("BL6") %>%
     plot_phenotypes()
   expect_doppelganger("no-data-control", p)
 
