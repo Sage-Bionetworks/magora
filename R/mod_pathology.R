@@ -44,6 +44,17 @@ mod_pathology_ui <- function(id) {
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
+  observeEvent(input$phenotype, {
+    phenotype_data <- dplyr::filter(magora::phenotypes, .data$phenotype == input$phenotype)
+    available_tissue <- unique(phenotype_data[["tissue"]])
+
+    shinyWidgets::updatePickerInput(
+      session = session,
+      "tissue",
+      choices = available_tissue
+    )
+  })
+
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
