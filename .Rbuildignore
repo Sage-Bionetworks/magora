@@ -10,3 +10,5 @@ $run_dev.*
 ^README\.Rmd$
 ^\.github$
 ^inst\/app\/www\/\.gitkeep$
+^app\.R$
+^rsconnect$
