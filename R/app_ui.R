@@ -7,7 +7,8 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     shiny::navbarPage(
       title = "Mouse-Agora",
-      mod_pathology_ui("pathology")
+      mod_pathology_ui("pathology"),
+      mod_gene_expression_ui("gene_expression")
     )
   )
 }
