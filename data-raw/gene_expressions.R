@@ -4,6 +4,7 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(stringr)
+library(forcats)
 
 synLogin()
 
@@ -61,6 +62,23 @@ individual_metadata %>%
 
 gene_expressions <- tpm_per_gene %>%
   left_join(individual_metadata, by = "mouse_id") %>%
-  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene_id, tpm)
+  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene_id, tpm) %>%
+  arrange(age) %>%
+  mutate(age = as_factor(age))
+
+# Generate sample of data to iterate with ----
+# Sample by gene, and sampling by % of zeros to get a good idea of what plots will look like
+
+sample_genes <- gene_expressions %>%
+  mutate(zero = tpm == 0) %>%
+  group_by(gene_id) %>%
+  summarise(prop_zero = mean(zero)) %>%
+  mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%
+  group_by(prop_zero_group) %>%
+  sample_n(5) %>%
+  pull(gene_id)
+
+gene_expressions <- gene_expressions %>%
+  filter(gene_id %in% sample_genes)
 
 usethis::use_data(gene_expressions, overwrite = TRUE)
