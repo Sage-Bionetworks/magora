@@ -60,7 +60,7 @@ mod_gene_expression_server <- function(input, output, session) {
     shiny::req(nrow(filtered_gene_expressions()) > 0)
 
     filtered_gene_expressions() %>%
-      plot_gene_expressions()
+      magora_boxplot(plot_type = "gene expression")
   })
 }
 

@@ -73,7 +73,7 @@ mod_pathology_server <- function(input, output, session) {
 
     filtered_phenotypes() %>%
       expand_mouse_line_factor(input$mouse_line_group) %>%
-      plot_phenotypes()
+      magora_boxplot(plot_type = "phenotype")
   })
 }
 
