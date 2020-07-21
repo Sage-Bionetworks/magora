@@ -38,7 +38,8 @@ individual_metadata <- individual_metadata_raw %>%
     mouse_line_group = str_remove(genotype, "_carrier|_noncarrier"),
     across(c(dateBirth, dateDeath), mdy),
     age_interval = interval(dateBirth, dateDeath),
-    age = round(age_interval / months(1))) %>%
+    age = round(age_interval / months(1))
+  ) %>%
   select(mouse_id = individualID, mouse_line, mouse_line_group, sex, age)
 
 # Check that all mice with tpm data have metadata

@@ -107,7 +107,7 @@ test_that("All levels of age are shown in the plot even if not present in the fi
   p <- phenotypes %>%
     dplyr::filter(
       .data$phenotype %in% "Plasma AB 40",
-      .data$mouse_line_group %in%  "BL6",
+      .data$mouse_line_group %in% "BL6",
       .data$tissue %in% "plasma"
     ) %>%
     expand_mouse_line_group_factor("BL6") %>%
@@ -118,8 +118,10 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 # Gene expressions ----
 
 gene_expression_df <- gene_expressions %>%
-  dplyr::filter(gene_id == "ENSMUSG00000025790",
-                mouse_line == "C57BL6J")
+  dplyr::filter(
+    gene_id == "ENSMUSG00000025790",
+    mouse_line == "C57BL6J"
+  )
 
 test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expression' in annotations and has a TPM y-axis label", {
   p <- gene_expression_df %>%
