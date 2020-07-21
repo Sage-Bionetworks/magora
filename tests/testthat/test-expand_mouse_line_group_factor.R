@@ -1,14 +1,14 @@
 # Set up fake data for testing on
-test_that("refactor_mouse_line expands the data[['mouse_line']] factor levels to include both experiment and control lines for the specified `mouse_line_group`, even if there isn't data for both", {
+test_that("expand_mouse_line_group_factor expands the data[['mouse_line']] factor levels to include both experiment and control lines for the specified `mouse_line_group`, even if there isn't data for both", {
   output <- phenotypes %>%
-    expand_mouse_line_factor("BL6") %>%
+    expand_mouse_line_group_factor("BL6") %>%
     dplyr::pull(mouse_line) %>%
     levels()
   expect_equal(output, c("BL6", "5XfAD;BL6"))
 
   output <- phenotypes %>%
     dplyr::filter(mouse_line == "BL6") %>%
-    expand_mouse_line_factor("BL6") %>%
+    expand_mouse_line_group_factor("BL6") %>%
     dplyr::pull(mouse_line) %>%
     levels()
   expect_equal(output, c("BL6", "5XfAD;BL6"))

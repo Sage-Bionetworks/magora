@@ -4,9 +4,9 @@
 #'
 #' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue).
 #' @param mouse_line_group Mouse line group(s) to expand factor for.
-#' @param phenotype_data Phenotype data to pull original mouse line factors from. Defaults to \code{link{phenotypes}}.
-expand_mouse_line_factor <- function(data, mouse_line_group, phenotype_data = magora::phenotypes) {
-  mouse_line_experiment_control <- phenotype_data %>%
+#' @param reference_data Reference data to pull original mouse line factors from. Defaults to \code{link{phenotypes}}.
+expand_mouse_line_group_factor <- function(data, mouse_line_group, reference_data = magora::phenotypes) {
+  mouse_line_experiment_control <- reference_data %>%
     dplyr::filter(.data$mouse_line_group %in% !!mouse_line_group) %>%
     dplyr::arrange(.data$mouse_line) %>%
     dplyr::pull(.data$mouse_line) %>%
