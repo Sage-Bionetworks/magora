@@ -57,10 +57,15 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_line_group), message = "Please select one or more mouse lines.")
     )
 
-    filter_pathology(magora::phenotypes, input$phenotype, input$mouse_line_group, input$tissue)
+    magora::phenotypes %>%
+      dplyr::filter(
+        .data$phenotype %in% input$phenotype,
+        .data$mouse_line_group %in% input$mouse_line_group,
+        .data$tissue %in% input$tissue
+      )
   })
 
   output$phenotype_plot <- shiny::renderPlot({

@@ -2,7 +2,7 @@
 #'
 #' Expand mouse line factor to include all experiment and control lines for the specified \code{mouse_line_group}, even if there is not data for both. Used before \code{\link{plot_phenotypes}} to ensure that facets are shown for all mouse lines selected.
 #'
-#' @param data Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).
+#' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue).
 #' @param mouse_line_group Mouse line group(s) to expand factor for.
 #' @param phenotype_data Phenotype data to pull original mouse line factors from. Defaults to \code{link{phenotypes}}.
 expand_mouse_line_factor <- function(data, mouse_line_group, phenotype_data = magora::phenotypes) {
