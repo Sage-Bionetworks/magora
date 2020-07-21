@@ -4,15 +4,19 @@
 \alias{expand_mouse_line_factor}
 \title{Expand mouse line factor}
 \usage{
-expand_mouse_line_factor(data, mouse_line, phenotype_data = magora::phenotypes)
+expand_mouse_line_factor(
+  data,
+  mouse_line_group,
+  phenotype_data = magora::phenotypes
+)
 }
 \arguments{
 \item{data}{Input data (the result of \code{\link{filter_pathology}} with \code{\link{phenotypes}} as input).}
 
-\item{mouse_line}{Mouse line(s) to expand factor for.}
+\item{mouse_line_group}{Mouse line group(s) to expand factor for.}
 
 \item{phenotype_data}{Phenotype data to pull original mouse line factors from. Defaults to \code{link{phenotypes}}.}
 }
 \description{
-Expand mouse line factor to include all experiment and control lines for the specified \code{mouse_line}, even if there is not data for both. Used before \code{\link{plot_phenotypes}} to ensure that facets are shown for all mouse lines selected.
+Expand mouse line factor to include all experiment and control lines for the specified \code{mouse_line_group}, even if there is not data for both. Used before \code{\link{plot_phenotypes}} to ensure that facets are shown for all mouse lines selected.
 }

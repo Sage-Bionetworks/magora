@@ -18,18 +18,18 @@ phenotypes <- phenotypes_raw %>%
   mutate(
     Age = as_factor(Age)
   ) %>%
-  separate(`Mouse Line`, into = c("experiment", "mouse_line"), fill = "left", remove = FALSE) %>%
+  separate(`Mouse Line`, into = c("experiment", "mouse_line_group"), fill = "left", remove = FALSE) %>%
   mutate(
-    mouse_line_type = ifelse(`Mouse Line` == mouse_line, 1, 2)
+    mouse_line_type = ifelse(`Mouse Line` == mouse_line_group, 1, 2)
   )
 
 mouse_line_order <- phenotypes %>%
-  arrange(mouse_line) %>%
-  distinct(mouse_line) %>%
+  arrange(mouse_line_group) %>%
+  distinct(mouse_line_group) %>%
   mutate(mouse_line_order = row_number())
 
 phenotypes <- phenotypes %>%
-  left_join(mouse_line_order, by = "mouse_line") %>%
+  left_join(mouse_line_order, by = "mouse_line_group") %>%
   mutate(
     mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
     `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
@@ -40,6 +40,6 @@ phenotypes <- phenotypes %>%
     values_to = "value"
   ) %>%
   filter(!is.na(value)) %>%
-  select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line_full = `Mouse Line`, mouse_line, age = Age, phenotype, value)
+  select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line = `Mouse Line`, mouse_line_group, age = Age, phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)

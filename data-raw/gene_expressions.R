@@ -4,7 +4,6 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(stringr)
-library(forcats)
 
 synLogin()
 
@@ -19,7 +18,7 @@ tpm_per_gene <- tpm_per_gene_raw %>%
     cols = starts_with("X"),
     names_to = "mouse_id",
     names_prefix = "X",
-    values_to = "tpm"
+    values_to = "value"
   ) %>%
   mutate(mouse_id = as.numeric(mouse_id))
 
@@ -31,6 +30,7 @@ individual_metadata_raw <- read_csv(here::here("data-raw", "Jax.IU.Pitt_5XFAD_in
 
 individual_metadata <- individual_metadata_raw %>%
   mutate(
+    sex = str_to_title(sex),
     mouse_line = case_when(
       str_ends(genotype, "_carrier") ~ str_remove(genotype, "_carrier"),
       str_ends(genotype, "_noncarrier") ~ genotypeBackground
@@ -62,15 +62,15 @@ individual_metadata %>%
 
 gene_expressions <- tpm_per_gene %>%
   left_join(individual_metadata, by = "mouse_id") %>%
-  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene_id, tpm) %>%
+  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene_id, value) %>%
   arrange(age) %>%
-  mutate(age = as_factor(age))
+  mutate(age = as.factor(age))
 
 # Generate sample of data to iterate with ----
 # Sample by gene, and sampling by % of zeros to get a good idea of what plots will look like
 
 sample_genes <- gene_expressions %>%
-  mutate(zero = tpm == 0) %>%
+  mutate(zero = value == 0) %>%
   group_by(gene_id) %>%
   summarise(prop_zero = mean(zero)) %>%
   mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%

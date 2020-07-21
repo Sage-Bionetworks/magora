@@ -2,6 +2,7 @@
 
 export("%>%")
 export(filter_pathology)
+export(plot_gene_expressions)
 export(plot_phenotypes)
 export(run_app)
 importFrom(magrittr,"%>%")

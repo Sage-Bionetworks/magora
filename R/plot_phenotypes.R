@@ -8,12 +8,12 @@ plot_phenotypes <- function(data) {
 
   # Generate annotation for mouse lines (facets) that won't have any data
   measured_annotation <- data %>%
-    dplyr::count(.data$mouse_line_full, .drop = FALSE) %>%
+    dplyr::count(.data$mouse_line, .drop = FALSE) %>%
     dplyr::filter(.data$n == 0) %>%
     dplyr::mutate(label = "This phenotype cannot be\nmeasured in this mouse line.")
 
   p <- ggplot2::ggplot(data) +
-    ggplot2::facet_wrap(ggplot2::vars(.data$mouse_line_full), ncol = 2, drop = FALSE) +
+    ggplot2::facet_wrap(ggplot2::vars(.data$mouse_line), ncol = 2, drop = FALSE) +
     ggplot2::geom_boxplot(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex)), position = ggplot2::position_dodge2(preserve = "single"))
 
   if (nrow(measured_annotation) > 0) {

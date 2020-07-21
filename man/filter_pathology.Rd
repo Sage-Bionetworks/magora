@@ -11,7 +11,7 @@ filter_pathology(data, phenotype, mouse_line, tissue)
 
 \item{phenotype}{Phenotype to filter by. Keeps data where \code{.data[["phenotype"]] \%in\% phenotype}}
 
-\item{mouse_line}{Mouse lines to filter by. Keeps data where \code{.data[["mouse_line"]] \%in\% mouse_line}}
+\item{mouse_line}{Mouse lines to filter by. Keeps data where \code{.data[["mouse_line_group"]] \%in\% mouse_line}}
 
 \item{tissue}{Tissue to filter by. Keeps data where \code{.data[["tissue"]] \%in\% tissue}}
 }
