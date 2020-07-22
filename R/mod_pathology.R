@@ -44,7 +44,7 @@ mod_pathology_ui <- function(id) {
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
-  observeEvent(input$phenotype, {
+  shiny::observeEvent(input$phenotype, {
     phenotype_data <- dplyr::filter(magora::phenotypes, .data$phenotype == input$phenotype)
     available_tissue <- unique(phenotype_data[["tissue"]])
 
@@ -72,7 +72,7 @@ mod_pathology_server <- function(input, output, session) {
     shiny::req(nrow(filtered_phenotypes()) > 0)
 
     filtered_phenotypes() %>%
-      expand_mouse_line_group_factor(input$mouse_line_group) %>%
+      expand_mouse_line_factor(input$mouse_line_group) %>%
       magora_boxplot(plot_type = "phenotype")
   })
 }

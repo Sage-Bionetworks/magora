@@ -6,7 +6,7 @@
 #'
 #' @noRd
 mod_gene_expression_ui <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   shiny::tabPanel(
     "Gene Expression",
     shiny::sidebarLayout(
