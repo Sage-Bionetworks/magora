@@ -4,8 +4,9 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(stringr)
+library(forcats)
 
-synLogin()
+# synLogin()
 
 # Read and clean up TPM data ----
 
@@ -35,12 +36,31 @@ individual_metadata <- individual_metadata_raw %>%
       str_ends(genotype, "_carrier") ~ str_remove(genotype, "_carrier"),
       str_ends(genotype, "_noncarrier") ~ genotypeBackground
     ),
+    mouse_line_type = case_when( # Assuming that "carrier" is the experiment and "noncarrier" is the control
+      str_ends(genotype, "_carrier") ~ 2,
+      str_ends(genotype, "_noncarrier") ~ 1
+    ),
     mouse_line_group = str_remove(genotype, "_carrier|_noncarrier"),
     across(c(dateBirth, dateDeath), mdy),
     age_interval = interval(dateBirth, dateDeath),
     age = round(age_interval / months(1))
   ) %>%
-  select(mouse_id = individualID, mouse_line, mouse_line_group, sex, age)
+  select(mouse_id = individualID, mouse_line, mouse_line_type, mouse_line_group, sex, age)
+
+# Order mouse line factor so that control shows first
+
+mouse_line_order <- individual_metadata %>%
+  arrange(mouse_line_group) %>%
+  distinct(mouse_line_group) %>%
+  mutate(mouse_line_order = row_number())
+
+individual_metadata <- individual_metadata %>%
+  left_join(mouse_line_order, by = "mouse_line_group") %>%
+  mutate(
+    mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
+    mouse_line = fct_reorder(mouse_line, mouse_line_factor)
+  ) %>%
+  select(-mouse_line_type, -mouse_line_order, -mouse_line_factor)
 
 # Check that all mice with tpm data have metadata
 
@@ -49,23 +69,13 @@ tpm_per_gene %>%
   anti_join(individual_metadata, by = "mouse_id") %>%
   nrow() == 0
 
-# Not sure if as relevant -- not all mice with metadata have tpm data
-
-individual_metadata %>%
-  anti_join(
-    tpm_per_gene %>%
-      distinct(mouse_id),
-    by = "mouse_id"
-  ) %>%
-  nrow() == 0
-
 # Combine tpm with metadata -----
 
 gene_expressions <- tpm_per_gene %>%
   left_join(individual_metadata, by = "mouse_id") %>%
   select(mouse_id, mouse_line, mouse_line_group, sex, age, gene_id, value) %>%
   arrange(age) %>%
-  mutate(age = as.factor(age))
+  mutate(age = as_factor(age))
 
 # Generate sample of data to iterate with ----
 # Sample by gene, and sampling by % of zeros to get a good idea of what plots will look like
