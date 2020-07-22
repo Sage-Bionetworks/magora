@@ -60,11 +60,7 @@ mod_gene_expression_server <- function(input, output, session) {
     shiny::req(nrow(filtered_gene_expressions()) > 0)
 
     filtered_gene_expressions() %>%
-      dplyr::mutate(
-        mouse_line = forcats::fct_drop(.data$mouse_line),
-        mouse_line = forcats::fct_expand(.data$mouse_line, input$mouse_line),
-        mouse_line = forcats::fct_relevel(.data$mouse_line, input$mouse_line)
-      ) %>%
+      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
       magora_boxplot(plot_type = "gene expression")
   })
 }
