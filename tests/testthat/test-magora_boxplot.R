@@ -119,8 +119,8 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 
 gene_expression_df <- gene_expressions %>%
   dplyr::filter(
-    gene_id == "ENSMUSG00000025790",
-    mouse_line == "C57BL6J"
+    gene_id == "ENSMUSG00000061356",
+    mouse_line == "5XFAD"
   )
 
 test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expression' in annotations and has a TPM y-axis label", {

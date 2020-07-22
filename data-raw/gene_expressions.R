@@ -80,6 +80,8 @@ gene_expressions <- tpm_per_gene %>%
 # Generate sample of data to iterate with ----
 # Sample by gene, and sampling by % of zeros to get a good idea of what plots will look like
 
+set.seed(1234)
+
 sample_genes <- gene_expressions %>%
   mutate(zero = value == 0) %>%
   group_by(gene_id) %>%
