@@ -20,7 +20,7 @@ mod_gene_expression_ui <- function(id) {
         shinyWidgets::pickerInput(
           ns("mouse_line"),
           "Select mouse lines",
-          choices = as.character(unique(magora::gene_expressions[["mouse_line"]])),
+          choices = as.character(levels(magora::gene_expressions[["mouse_line"]])),
           multiple = TRUE,
           selected = c("5XFAD", "C57BL6J")
         ),
