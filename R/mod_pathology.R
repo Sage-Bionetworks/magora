@@ -72,7 +72,7 @@ mod_pathology_server <- function(input, output, session) {
     shiny::req(nrow(filtered_phenotypes()) > 0)
 
     filtered_phenotypes() %>%
-      expand_mouse_line_factor(input$mouse_line_group) %>%
+      expand_mouse_line_factor_from_group(input$mouse_line_group) %>%
       magora_boxplot(plot_type = "phenotype")
   })
 }

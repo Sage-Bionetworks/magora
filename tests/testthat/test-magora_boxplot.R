@@ -40,7 +40,7 @@ test_that("magora_boxplot produces box plots comparing the phenotype by mouse li
       .data$mouse_line_group %in% "BL6",
       .data$tissue %in% "cortex"
     ) %>%
-    expand_mouse_line_factor("BL6") %>%
+    expand_mouse_line_factor_from_group("BL6") %>%
     magora_boxplot()
   expect_doppelganger("faceted-box-plots", p)
 })
@@ -52,7 +52,7 @@ test_that("magora_boxplot produces two rows of facets when two mouse lines are i
       .data$mouse_line_group %in% c("BL5", "BL6"),
       .data$tissue %in% "cortex"
     ) %>%
-    expand_mouse_line_factor(c("BL5", "BL6"), phenotypes_df) %>%
+    expand_mouse_line_factor_from_group(c("BL5", "BL6"), phenotypes_df) %>%
     magora_boxplot()
   expect_doppelganger("two-row-facets", p)
 })
@@ -65,7 +65,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$mouse_line_group %in% "BL6",
       .data$tissue %in% "cortex"
     ) %>%
-    expand_mouse_line_factor("BL6") %>%
+    expand_mouse_line_factor_from_group("BL6") %>%
     magora_boxplot()
   expect_doppelganger("no-data-experiment", p)
 
@@ -76,7 +76,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$mouse_line_group %in% "BL6",
       .data$tissue %in% "cortex"
     ) %>%
-    expand_mouse_line_factor("BL6") %>%
+    expand_mouse_line_factor_from_group("BL6") %>%
     magora_boxplot()
   expect_doppelganger("no-data-control", p)
 
@@ -87,7 +87,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$mouse_line_group %in% c("BL5", "BL6"),
       .data$tissue %in% "cortex"
     ) %>%
-    expand_mouse_line_factor(c("BL5", "BL6"), phenotypes_df) %>%
+    expand_mouse_line_factor_from_group(c("BL5", "BL6"), phenotypes_df) %>%
     magora_boxplot()
   expect_doppelganger("no-data-interaction", p)
 
@@ -98,7 +98,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$mouse_line_group %in% c("BL5", "BL6"),
       .data$tissue %in% "cortex"
     ) %>%
-    expand_mouse_line_factor(c("BL5", "BL6"), phenotypes_df) %>%
+    expand_mouse_line_factor_from_group(c("BL5", "BL6"), phenotypes_df) %>%
     magora_boxplot()
   expect_doppelganger("no-data-both", p)
 })
@@ -110,22 +110,51 @@ test_that("All levels of age are shown in the plot even if not present in the fi
       .data$mouse_line_group %in% "BL6",
       .data$tissue %in% "plasma"
     ) %>%
-    expand_mouse_line_factor("BL6") %>%
+    expand_mouse_line_factor_from_group("BL6") %>%
     magora_boxplot()
   expect_doppelganger("not-all-ages", p)
 })
 
 # Gene expressions ----
 
-gene_expression_df <- gene_expressions %>%
-  dplyr::filter(
-    gene_id == "ENSMUSG00000061356",
-    mouse_line == "5XFAD"
-  )
-
 test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expression' in annotations and has a TPM y-axis label", {
-  p <- gene_expression_df %>%
-    dplyr::mutate(mouse_line = forcats::fct_expand(mouse_line, c("5XFAD", "C57BL6J"))) %>%
+  p <- gene_expressions %>%
+    dplyr::filter(
+      gene_id == "ENSMUSG00000061356",
+      mouse_line == "5XFAD"
+    ) %>%
+    expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
     magora_boxplot(plot_type = "gene expression")
-  expect_doppelganger("no-data-gene-expression", p)
+  expect_doppelganger("gene-expression-no-data", p)
+})
+
+test_that("magora_boxplot with plot_type = 'gene expression' shows all, and only, mouse lines selected", {
+  p <- gene_expressions %>%
+    dplyr::filter(
+      gene_id == "ENSMUSG00000061356",
+      mouse_line == "5XFAD"
+    ) %>%
+    expand_mouse_line_factor_from_selection("5XFAD") %>%
+    magora_boxplot(plot_type = "gene expression")
+  expect_doppelganger("gene-expression-single-mouse-line", p)
+
+  p <- gene_expressions %>%
+    dplyr::filter(
+      gene_id == "ENSMUSG00000061356",
+      mouse_line == c("5XFAD", "C57BL6J")
+    ) %>%
+    expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
+    magora_boxplot(plot_type = "gene expression")
+  expect_doppelganger("gene-expression-all-mouse-line", p)
+})
+
+test_that("magora_boxplot with plot_type = 'gene expression' shows facets in the order selected", {
+  p <- gene_expressions %>%
+    dplyr::filter(
+      gene_id == "ENSMUSG00000061356",
+      mouse_line == c("5XFAD", "C57BL6J")
+    ) %>%
+    expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
+    magora_boxplot(plot_type = "gene expression")
+  expect_doppelganger("gene-expression-different-order", p)
 })
