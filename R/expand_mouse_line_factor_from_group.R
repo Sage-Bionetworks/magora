@@ -15,10 +15,5 @@ expand_mouse_line_factor_from_group <- function(data, mouse_line_group, referenc
     as.character() %>%
     unique()
 
-  data %>%
-    dplyr::mutate(
-      mouse_line = forcats::fct_drop(.data$mouse_line),
-      mouse_line = forcats::fct_expand(.data$mouse_line, mouse_line_experiment_control),
-      mouse_line = forcats::fct_relevel(.data$mouse_line, mouse_line_experiment_control)
-    )
+  expand_mouse_line_factor_from_selection(data, mouse_line_experiment_control)
 }
