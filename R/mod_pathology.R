@@ -18,9 +18,9 @@ mod_pathology_ui <- function(id) {
           choices = unique(magora::phenotypes[["phenotype"]])
         ),
         shinyWidgets::pickerInput(
-          ns("mouse_line"),
+          ns("mouse_line_group"),
           "Select mouse lines",
-          choices = unique(magora::phenotypes[["mouse_line"]]),
+          choices = unique(magora::phenotypes[["mouse_line_group"]]),
           multiple = TRUE,
           selected = "BL6"
         ),
@@ -44,7 +44,7 @@ mod_pathology_ui <- function(id) {
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
-  observeEvent(input$phenotype, {
+  shiny::observeEvent(input$phenotype, {
     phenotype_data <- dplyr::filter(magora::phenotypes, .data$phenotype == input$phenotype)
     available_tissue <- unique(phenotype_data[["tissue"]])
 
@@ -57,18 +57,23 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_line_group), message = "Please select one or more mouse lines.")
     )
 
-    filter_pathology(magora::phenotypes, input$phenotype, input$mouse_line, input$tissue)
+    magora::phenotypes %>%
+      dplyr::filter(
+        .data$phenotype %in% input$phenotype,
+        .data$mouse_line_group %in% input$mouse_line_group,
+        .data$tissue %in% input$tissue
+      )
   })
 
   output$phenotype_plot <- shiny::renderPlot({
     shiny::req(nrow(filtered_phenotypes()) > 0)
 
     filtered_phenotypes() %>%
-      expand_mouse_line_factor(input$mouse_line) %>%
-      plot_phenotypes()
+      expand_mouse_line_factor_from_group(input$mouse_line_group) %>%
+      magora_boxplot(plot_type = "phenotype")
   })
 }
 
