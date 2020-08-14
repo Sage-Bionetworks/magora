@@ -45,8 +45,8 @@ mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
   shiny::observeEvent(input$phenotype, {
-    phenotype_data <- dplyr::filter(magora::phenotypes, .data$phenotype == input$phenotype)
-    available_tissue <- unique(phenotype_data[["tissue"]])
+    available_tissue <- magora::phenotype_tissue[[input$phenotype]]
+
 
     shinyWidgets::updatePickerInput(
       session = session,
@@ -69,7 +69,11 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   output$phenotype_plot <- shiny::renderPlot({
-    shiny::req(nrow(filtered_phenotypes()) > 0)
+    shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
+
+    shiny::validate(
+      shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
+    )
 
     filtered_phenotypes() %>%
       expand_mouse_line_factor_from_selection(input$mouse_line) %>%

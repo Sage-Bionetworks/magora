@@ -45,3 +45,8 @@ phenotypes <- phenotypes %>%
   select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line = `Mouse Line`, mouse_line_group, age = Age, phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)
+
+phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
+  lapply(function(x) distinct(x, tissue) %>% pull(tissue))
+
+usethis::use_data(phenotype_tissue, overwrite = TRUE)

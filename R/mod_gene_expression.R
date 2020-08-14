@@ -57,7 +57,10 @@ mod_gene_expression_server <- function(input, output, session) {
   })
 
   output$gene_expression_plot <- shiny::renderPlot({
-    shiny::req(nrow(filtered_gene_expressions()) > 0)
+
+    shiny::validate(
+      shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
+    )
 
     filtered_gene_expressions() %>%
       expand_mouse_line_factor_from_selection(input$mouse_line) %>%
