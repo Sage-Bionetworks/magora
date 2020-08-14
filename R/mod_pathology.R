@@ -18,11 +18,11 @@ mod_pathology_ui <- function(id) {
           choices = unique(magora::phenotypes[["phenotype"]])
         ),
         shinyWidgets::pickerInput(
-          ns("mouse_line_group"),
+          ns("mouse_line"),
           "Select mouse lines",
-          choices = unique(magora::phenotypes[["mouse_line_group"]]),
+          choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
           multiple = TRUE,
-          selected = "BL6"
+          selected = c("5XFAD", "C57BL6J")
         ),
         shinyWidgets::pickerInput(
           ns("tissue"),
@@ -57,13 +57,13 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line_group), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
     )
 
     magora::phenotypes %>%
       dplyr::filter(
         .data$phenotype %in% input$phenotype,
-        .data$mouse_line_group %in% input$mouse_line_group,
+        .data$mouse_line %in% input$mouse_line,
         .data$tissue %in% input$tissue
       )
   })
@@ -72,7 +72,7 @@ mod_pathology_server <- function(input, output, session) {
     shiny::req(nrow(filtered_phenotypes()) > 0)
 
     filtered_phenotypes() %>%
-      expand_mouse_line_factor_from_group(input$mouse_line_group) %>%
+      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
       magora_boxplot(plot_type = "phenotype")
   })
 }
