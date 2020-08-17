@@ -16,7 +16,7 @@ phenotypes <- phenotypes_raw %>%
   ) %>%
   arrange(Age) %>%
   mutate(
-    Age = as_factor(Age),
+    Age = as_factor(Age)
   ) %>%
   separate(`Mouse Line`, into = c("experiment", "mouse_line_group"), fill = "left", remove = FALSE) %>%
   mutate(
@@ -32,8 +32,10 @@ phenotypes <- phenotypes %>%
   left_join(mouse_line_order, by = "mouse_line_group") %>%
   mutate(
     mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
-    `Mouse Line` = case_when(`Mouse Line` == "BL6" ~ "C57BL6J",
-                             `Mouse Line` == "5XfAD;BL6" ~ "5XFAD"),
+    `Mouse Line` = case_when(
+      `Mouse Line` == "BL6" ~ "C57BL6J",
+      `Mouse Line` == "5XfAD;BL6" ~ "5XFAD"
+    ),
     `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
   ) %>%
   pivot_longer(

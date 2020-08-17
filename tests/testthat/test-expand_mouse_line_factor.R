@@ -46,7 +46,6 @@ test_that("expand_mouse_line_factor_from_selection includes factors selected, ev
     dplyr::filter(mouse_line == "5XFAD") %>%
     expand_mouse_line_factor_from_selection(mouse_line_selection)
   expect_equal(levels(output[["mouse_line"]]), mouse_line_selection)
-
 })
 
 test_that("expand_mouse_line_factor_from_selection returns factor levels in the same order as the selection", {

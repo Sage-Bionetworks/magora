@@ -1,6 +1,6 @@
 #' Boxplot for phenotypes or gene expressions
 #'
-#' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, or or \code{\link{gene_expressions}} filtered by gene, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).
+#' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, or \code{\link{gene_expressions}} filtered by gene, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).
 #' @param plot_type Type of plot, used for generating annotations and y-axis labels. One of "phenotype" or "gene expression".
 #'
 #' @return A ggplot2 object.
