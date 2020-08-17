@@ -18,11 +18,11 @@ mod_pathology_ui <- function(id) {
           choices = unique(magora::phenotypes[["phenotype"]])
         ),
         shinyWidgets::pickerInput(
-          ns("mouse_line_group"),
+          ns("mouse_line"),
           "Select mouse lines",
-          choices = unique(magora::phenotypes[["mouse_line_group"]]),
+          choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
           multiple = TRUE,
-          selected = "BL6"
+          selected = c("C57BL6J", "5XFAD")
         ),
         shinyWidgets::pickerInput(
           ns("tissue"),
@@ -45,8 +45,8 @@ mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
   shiny::observeEvent(input$phenotype, {
-    phenotype_data <- dplyr::filter(magora::phenotypes, .data$phenotype == input$phenotype)
-    available_tissue <- unique(phenotype_data[["tissue"]])
+    available_tissue <- magora::phenotype_tissue[[input$phenotype]]
+
 
     shinyWidgets::updatePickerInput(
       session = session,
@@ -57,22 +57,26 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line_group), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
     )
 
     magora::phenotypes %>%
       dplyr::filter(
         .data$phenotype %in% input$phenotype,
-        .data$mouse_line_group %in% input$mouse_line_group,
+        .data$mouse_line %in% input$mouse_line,
         .data$tissue %in% input$tissue
       )
   })
 
   output$phenotype_plot <- shiny::renderPlot({
-    shiny::req(nrow(filtered_phenotypes()) > 0)
+    shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
+
+    shiny::validate(
+      shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
+    )
 
     filtered_phenotypes() %>%
-      expand_mouse_line_factor_from_group(input$mouse_line_group) %>%
+      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
       magora_boxplot(plot_type = "phenotype")
   })
 }

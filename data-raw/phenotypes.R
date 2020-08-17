@@ -32,6 +32,10 @@ phenotypes <- phenotypes %>%
   left_join(mouse_line_order, by = "mouse_line_group") %>%
   mutate(
     mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
+    `Mouse Line` = case_when(
+      `Mouse Line` == "BL6" ~ "C57BL6J",
+      `Mouse Line` == "5XfAD;BL6" ~ "5XFAD"
+    ),
     `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
   ) %>%
   pivot_longer(
@@ -43,3 +47,8 @@ phenotypes <- phenotypes %>%
   select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line = `Mouse Line`, mouse_line_group, age = Age, phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)
+
+phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
+  lapply(function(x) distinct(x, tissue) %>% pull(tissue))
+
+usethis::use_data(phenotype_tissue, overwrite = TRUE)
