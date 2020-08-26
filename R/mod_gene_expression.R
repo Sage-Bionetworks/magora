@@ -12,10 +12,12 @@ mod_gene_expression_ui <- function(id) {
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         width = 3,
-        shinyWidgets::pickerInput(
-          ns("gene_id"),
+        shiny::selectInput(
+          ns("gene"),
           "Select a gene",
-          choices = unique(magora::gene_expressions[["gene_id"]])
+          choices = unique(magora::gene_expressions[["gene"]]),
+          multiple = FALSE,
+          selectize = TRUE
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
@@ -51,7 +53,7 @@ mod_gene_expression_server <- function(input, output, session) {
 
     magora::gene_expressions %>%
       dplyr::filter(
-        .data$gene_id %in% input$gene_id,
+        .data$gene %in% input$gene,
         .data$mouse_line %in% input$mouse_line
       )
   })
