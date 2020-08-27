@@ -127,6 +127,7 @@ sample_genes <- gene_expressions %>%
 
 gene_expressions <- gene_expressions %>%
   filter(gene %in% sample_genes) %>%
-  select(-gene_symbol)
+  select(-gene_symbol) %>%
+  arrange(gene)
 
 usethis::use_data(gene_expressions, overwrite = TRUE)
