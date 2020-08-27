@@ -45,8 +45,10 @@ genes <- genes %>%
 
 genes <- genes %>%
   add_count(gene_symbol) %>%
-  mutate(gene = case_when(n > 1 ~ gene_id,
-                          TRUE ~ gene)) %>%
+  mutate(gene = case_when(
+    n > 1 ~ gene_id,
+    TRUE ~ gene
+  )) %>%
   select(-n)
 
 # Check that there aren't multiple symbols for a single gene
