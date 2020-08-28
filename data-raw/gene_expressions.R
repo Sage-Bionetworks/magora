@@ -8,27 +8,154 @@ library(lubridate)
 library(stringr)
 library(forcats)
 library(purrr)
+library(magora)
+
+options(scipen = 999) # So that casting mouse_id to character doesn't convert e.g. 10000000 to "1e+07"
 
 # synLogin()
 
 # Read and clean up TPM data ----
 
-# tpm_per_gene_synapse <- synGet("syn22108848", downloadLocation = here::here("data-raw"))
+# 5XFAD ----
 
-tpm_per_gene_raw <- read.table(here::here("data-raw", "tpm_gene_5XFAD.txt"), header = TRUE)
+# synGet("syn22108848", downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
 
-tpm_per_gene <- tpm_per_gene_raw %>%
+tpm_5xfad <- read.table(here::here("data-raw", "gene_expressions", "5xfad", "tpm_gene_5XFAD.txt"), header = TRUE) %>%
   pivot_longer(
     cols = starts_with("X"),
     names_to = "mouse_id",
     names_prefix = "X",
     values_to = "value"
+  )
+
+# htau_trem2 ----
+
+# magora:::download_tpm_and_annotations("syn18694013", "htau_trem2")
+
+# Read and combine htau_trem2 data
+tpm_htau_trem2 <- magora:::read_combine_tpm_and_annotations("htau_trem2")
+
+# app_ps1 ----
+
+# magora:::download_tpm_and_annotations("syn15666853", "app_ps1")
+
+# Read and combine app_ps1 data
+tpm_app_ps1 <- magora:::read_combine_tpm_and_annotations("app_ps1")
+
+### combine tpm
+
+tpm <- tpm_5xfad %>%
+  bind_rows(tpm_htau_trem2) %>%
+  bind_rows(tpm_app_ps1)
+
+# Individual Metadata ----
+
+# 5XFAD ----
+
+#synGet("syn22103212", downloadLocation = here::here("data-raw"))
+
+# Logic for mouse line:
+# if genotype is 5XFAD_carrier, then Mouse Line = 5XFAD
+# If genotype is 5XFAD_noncarrier, then Mouse Line = genotypeBackground
+
+individual_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions", "5xfad", "Jax.IU.Pitt_5XFAD_individual_metadata.csv")) %>%
+  mutate(
+    sex = str_to_title(sex),
+    mouse_line = case_when(
+      str_ends(genotype, "_carrier") ~ str_remove(genotype, "_carrier"),
+      str_ends(genotype, "_noncarrier") ~ genotypeBackground
+    ),
+    across(c(dateBirth, dateDeath), mdy),
+    age_interval = interval(dateBirth, dateDeath),
+    age = round(age_interval / months(1)),
+    mouse_id = as.character(individualID)
   ) %>%
-  mutate(mouse_id = as.numeric(mouse_id))
+  select(mouse_id, mouse_line, sex, age)
+
+# htau_trem2 ----
+
+# synGet("syn22161041", downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
+
+individual_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_individual_metdata.csv")) %>%
+  mutate(
+    sex = str_to_title(sex),
+    mouse_line = genotype,
+    across(c(dateBirth, dateDeath), mdy),
+    age_interval = interval(dateBirth, dateDeath),
+    age = round(age_interval / months(1)),
+    age = ifelse(age == -6, 6, age) # Fix one age where dateBirth and dateDeath look mixed up
+  ) %>%
+  select(mouse_id = individualID, mouse_line, sex, age)
+
+# app_ps1 ----
+
+# synGet("syn18879639", downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
+
+individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_individual_metadata.csv")) %>%
+  mutate(
+    sex = str_to_title(sex),
+    mouse_line = genotype,
+    age = as.numeric(str_remove(ageOfDeath, "m")),
+    mouse_id = as.character(individualID)
+  ) %>%
+  select(mouse_id, mouse_line, sex, age)
+
+# Combine individual metadata
+
+individual_metadata <- individual_metadata_5xfad %>%
+  bind_rows(individual_metadata_htau_trem2) %>%
+  bind_rows(individual_metadata_app_ps1)
+
+# Check there are no duplicate mouse_ids across the datasets
+
+individual_metadata %>%
+  add_count(mouse_id) %>%
+  filter(n > 1) %>%
+  nrow() == 0
+
+# Biospecimen metadata ----
+
+# 5xfad ----
+
+# Biospecimen data is wrong for 5xfad data - just set tissue to "right cerebral hemisphere"
+
+tissue_5xfad <- tpm_5xfad %>%
+  distinct(mouse_id) %>%
+  mutate(tissue = "right cerebral hemisphere")
+
+# htau_trem2 ----
+
+# synGet("syn18720956", downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
+
+biospecimen_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_biospecimen_metadata.csv"))
+
+tissue_htau_trem2 <- tpm_htau_trem2 %>%
+  distinct(mouse_id, specimen_id) %>%
+  left_join(biospecimen_metadata_htau_trem2, by = c("mouse_id" = "individualID", "specimen_id" = "specimenID")) %>%
+  select(mouse_id, specimen_id, tissue)
+
+# app_ps1 -----
+
+# synGet("syn18879638", downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
+
+biospecimen_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_biospecimen_metadata.csv")) %>%
+  mutate(individualID = as.character(individualID),
+         specimenID = as.character(specimenID))
+
+tissue_app_ps1 <- tpm_app_ps1 %>%
+  distinct(mouse_id, specimen_id) %>%
+  left_join(biospecimen_metadata_app_ps1, by = c("mouse_id" = "individualID", "specimen_id" = "specimenID")) %>%
+  select(mouse_id, specimen_id, tissue)
+
+# Combine tissue
+
+tissue <- tissue_5xfad %>%
+  bind_rows(tissue_htau_trem2) %>%
+  bind_rows(tissue_app_ps1)
 
 # Query symbols to use in place of gene ids where possible ----
 
-genes <- tpm_per_gene %>%
+genes <- tpm %>%
   distinct(gene_id)
 
 gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_id"]], columns = "SYMBOL", keytype = "GENEID") %>%
@@ -59,102 +186,21 @@ genes %>%
   filter(n > 1) %>%
   nrow() == 0
 
-# Read and clean up individual metadata ---
+# Combine tpm, individual metadata, tissue, and gene symbol ----
 
-# individual_metadata_synapse <- synGet("syn22103212", downloadLocation = here::here("data-raw"))
-
-individual_metadata_raw <- read_csv(here::here("data-raw", "Jax.IU.Pitt_5XFAD_individual_metadata.csv"))
-
-individual_metadata <- individual_metadata_raw %>%
-  mutate(
-    sex = str_to_title(sex),
-    mouse_line = case_when(
-      str_ends(genotype, "_carrier") ~ str_remove(genotype, "_carrier"),
-      str_ends(genotype, "_noncarrier") ~ genotypeBackground
-    ),
-    mouse_line_type = case_when( # Assuming that "carrier" is the experiment and "noncarrier" is the control
-      str_ends(genotype, "_carrier") ~ 2,
-      str_ends(genotype, "_noncarrier") ~ 1
-    ),
-    mouse_line_group = str_remove(genotype, "_carrier|_noncarrier"),
-    across(c(dateBirth, dateDeath), mdy),
-    age_interval = interval(dateBirth, dateDeath),
-    age = round(age_interval / months(1))
-  ) %>%
-  select(mouse_id = individualID, mouse_line, mouse_line_type, mouse_line_group, sex, age)
-
-# Order mouse line factor so that control shows first
-
-mouse_line_order <- individual_metadata %>%
-  arrange(mouse_line_group) %>%
-  distinct(mouse_line_group) %>%
-  mutate(mouse_line_order = row_number())
-
-individual_metadata <- individual_metadata %>%
-  left_join(mouse_line_order, by = "mouse_line_group") %>%
-  mutate(
-    mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
-    mouse_line = fct_reorder(mouse_line, mouse_line_factor)
-  ) %>%
-  select(-mouse_line_type, -mouse_line_order, -mouse_line_factor)
-
-# Check that all mice with tpm data have metadata
-
-tpm_per_gene %>%
-  distinct(mouse_id) %>%
-  anti_join(individual_metadata, by = "mouse_id") %>%
-  nrow() == 0
-
-# Combine tpm with metadata and gene symbol -----
-
-gene_expressions <- tpm_per_gene %>%
+gene_expressions <- tpm %>%
   left_join(individual_metadata, by = "mouse_id") %>%
+  left_join(tissue, by = c("mouse_id", "specimen_id")) %>% # NAs join by default, so it shouldn't be an issue to join by specimen_id too even though the 5xfad data doesn't have a specimen id
   left_join(genes, by = "gene_id") %>%
-  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene, gene_symbol, value) %>%
+  select(mouse_id, mouse_line, sex, age, gene, gene_symbol, value) %>%
   arrange(age) %>%
   mutate(age = as_factor(age))
 
-# Generate sample of data to iterate with ----
-# Sample by gene, and sampling by % of zeros to get a good idea of what plots will look like
+# Check no rows have been added via duplicate IDs etc in joins
 
-set.seed(1234)
+nrow(tpm) == nrow(gene_expressions)
 
-sample_genes <- gene_expressions %>%
-  mutate(zero = value == 0) %>%
-  group_by(gene) %>%
-  summarise(prop_zero = mean(zero)) %>%
-  mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%
-  group_by(prop_zero_group) %>%
-  sample_n(5) %>%
-  pull(gene)
+# Save data ----
 
-gene_expressions <- gene_expressions %>%
-  filter(gene %in% sample_genes) %>%
-  select(-gene_symbol) %>%
-  arrange(gene)
-
-usethis::use_data(gene_expressions, overwrite = TRUE)
-
-
-
-
-
-# New data ----
-
-synLogin()
-
-# htau_trem2 ----
-
-# Download htau_trem2 data
-# download_tpm_and_annotations("syn18694013", "htau_trem2")
-
-# Read and combine htau_trem2 data
-htau_trem2 <- read_combine_tpm_and_annotations("htau_trem2")
-
-# app_ps1 ----
-
-# Download aps_ps1 data
-# download_tpm_and_annotations("syn15666853", "app_ps1")
-
-# Read and combine app_ps1 data
-app_ps1 <- read_combine_tpm_and_annotations("app_ps1")
+saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions"))
+vroom::vroom()
