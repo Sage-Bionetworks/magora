@@ -7,6 +7,7 @@ library(tidyr)
 library(lubridate)
 library(stringr)
 library(forcats)
+library(purrr)
 
 # synLogin()
 
@@ -133,3 +134,27 @@ gene_expressions <- gene_expressions %>%
   arrange(gene)
 
 usethis::use_data(gene_expressions, overwrite = TRUE)
+
+
+
+
+
+# New data ----
+
+synLogin()
+
+# htau_trem2 ----
+
+# Download htau_trem2 data
+# download_tpm_and_annotations("syn18694013", "htau_trem2")
+
+# Read and combine htau_trem2 data
+htau_trem2 <- read_combine_tpm_and_annotations("htau_trem2")
+
+# app_ps1 ----
+
+# Download aps_ps1 data
+# download_tpm_and_annotations("syn15666853", "app_ps1")
+
+# Read and combine app_ps1 data
+app_ps1 <- read_combine_tpm_and_annotations("app_ps1")
