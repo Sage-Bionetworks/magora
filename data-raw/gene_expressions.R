@@ -1,5 +1,7 @@
 library(synapser)
 library(readr)
+library(AnnotationDbi)
+library(EnsDb.Mmusculus.v79)
 library(dplyr)
 library(tidyr)
 library(lubridate)
@@ -22,6 +24,39 @@ tpm_per_gene <- tpm_per_gene_raw %>%
     values_to = "value"
   ) %>%
   mutate(mouse_id = as.numeric(mouse_id))
+
+# Query symbols to use in place of gene ids where possible ----
+
+genes <- tpm_per_gene %>%
+  distinct(gene_id)
+
+gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_id"]], columns = "SYMBOL", keytype = "GENEID") %>%
+  as_tibble() %>%
+  rename(gene_id = GENEID, gene_symbol = SYMBOL) %>%
+  mutate(gene_symbol = ifelse(gene_symbol == "", NA_character_, gene_symbol))
+
+# If the symbol exists, use that - otherwise, use gene id
+
+genes <- genes %>%
+  left_join(gene_symbols, by = "gene_id") %>%
+  mutate(gene = coalesce(gene_symbol, gene_id))
+
+# There are some cases where one symbol corresponds to many gene ids - rather than collapsing them, also fall back to the gene id instead of the symbol
+
+genes <- genes %>%
+  add_count(gene_symbol) %>%
+  mutate(gene = case_when(
+    n > 1 ~ gene_id,
+    TRUE ~ gene
+  )) %>%
+  select(-n)
+
+# Check that there aren't multiple symbols for a single gene
+
+genes %>%
+  add_count(gene_id) %>%
+  filter(n > 1) %>%
+  nrow() == 0
 
 # Read and clean up individual metadata ---
 
@@ -69,11 +104,12 @@ tpm_per_gene %>%
   anti_join(individual_metadata, by = "mouse_id") %>%
   nrow() == 0
 
-# Combine tpm with metadata -----
+# Combine tpm with metadata and gene symbol -----
 
 gene_expressions <- tpm_per_gene %>%
   left_join(individual_metadata, by = "mouse_id") %>%
-  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene_id, value) %>%
+  left_join(genes, by = "gene_id") %>%
+  select(mouse_id, mouse_line, mouse_line_group, sex, age, gene, gene_symbol, value) %>%
   arrange(age) %>%
   mutate(age = as_factor(age))
 
@@ -84,14 +120,16 @@ set.seed(1234)
 
 sample_genes <- gene_expressions %>%
   mutate(zero = value == 0) %>%
-  group_by(gene_id) %>%
+  group_by(gene) %>%
   summarise(prop_zero = mean(zero)) %>%
   mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%
   group_by(prop_zero_group) %>%
   sample_n(5) %>%
-  pull(gene_id)
+  pull(gene)
 
 gene_expressions <- gene_expressions %>%
-  filter(gene_id %in% sample_genes)
+  filter(gene %in% sample_genes) %>%
+  select(-gene_symbol) %>%
+  arrange(gene)
 
 usethis::use_data(gene_expressions, overwrite = TRUE)
