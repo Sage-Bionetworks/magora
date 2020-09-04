@@ -203,4 +203,4 @@ nrow(tpm) == nrow(gene_expressions)
 # Save data ----
 
 saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions"))
-vroom::vroom()
+readr::write_csv(gene_expressions, path = gzfile(here::here("inst", "extdata", "gene_expressions.csv.gz")))
