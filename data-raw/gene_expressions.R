@@ -161,7 +161,7 @@ genes <- tpm %>%
 gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_id"]], columns = "SYMBOL", keytype = "GENEID") %>%
   as_tibble() %>%
   rename(gene_id = GENEID, gene_symbol = SYMBOL) %>%
-  mutate(gene_symbol = ifelse(gene_symbol == "", NA_character_, gene_symbol))
+  mutate(gene_symbol = ifelse(gene_symbol %in% c("", "__alignment_not_unique", "__ambiguous", "__no_feature", "__not_aligned", "__too_low_aQual"), NA_character_, gene_symbol))
 
 # If the symbol exists, use that - otherwise, use gene id
 
@@ -192,7 +192,7 @@ gene_expressions <- tpm %>%
   left_join(individual_metadata, by = "mouse_id") %>%
   left_join(tissue, by = c("mouse_id", "specimen_id")) %>% # NAs join by default, so it shouldn't be an issue to join by specimen_id too even though the 5xfad data doesn't have a specimen id
   left_join(genes, by = "gene_id") %>%
-  select(mouse_id, mouse_line, sex, age, gene, gene_symbol, value) %>%
+  select(mouse_line, sex, age, tissue, gene, value) %>%
   arrange(age) %>%
   mutate(age = as_factor(age))
 
@@ -200,7 +200,28 @@ gene_expressions <- tpm %>%
 
 nrow(tpm) == nrow(gene_expressions)
 
+# Sample of 10,000 genes ----
+
+set.seed(1234)
+
+genes_sample <- genes %>%
+  sample_n(10000) %>%
+  pull(gene)
+
+gene_expressions <- gene_expressions %>%
+  filter(gene %in% genes_sample)
+
 # Save data ----
 
-saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions"))
-readr::write_csv(gene_expressions, path = gzfile(here::here("inst", "extdata", "gene_expressions.csv.gz")))
+# Saving mouse line, genes, and tissues separately to be used as inputs - tried out generating them via renderUI() but there's a considerable slowdown versus saving as objects directly
+
+gene_expression_genes <- sort(unique(gene_expressions[["gene"]]))
+usethis::use_data(gene_expression_genes, overwrite = TRUE)
+
+gene_expression_mouse_lines <- sort(unique(gene_expressions[["mouse_line"]]))
+usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
+
+gene_expression_tissue <- sort(unique(gene_expressions[["tissue"]]))
+usethis::use_data(gene_expression_tissue, overwrite = TRUE)
+
+saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions.rds"))

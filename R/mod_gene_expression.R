@@ -16,21 +16,21 @@ mod_gene_expression_ui <- function(id) {
         shiny::selectInput(
           ns("gene"),
           "Select a gene",
-          choices = sort(magora::gene_expressions_genes),
+          choices = magora::gene_expression_genes,
           multiple = FALSE,
           selectize = TRUE
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
           "Select mouse lines",
-          choices = sort(magora::gene_expressions_mouse_lines),
+          choices = magora::gene_expression_mouse_lines,
           multiple = TRUE,
           selected = c("5XFAD", "C57BL6J")
         ),
         shinyWidgets::pickerInput(
           ns("tissue"),
           "Select tissue",
-          choices = sort(magora::gene_expressions_tissue)
+          choices = magora::gene_expression_tissue
         )
       ),
       shiny::uiOutput(ns("gene_expression_plot_ui"))
@@ -41,10 +41,8 @@ mod_gene_expression_ui <- function(id) {
 #' Gene Expression page server Function
 #'
 #' @noRd
-mod_gene_expression_server <- function(input, output, session) {
+mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
-
-  gene_expressions <- golem::get_golem_options("gene_expressions")
 
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
