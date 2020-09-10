@@ -7,8 +7,3 @@
 #'
 #' A data set containing the tissues available for each mouse phenotype.
 "phenotype_tissue"
-
-#' Gene expression data
-#'
-#' A data set containing mouse gene expressions along with sex, age, and mouse line.
-"gene_expressions"

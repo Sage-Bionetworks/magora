@@ -8,7 +8,8 @@ library(lubridate)
 library(stringr)
 library(forcats)
 library(purrr)
-library(magora)
+
+source(here::here("data-raw/gene_expressions_data_functions.R"))
 
 options(scipen = 999) # So that casting mouse_id to character doesn't convert e.g. 10000000 to "1e+07"
 
@@ -30,17 +31,17 @@ tpm_5xfad <- read.table(here::here("data-raw", "gene_expressions", "5xfad", "tpm
 
 # htau_trem2 ----
 
-# magora:::download_tpm_and_annotations("syn18694013", "htau_trem2")
+# download_tpm_and_annotations("syn18694013", "htau_trem2")
 
 # Read and combine htau_trem2 data
-tpm_htau_trem2 <- magora:::read_combine_tpm_and_annotations("htau_trem2")
+tpm_htau_trem2 <- read_combine_tpm_and_annotations("htau_trem2")
 
 # app_ps1 ----
 
-# magora:::download_tpm_and_annotations("syn15666853", "app_ps1")
+# download_tpm_and_annotations("syn15666853", "app_ps1")
 
 # Read and combine app_ps1 data
-tpm_app_ps1 <- magora:::read_combine_tpm_and_annotations("app_ps1")
+tpm_app_ps1 <- read_combine_tpm_and_annotations("app_ps1")
 
 ### combine tpm
 
