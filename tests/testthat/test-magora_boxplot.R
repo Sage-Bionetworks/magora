@@ -1,9 +1,9 @@
 library(vdiffr)
 context("magora_boxplot") # Required by vdiffr still
 
-# Phenotypes ----
+gene_expressions <- readRDS(system.file("extdata/gene_expressions.rds", package = "magora"))
 
-# Set up fake data for testing on
+# Set up fake phenotypes data for testing on
 
 set.seed(1234)
 

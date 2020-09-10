@@ -104,7 +104,9 @@ individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions
 
 individual_metadata <- individual_metadata_5xfad %>%
   bind_rows(individual_metadata_htau_trem2) %>%
-  bind_rows(individual_metadata_app_ps1)
+  bind_rows(individual_metadata_app_ps1) %>%
+  arrange(mouse_line) %>%
+  mutate(mouse_line = fct_inorder(mouse_line))
 
 # Check there are no duplicate mouse_ids across the datasets
 
@@ -161,7 +163,7 @@ genes <- tpm %>%
 gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_id"]], columns = "SYMBOL", keytype = "GENEID") %>%
   as_tibble() %>%
   rename(gene_id = GENEID, gene_symbol = SYMBOL) %>%
-  mutate(gene_symbol = ifelse(gene_symbol %in% c("", "__alignment_not_unique", "__ambiguous", "__no_feature", "__not_aligned", "__too_low_aQual"), NA_character_, gene_symbol))
+  mutate(gene_symbol = ifelse(gene_symbol %in% c(""), NA_character_, gene_symbol))
 
 # If the symbol exists, use that - otherwise, use gene id
 
@@ -201,15 +203,21 @@ gene_expressions <- tpm %>%
 nrow(tpm) == nrow(gene_expressions)
 
 # Sample of 10,000 genes ----
+# Sampling by % of zeros to get a good idea of what plots will look like
 
 set.seed(1234)
 
-genes_sample <- genes %>%
-  sample_n(10000) %>%
+sample_genes <- gene_expressions %>%
+  mutate(zero = value == 0) %>%
+  group_by(gene) %>%
+  summarise(prop_zero = mean(zero)) %>%
+  mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%
+  group_by(prop_zero_group) %>%
+  sample_n(2500) %>%
   pull(gene)
 
 gene_expressions <- gene_expressions %>%
-  filter(gene %in% genes_sample)
+  filter(gene %in% sample_genes)
 
 # Save data ----
 
@@ -218,7 +226,7 @@ gene_expressions <- gene_expressions %>%
 gene_expression_genes <- sort(unique(gene_expressions[["gene"]]))
 usethis::use_data(gene_expression_genes, overwrite = TRUE)
 
-gene_expression_mouse_lines <- sort(unique(gene_expressions[["mouse_line"]]))
+gene_expression_mouse_lines <- levels(gene_expressions[["mouse_line"]])
 usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
 
 gene_expression_tissue <- sort(unique(gene_expressions[["tissue"]]))
