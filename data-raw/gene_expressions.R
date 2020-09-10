@@ -230,7 +230,7 @@ usethis::use_data(gene_expression_genes, overwrite = TRUE)
 gene_expression_mouse_lines <- levels(gene_expressions[["mouse_line"]])
 usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
 
-gene_expression_tissue <- sort(unique(gene_expressions[["tissue"]]))
-usethis::use_data(gene_expression_tissue, overwrite = TRUE)
+gene_expression_tissues <- sort(unique(gene_expressions[["tissue"]]))
+usethis::use_data(gene_expression_tissues, overwrite = TRUE)
 
 saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions.rds"))

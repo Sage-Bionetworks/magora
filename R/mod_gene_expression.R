@@ -30,7 +30,7 @@ mod_gene_expression_ui <- function(id) {
         shinyWidgets::pickerInput(
           ns("tissue"),
           "Select tissue",
-          choices = magora::gene_expression_tissue
+          choices = magora::gene_expression_tissues
         )
       ),
       shiny::uiOutput(ns("gene_expression_plot_ui"))
@@ -71,7 +71,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     shiny::mainPanel(
       width = 9,
       shiny::plotOutput(ns("gene_expression_plot"),
-        height = glue::glue("{ceiling(length(input$mouse_line)/2)*400}px")
+        height = paste0(ceiling(length(input$mouse_line)/2)*400, "px")
       )
     )
   })
