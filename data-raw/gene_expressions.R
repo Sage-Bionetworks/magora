@@ -198,9 +198,7 @@ gene_expressions <- tpm %>%
   left_join(individual_metadata, by = "mouse_id") %>%
   left_join(tissue, by = c("mouse_id", "specimen_id")) %>% # NAs join by default, so it shouldn't be an issue to join by specimen_id too even though the 5xfad data doesn't have a specimen id
   left_join(genes, by = "gene_id") %>%
-  select(mouse_line, sex, age, tissue, gene, value) %>%
-  arrange(age) %>%
-  mutate(age = as_factor(age))
+  select(mouse_line, sex, age, tissue, gene, value)
 
 # Check no rows have been added via duplicate IDs etc in joins
 
@@ -223,17 +221,23 @@ sample_genes <- gene_expressions %>%
 gene_expressions <- gene_expressions %>%
   filter(gene %in% sample_genes)
 
+# Make variables into factors to save space when saving
+
+gene_expressions <- gene_expressions %>%
+  arrange(age) %>%
+  mutate(across(c(sex, age, tissue, gene), .fns = as_factor))
+
 # Save data ----
 
 # Saving mouse line, genes, and tissues separately to be used as inputs - tried out generating them via renderUI() but there's a considerable slowdown versus saving as objects directly
 
-gene_expression_genes <- sort(unique(gene_expressions[["gene"]]))
+gene_expression_genes <- sort(levels(gene_expressions[["gene"]]))
 usethis::use_data(gene_expression_genes, overwrite = TRUE)
 
 gene_expression_mouse_lines <- levels(gene_expressions[["mouse_line"]])
 usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
 
-gene_expression_tissues <- sort(unique(gene_expressions[["tissue"]]))
+gene_expression_tissues <- sort(levels(gene_expressions[["tissue"]]))
 usethis::use_data(gene_expression_tissues, overwrite = TRUE)
 
 saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions.rds"))
