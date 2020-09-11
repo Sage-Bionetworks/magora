@@ -99,7 +99,12 @@ individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions
       str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
       str_ends(genotype, "_WT") ~ "C57BL6J"
     ),
-    age = as.numeric(str_remove(ageOfDeath, "m")),
+    # Age is in two columns: either there is ageOfDeath and no dateBirth/dateDeath, or the opposite
+    # Calculate both and then coalesce
+    age_m = as.numeric(str_remove(ageOfDeath, "m")),
+    age_interval = interval(dateBirth, dateDeath),
+    age_d = round(age_interval / months(1)),
+    age = coalesce(age_m, age_d),
     mouse_id = as.character(individualID)
   ) %>%
   select(mouse_id, mouse_line, sex, age)
