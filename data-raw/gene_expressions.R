@@ -34,7 +34,7 @@ tpm_5xfad <- read.table(here::here("data-raw", "gene_expressions", "5xfad", "tpm
 # download_tpm_and_annotations("syn18694013", "htau_trem2")
 
 # Read and combine htau_trem2 data
-tpm_htau_trem2 <- read_combine_tpm_and_annotations("htau_trem2")
+# tpm_htau_trem2 <- read_combine_tpm_and_annotations("htau_trem2")
 
 # app_ps1 ----
 
@@ -46,7 +46,7 @@ tpm_app_ps1 <- read_combine_tpm_and_annotations("app_ps1")
 ### combine tpm
 
 tpm <- tpm_5xfad %>%
-  bind_rows(tpm_htau_trem2) %>%
+  # bind_rows(tpm_htau_trem2) %>%
   bind_rows(tpm_app_ps1)
 
 # Individual Metadata ----
@@ -77,16 +77,16 @@ individual_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions",
 
 # synGet("syn22161041", downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
 
-individual_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_individual_metdata.csv")) %>%
-  mutate(
-    sex = str_to_title(sex),
-    mouse_line = genotype,
-    across(c(dateBirth, dateDeath), mdy),
-    age_interval = interval(dateBirth, dateDeath),
-    age = round(age_interval / months(1)),
-    age = ifelse(age == -6, 6, age) # Fix one age where dateBirth and dateDeath look mixed up
-  ) %>%
-  select(mouse_id = individualID, mouse_line, sex, age)
+# individual_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_individual_metdata.csv")) %>%
+#   mutate(
+#     sex = str_to_title(sex),
+#     mouse_line = genotype,
+#     across(c(dateBirth, dateDeath), mdy),
+#     age_interval = interval(dateBirth, dateDeath),
+#     age = round(age_interval / months(1)),
+#     age = ifelse(age == -6, 6, age) # Fix one age where dateBirth and dateDeath look mixed up
+#   ) %>%
+#   select(mouse_id = individualID, mouse_line, sex, age)
 
 # app_ps1 ----
 
@@ -95,7 +95,10 @@ individual_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressi
 individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_individual_metadata.csv")) %>%
   mutate(
     sex = str_to_title(sex),
-    mouse_line = genotype,
+    mouse_line = case_when(
+      str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
+      str_ends(genotype, "_WT") ~ "C57BL6J"
+    ),
     age = as.numeric(str_remove(ageOfDeath, "m")),
     mouse_id = as.character(individualID)
   ) %>%
@@ -104,7 +107,7 @@ individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions
 # Combine individual metadata
 
 individual_metadata <- individual_metadata_5xfad %>%
-  bind_rows(individual_metadata_htau_trem2) %>%
+  # bind_rows(individual_metadata_htau_trem2) %>%
   bind_rows(individual_metadata_app_ps1) %>%
   arrange(mouse_line) %>%
   mutate(mouse_line = fct_inorder(mouse_line))
@@ -130,12 +133,12 @@ tissue_5xfad <- tpm_5xfad %>%
 
 # synGet("syn18720956", downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
 
-biospecimen_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_biospecimen_metadata.csv"))
+# biospecimen_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_biospecimen_metadata.csv"))
 
-tissue_htau_trem2 <- tpm_htau_trem2 %>%
-  distinct(mouse_id, specimen_id) %>%
-  left_join(biospecimen_metadata_htau_trem2, by = c("mouse_id" = "individualID", "specimen_id" = "specimenID")) %>%
-  select(mouse_id, specimen_id, tissue)
+# tissue_htau_trem2 <- tpm_htau_trem2 %>%
+#   distinct(mouse_id, specimen_id) %>%
+#   left_join(biospecimen_metadata_htau_trem2, by = c("mouse_id" = "individualID", "specimen_id" = "specimenID")) %>%
+#   select(mouse_id, specimen_id, tissue)
 
 # app_ps1 -----
 
@@ -153,7 +156,7 @@ tissue_app_ps1 <- tpm_app_ps1 %>%
 # Combine tissue
 
 tissue <- tissue_5xfad %>%
-  bind_rows(tissue_htau_trem2) %>%
+  # bind_rows(tissue_htau_trem2) %>%
   bind_rows(tissue_app_ps1)
 
 # Query symbols to use in place of gene ids where possible ----
