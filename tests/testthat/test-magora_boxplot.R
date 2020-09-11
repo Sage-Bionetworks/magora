@@ -2,6 +2,7 @@ library(vdiffr)
 context("magora_boxplot") # Required by vdiffr still
 
 gene_expressions <- readRDS(system.file("extdata/gene_expressions.rds", package = "magora"))
+gene_filter <- "Gna12"
 
 # Set up fake phenotypes data for testing on
 
@@ -126,7 +127,7 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == "Zfp423",
+      gene == gene_filter,
       .data$mouse_line %in% c("C57BL6J", "5XFAD"),
     ) %>%
     dplyr::filter(!(mouse_line == "C57BL6J" & age == 4)) %>%
@@ -138,7 +139,7 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expression' in annotations and has a TPM y-axis label", {
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == "Zfp423",
+      gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
@@ -149,7 +150,7 @@ test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expressi
 test_that("magora_boxplot shows all, and only, mouse lines selected", {
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == "Zfp423",
+      gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
     expand_mouse_line_factor_from_selection("5XFAD") %>%
@@ -158,7 +159,7 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
 
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == "Zfp423",
+      gene == gene_filter,
       mouse_line == c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
@@ -169,7 +170,7 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
 test_that("magora_boxplot shows facets in the order selected", {
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == "Zfp423",
+      gene == gene_filter,
       mouse_line == c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%

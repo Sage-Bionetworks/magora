@@ -5,7 +5,7 @@
 \alias{gene_expression_tissues}
 \title{A data set containing the tissues in the gene expressions data.}
 \format{
-An object of class \code{character} of length 5.
+An object of class \code{character} of length 2.
 }
 \usage{
 gene_expression_tissues

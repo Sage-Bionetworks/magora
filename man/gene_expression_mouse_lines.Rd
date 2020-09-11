@@ -5,7 +5,7 @@
 \alias{gene_expression_mouse_lines}
 \title{A data set containing the mouse lines in the gene expressions data.}
 \format{
-An object of class \code{character} of length 10.
+An object of class \code{character} of length 3.
 }
 \usage{
 gene_expression_mouse_lines
