@@ -32,7 +32,7 @@ mod_pathology_ui <- function(id) {
       ),
       shiny::mainPanel(
         width = 9,
-        shiny::plotOutput(ns("phenotype_plot"))
+        shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")))
       )
     )
   )

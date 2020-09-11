@@ -68,12 +68,17 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
+
+    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
+    shiny::validate(
+      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+    )
+
     shiny::mainPanel(
       width = 9,
-      shiny::plotOutput(ns("gene_expression_plot"),
-        height = paste0(ceiling(length(input$mouse_line)/2)*400, "px")
+      shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
+        height = paste0(ceiling(length(input$mouse_line)/2)*400, "px")))
       )
-    )
   })
 }
 
