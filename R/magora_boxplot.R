@@ -32,15 +32,15 @@ magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression")) 
           )
       ) %>%
       dplyr::mutate(
-        sex = forcats::fct_expand(sex, levels(data[["sex"]])),
-        sex = forcats::fct_relevel(sex, levels(data[["sex"]]))
+        sex = forcats::fct_expand(.data$sex, levels(data[["sex"]])),
+        sex = forcats::fct_relevel(.data$sex, levels(data[["sex"]]))
       )
   }
 
   p <- ggplot2::ggplot(data) +
     ggplot2::facet_wrap(ggplot2::vars(.data$mouse_line), ncol = 2, drop = FALSE) +
-    ggplot2::geom_boxplot(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex), color = color, alpha = alpha), position = ggplot2::position_dodge2(preserve = "single"), outlier.shape = NA) +
-    ggplot2::geom_point(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex), alpha = alpha), position = ggplot2::position_jitterdodge(jitter.width = 0.1, seed = 1234)) +
+    ggplot2::geom_boxplot(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex), color = .data$color, alpha = .data$alpha), position = ggplot2::position_dodge2(preserve = "single"), outlier.shape = NA) +
+    ggplot2::geom_point(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex), alpha = .data$alpha), position = ggplot2::position_jitterdodge(jitter.width = 0.1, seed = 1234)) +
     ggplot2::scale_alpha_identity() +
     ggplot2::scale_color_identity()
 

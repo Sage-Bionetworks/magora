@@ -22,3 +22,8 @@
 #'
 #' A data set containing the tissues in the gene expressions data.
 "gene_expression_tissues"
+
+#' Gene expressions mouse line itssues
+#'
+#' A data set containing the tissues available for each mouse line.
+"gene_expressions_mouse_line_tissues"
