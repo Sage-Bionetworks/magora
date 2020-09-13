@@ -16,7 +16,8 @@ magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression")) 
 
   p <- ggplot2::ggplot(data) +
     ggplot2::facet_wrap(ggplot2::vars(.data$mouse_line), ncol = 2, drop = FALSE) +
-    ggplot2::geom_boxplot(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex)), position = ggplot2::position_dodge2(preserve = "single"))
+    ggplot2::geom_boxplot(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex)), position = ggplot2::position_dodge2(preserve = "single"), outlier.shape = NA, alpha = 0.8) +
+    ggplot2::geom_point(ggplot2::aes(x = .data$age, y = .data$value, fill = paste("Sex:", .data$sex)), position = ggplot2::position_jitterdodge(jitter.width = 0.1))
 
   if (nrow(measured_annotation) > 0) {
     y_range <- ggplot2::layer_scales(p)$y$range$range
