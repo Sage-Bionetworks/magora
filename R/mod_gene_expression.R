@@ -13,12 +13,12 @@ mod_gene_expression_ui <- function(id) {
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         width = 3,
-        shiny::selectInput(
+        shiny::selectizeInput(
           ns("gene"),
           "Select a gene",
           choices = magora::gene_expression_genes,
           multiple = FALSE,
-          selectize = TRUE
+          options= list(maxOptions = length(magora::gene_expression_genes))
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
