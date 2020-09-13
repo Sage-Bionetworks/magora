@@ -160,7 +160,7 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
   p <- gene_expressions %>%
     dplyr::filter(
       gene == gene_filter,
-      mouse_line == c("5XFAD", "C57BL6J")
+      mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
     magora_boxplot(plot_type = "gene expression")
@@ -171,7 +171,7 @@ test_that("magora_boxplot shows facets in the order selected", {
   p <- gene_expressions %>%
     dplyr::filter(
       gene == gene_filter,
-      mouse_line == c("5XFAD", "C57BL6J")
+      mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(plot_type = "gene expression")
@@ -180,7 +180,7 @@ test_that("magora_boxplot shows facets in the order selected", {
   p <- phenotypes %>%
     dplyr::filter(
       .data$phenotype %in% "Plasma AB 40",
-      .data$mouse_line == c("5XFAD", "C57BL6J")
+      .data$mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
     magora_boxplot()
