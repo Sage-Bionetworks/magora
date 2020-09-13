@@ -17,7 +17,7 @@ phenotypes <- phenotypes_raw %>%
   arrange(Age) %>%
   mutate(
     Age = as_factor(Age),
-    tissue = as_factor(stringr::str_to_title(Tissue)),
+    tissue = stringr::str_to_title(Tissue),
     sex = as_factor(Sex)
   ) %>%
   separate(`Mouse Line`, into = c("experiment", "mouse_line_group"), fill = "left", remove = FALSE) %>%
@@ -51,6 +51,6 @@ phenotypes <- phenotypes %>%
 usethis::use_data(phenotypes, overwrite = TRUE)
 
 phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
-  lapply(function(x) levels(x$tissue))
+  lapply(function(x) distinct(x, tissue) %>% pull(tissue))
 
 usethis::use_data(phenotype_tissue, overwrite = TRUE)

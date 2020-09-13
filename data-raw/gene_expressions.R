@@ -240,7 +240,7 @@ gene_expressions <- gene_expressions %>%
 gene_expression_genes <- sort(levels(gene_expressions[["gene"]]))
 usethis::use_data(gene_expression_genes, overwrite = TRUE)
 
-gene_expression_mouse_lines <- c("5XFAD", "C57BL6J", "APP/PS1_hemizygous")
+gene_expression_mouse_lines <- c("C57BL6J", "5XFAD", "APP/PS1_hemizygous")
 usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
 
 gene_expression_tissues <- sort(levels(gene_expressions[["tissue"]]))

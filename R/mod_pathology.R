@@ -47,10 +47,14 @@ mod_pathology_server <- function(input, output, session) {
   shiny::observeEvent(input$phenotype, {
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
 
+    # If the tissue previously selected is still available, keep it selected
+    selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
+
     shinyWidgets::updatePickerInput(
       session = session,
       "tissue",
-      choices = available_tissue
+      choices = available_tissue,
+      selected = selected_tissue
     )
   })
 
