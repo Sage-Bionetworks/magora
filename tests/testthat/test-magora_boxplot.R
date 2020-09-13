@@ -9,7 +9,7 @@ gene_filter <- "Gna12"
 set.seed(1234)
 
 phenotypes_df <- expand.grid(
-  tissue = c("cortex", "hippocampus"),
+  tissue = c("Cortex", "Hippocampus"),
   sex = c("Male", "Female"),
   mouse_line_group = c("BL6", "BL5"),
   age = c(4, 6, 12, 18),
@@ -39,7 +39,7 @@ test_that("magora_boxplot produces box plots comparing the phenotype by mouse li
     dplyr::filter(
       .data$phenotype %in% "GFAP+ cell #",
       .data$mouse_line %in% c("C57BL6J", "5XFAD"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot()
@@ -51,7 +51,7 @@ test_that("magora_boxplot produces two rows of facets when 3-4 mouse lines are s
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
       .data$mouse_line %in% c("BL5", "BL6", "5XfAD;BL5"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6")) %>%
     magora_boxplot()
@@ -61,7 +61,7 @@ test_that("magora_boxplot produces two rows of facets when 3-4 mouse lines are s
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
       .data$mouse_line %in% c("BL5", "BL6", "5XfAD;BL5", "5XfAD;BL6"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
     magora_boxplot()
@@ -74,7 +74,7 @@ test_that("magora_boxplot adds text to any facet without data", {
     dplyr::filter(
       .data$phenotype %in% "Microglia #",
       .data$mouse_line %in% c("5XFAD", "C57BL6J"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot()
@@ -85,7 +85,7 @@ test_that("magora_boxplot adds text to any facet without data", {
     dplyr::filter(
       .data$phenotype %in% "Microglia #",
       .data$mouse_line %in% c("5XFAD", "C57BL6J"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot()
@@ -96,7 +96,7 @@ test_that("magora_boxplot adds text to any facet without data", {
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
       .data$mouse_line_group %in% c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
     magora_boxplot()
@@ -107,7 +107,7 @@ test_that("magora_boxplot adds text to any facet without data", {
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
       .data$mouse_line_group %in% c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6"),
-      .data$tissue %in% "cortex"
+      .data$tissue %in% "Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
     magora_boxplot()
@@ -119,7 +119,7 @@ test_that("All levels of age are shown in the plot even if not present in the fi
     dplyr::filter(
       .data$phenotype %in% "Plasma AB 40",
       .data$mouse_line %in% c("C57BL6J", "5XFAD"),
-      .data$tissue %in% "plasma"
+      .data$tissue %in% "Plasma"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot()
