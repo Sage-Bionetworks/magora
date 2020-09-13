@@ -186,3 +186,28 @@ test_that("magora_boxplot shows facets in the order selected", {
     magora_boxplot()
   expect_doppelganger("pathology-different-order", p)
 })
+
+
+test_that("magora_boxplot dodges correctly and shows both Female/Male in legend even when only one sex appears", {
+  p <- gene_expressions %>%
+    dplyr::filter(
+      gene == gene_filter,
+      mouse_line == c("APP/PS1_hemizygous")
+    ) %>%
+    expand_mouse_line_factor_from_selection("APP/PS1_hemizygous") %>%
+    magora_boxplot(plot_type = "gene expression")
+  expect_doppelganger("boxplot-female-only", p)
+
+  p <- gene_expressions %>%
+    dplyr::filter(
+      gene == gene_filter,
+      mouse_line == c("APP/PS1_hemizygous")
+    ) %>%
+    dplyr::mutate(sex = "Male") %>%
+    dplyr::mutate(sex = forcats::fct_expand(sex, levels(gene_expressions[["sex"]])),
+                  sex = forcats::fct_relevel(sex, levels(gene_expressions[["sex"]]))) %>%
+    expand_mouse_line_factor_from_selection("APP/PS1_hemizygous") %>%
+    magora_boxplot(plot_type = "gene expression")
+  expect_doppelganger("boxplot-male-only", p)
+
+})
