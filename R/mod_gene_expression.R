@@ -44,6 +44,20 @@ mod_gene_expression_ui <- function(id) {
 mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
 
+  shiny::observeEvent(input$mouse_line, {
+    available_tissue <- unique(unlist(magora::gene_expressions_mouse_line_tissues[input$mouse_line]))
+
+    # If the tissue previously selected is still available, keep it selected
+    selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
+
+    shinyWidgets::updatePickerInput(
+      session = session,
+      "tissue",
+      choices = available_tissue,
+      selected = selected_tissue
+    )
+  })
+
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")

@@ -47,7 +47,6 @@ mod_pathology_server <- function(input, output, session) {
   shiny::observeEvent(input$phenotype, {
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
 
-
     shinyWidgets::updatePickerInput(
       session = session,
       "tissue",

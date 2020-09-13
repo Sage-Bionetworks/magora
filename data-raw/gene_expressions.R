@@ -95,10 +95,7 @@ individual_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions",
 individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_individual_metadata.csv")) %>%
   mutate(
     sex = str_to_title(sex),
-    mouse_line = case_when(
-      str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
-      str_ends(genotype, "_WT") ~ "C57BL6J"
-    ),
+    mouse_line = genotype,
     # Age is in two columns: either there is ageOfDeath and no dateBirth/dateDeath, or the opposite
     # Calculate both and then coalesce
     age_m = as.numeric(str_remove(ageOfDeath, "m")),
@@ -113,9 +110,7 @@ individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions
 
 individual_metadata <- individual_metadata_5xfad %>%
   # bind_rows(individual_metadata_htau_trem2) %>%
-  bind_rows(individual_metadata_app_ps1) %>%
-  arrange(mouse_line) %>%
-  mutate(mouse_line = fct_inorder(mouse_line))
+  bind_rows(individual_metadata_app_ps1)
 
 # Check there are no duplicate mouse_ids across the datasets
 
@@ -132,7 +127,7 @@ individual_metadata %>%
 
 tissue_5xfad <- tpm_5xfad %>%
   distinct(mouse_id) %>%
-  mutate(tissue = "right cerebral hemisphere")
+  mutate(tissue = "Right Cerebral Hemisphere")
 
 # htau_trem2 ----
 
@@ -203,11 +198,16 @@ gene_expressions <- tpm %>%
   left_join(individual_metadata, by = "mouse_id") %>%
   left_join(tissue, by = c("mouse_id", "specimen_id")) %>% # NAs join by default, so it shouldn't be an issue to join by specimen_id too even though the 5xfad data doesn't have a specimen id
   left_join(genes, by = "gene_id") %>%
-  select(mouse_line, sex, age, tissue, gene, value)
+  select(mouse_id, specimen_id, mouse_line, sex, age, tissue, gene, value)
 
 # Check no rows have been added via duplicate IDs etc in joins
 
 nrow(tpm) == nrow(gene_expressions)
+
+# Remove one mouse with age 22, likely an error
+
+gene_expressions <- gene_expressions %>%
+  filter(age != 22)
 
 # Sample of 10,000 genes ----
 # Sampling by % of zeros to get a good idea of what plots will look like
@@ -226,11 +226,12 @@ sample_genes <- gene_expressions %>%
 gene_expressions <- gene_expressions %>%
   filter(gene %in% sample_genes)
 
-# Make variables into factors to save space when saving
+# Make variables into factors to save space when saving, remove unused columns
 
 gene_expressions <- gene_expressions %>%
   arrange(age) %>%
-  mutate(across(c(sex, age, tissue, gene), .fns = as_factor))
+  mutate(across(c(sex, age, tissue, gene, mouse_line), .fns = as_factor)) %>%
+  select(-mouse_id, -specimen_id)
 
 # Save data ----
 
@@ -239,10 +240,15 @@ gene_expressions <- gene_expressions %>%
 gene_expression_genes <- sort(levels(gene_expressions[["gene"]]))
 usethis::use_data(gene_expression_genes, overwrite = TRUE)
 
-gene_expression_mouse_lines <- levels(gene_expressions[["mouse_line"]])
+gene_expression_mouse_lines <- c("5XFAD", "C57BL6J", "APP/PS1_hemizygous")
 usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
 
 gene_expression_tissues <- sort(levels(gene_expressions[["tissue"]]))
 usethis::use_data(gene_expression_tissues, overwrite = TRUE)
+
+# Save tissues relevant for each mouse line to update selector
+gene_expressions_mouse_line_tissues <- split(gene_expressions, gene_expressions$mouse_line) %>%
+  lapply(function(x) distinct(x, tissue) %>% pull(tissue) %>% as.character())
+usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
 
 saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions.rds"))
