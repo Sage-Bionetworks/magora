@@ -7,7 +7,7 @@
 magora_boxplot(data, plot_type = c("phenotype", "gene expression"))
 }
 \arguments{
-\item{data}{Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, or \code{\link{gene_expressions}} filtered by gene, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).}
+\item{data}{Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, or gene_expressions filtered by gene, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).}
 
 \item{plot_type}{Type of plot, used for generating annotations and y-axis labels. One of "phenotype" or "gene expression".}
 }

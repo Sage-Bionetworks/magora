@@ -10,6 +10,7 @@ run_app <- function(
       ui = app_ui,
       server = app_server
     ),
-    golem_opts = list(...)
+    golem_opts = list(... ,
+                      gene_expressions = readRDS(system.file("extdata/gene_expressions.rds", package = "magora")))
   )
 }

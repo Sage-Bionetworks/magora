@@ -7,35 +7,33 @@
 #' @noRd
 mod_gene_expression_ui <- function(id) {
   ns <- shiny::NS(id)
+
   shiny::tabPanel(
     "Gene Expression",
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         width = 3,
-        shiny::selectInput(
+        shiny::selectizeInput(
           ns("gene"),
           "Select a gene",
-          choices = unique(magora::gene_expressions[["gene"]]),
+          choices = magora::gene_expression_genes,
           multiple = FALSE,
-          selectize = TRUE
+          options= list(maxOptions = length(magora::gene_expression_genes))
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
           "Select mouse lines",
-          choices = as.character(levels(magora::gene_expressions[["mouse_line"]])),
+          choices = magora::gene_expression_mouse_lines,
           multiple = TRUE,
           selected = c("5XFAD", "C57BL6J")
         ),
         shinyWidgets::pickerInput(
           ns("tissue"),
           "Select tissue",
-          choices = NULL
+          choices = magora::gene_expression_tissues
         )
       ),
-      shiny::mainPanel(
-        width = 9,
-        shiny::plotOutput(ns("gene_expression_plot"))
-      )
+      shiny::uiOutput(ns("gene_expression_plot_ui"))
     )
   )
 }
@@ -43,18 +41,33 @@ mod_gene_expression_ui <- function(id) {
 #' Gene Expression page server Function
 #'
 #' @noRd
-mod_gene_expression_server <- function(input, output, session) {
+mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
+
+  shiny::observeEvent(input$mouse_line, {
+    available_tissue <- unique(unlist(magora::gene_expressions_mouse_line_tissues[input$mouse_line]))
+
+    # If the tissue previously selected is still available, keep it selected
+    selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
+
+    shinyWidgets::updatePickerInput(
+      session = session,
+      "tissue",
+      choices = available_tissue,
+      selected = selected_tissue
+    )
+  })
 
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
     )
 
-    magora::gene_expressions %>%
+    gene_expressions %>%
       dplyr::filter(
         .data$gene %in% input$gene,
-        .data$mouse_line %in% input$mouse_line
+        .data$mouse_line %in% input$mouse_line,
+        .data$tissue %in% input$tissue
       )
   })
 
@@ -66,6 +79,20 @@ mod_gene_expression_server <- function(input, output, session) {
     filtered_gene_expressions() %>%
       expand_mouse_line_factor_from_selection(input$mouse_line) %>%
       magora_boxplot(plot_type = "gene expression")
+  })
+
+  output$gene_expression_plot_ui <- shiny::renderUI({
+
+    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
+    shiny::validate(
+      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+    )
+
+    shiny::mainPanel(
+      width = 9,
+      shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
+        height = paste0(ceiling(length(input$mouse_line)/2)*400, "px")))
+      )
   })
 }
 

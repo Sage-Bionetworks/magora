@@ -16,7 +16,9 @@ phenotypes <- phenotypes_raw %>%
   ) %>%
   arrange(Age) %>%
   mutate(
-    Age = as_factor(Age)
+    Age = as_factor(Age),
+    tissue = stringr::str_to_title(Tissue),
+    sex = as_factor(Sex)
   ) %>%
   separate(`Mouse Line`, into = c("experiment", "mouse_line_group"), fill = "left", remove = FALSE) %>%
   mutate(
@@ -44,7 +46,7 @@ phenotypes <- phenotypes %>%
     values_to = "value"
   ) %>%
   filter(!is.na(value)) %>%
-  select(mouse_id = `mouse ID`, tissue = Tissue, sex = Sex, mouse_line = `Mouse Line`, mouse_line_group, age = Age, phenotype, value)
+  select(mouse_id = `mouse ID`, tissue, sex, mouse_line = `Mouse Line`, mouse_line_group, age = Age, phenotype, value)
 
 usethis::use_data(phenotypes, overwrite = TRUE)
 

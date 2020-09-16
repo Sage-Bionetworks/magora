@@ -7,7 +7,7 @@
 expand_mouse_line_factor_from_selection(data, mouse_line)
 }
 \arguments{
-\item{data}{Input data (e.g. \code{\link{gene_expressions}} filtered by phenotype, mouse line, and tissue).}
+\item{data}{Input data (e.g. \code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue).}
 
 \item{mouse_line}{Mouse lines to use as factor levels.}
 }
