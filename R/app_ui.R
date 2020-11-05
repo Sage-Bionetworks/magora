@@ -29,7 +29,7 @@ golem_add_external_resources <- function() {
     golem::favicon(),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "magora"
+      app_title = "Mouse Agora"
     )
     # shiny::tags$link(rel = "stylesheet", type = "text/css", "www/style.css")
     # Add here other external resources

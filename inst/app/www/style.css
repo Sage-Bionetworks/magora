@@ -209,11 +209,6 @@ p.tabDesc {
    padding-left: 4em;
    padding-right: 4em;
 }
-div.tabTitlePanel-end {
-   background-image: url("breadcrumb-bg.png");
-   background-repeat: repeat-x;
-   height: 8px;
-}
 
 div.ggvis-title {
    width: 100%;

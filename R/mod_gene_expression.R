@@ -7,9 +7,15 @@
 #' @noRd
 mod_gene_expression_ui <- function(id) {
   ns <- shiny::NS(id)
+  title <- "Gene Expression"
 
   shiny::tabPanel(
-    "Gene Expression",
+    title,
+    shiny::div(
+      shiny::h3(class = "tabTitle", title),
+      shiny::tags$p(class = "tabDesc", shinipsum::random_text(nwords = 15)),
+      shiny::hr()
+    ),
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         width = 3,

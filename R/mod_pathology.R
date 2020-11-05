@@ -7,8 +7,15 @@
 #' @noRd
 mod_pathology_ui <- function(id) {
   ns <- shiny::NS(id)
+  title <- "Pathology"
+
   shiny::tabPanel(
-    "Pathology",
+    title,
+    shiny::div(
+      shiny::h3(class = "tabTitle", title),
+      shiny::tags$p(class = "tabDesc", shinipsum::random_text(nwords = 10)),
+      shiny::hr()
+    ),
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         width = 3,
