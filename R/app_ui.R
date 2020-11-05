@@ -5,8 +5,9 @@
 app_ui <- function(request) {
   shiny::tagList(
     golem_add_external_resources(),
-    shiny::navbarPage(
-      title = "Mouse-Agora",
+    dashboardPage(
+      thead = mod_header_ui(),
+      mod_start_ui(),
       mod_pathology_ui("pathology"),
       mod_gene_expression_ui("gene_expression")
     )
@@ -30,6 +31,7 @@ golem_add_external_resources <- function() {
       path = app_sys("app/www"),
       app_title = "magora"
     )
+    # shiny::tags$link(rel = "stylesheet", type = "text/css", "www/style.css")
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
   )
