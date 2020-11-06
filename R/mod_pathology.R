@@ -23,33 +23,40 @@ mod_pathology_ui <- function(id) {
         shiny::fluidRow(
           shiny::column(
             width = 4,
-        shinyWidgets::pickerInput(
-          ns("phenotype"),
-          "Phenotype",
-          choices = unique(magora::phenotypes[["phenotype"]])
-        )),
-        shiny::column(
-          width = 4,
-        shinyWidgets::pickerInput(
-          ns("mouse_line"),
-          "Mouse lines",
-          choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
-          multiple = TRUE,
-          selected = c("C57BL6J", "5XFAD")
-        )),
-        shiny::column(
-          width = 4,
-        shinyWidgets::pickerInput(
-          ns("tissue"),
-          "Tissue",
-          choices = unique(magora::phenotypes[["tissue"]])
-        ))
-        )),
+            shinyWidgets::pickerInput(
+              ns("phenotype"),
+              "Phenotype",
+              choices = unique(magora::phenotypes[["phenotype"]])
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("mouse_line"),
+              "Mouse lines",
+              choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
+              multiple = TRUE,
+              selected = c("C57BL6J", "5XFAD")
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("tissue"),
+              "Tissue",
+              choices = unique(magora::phenotypes[["tissue"]])
+            )
+          )
+        )
+      ),
       shiny::column(
         width = 12,
-        shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")))
+        shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")),
+          color = "#88B8DE"
+        )
       )
-    ))
+    )
+  )
 }
 
 #' Pathology page server function

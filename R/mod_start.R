@@ -30,7 +30,7 @@ mod_start_ui <- function() {
           shiny::div(
             class = "float box box-rear",
             shiny::tags$p(
-              shiny::tags$img(class = "rear-preview", src = "REAR-cover-2015.jpg"),
+              shiny::tags$img(class = "rear-preview", src = "www/magora-logo.png"),
               shinipsum::random_text(nwords = 40)
             )
           )
@@ -39,7 +39,7 @@ mod_start_ui <- function() {
       shiny::div(
         class = "box box-timeout",
         shiny::tags$p(
-          shinipsum::random_text(nwords = 10)
+          shinipsum::random_text(nwords = 20)
         )
       )
     )

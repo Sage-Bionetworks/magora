@@ -13,7 +13,7 @@ mod_header_ui <- function() {
           target = "_blank",
           title = "Sage Bionetworks",
           tags$img(
-            src = "https://sagebionetworks.org/wp-content/uploads/2018/02/sage-bionetworks-logo.svg",
+            src = "www/sage-bionetworks-logo.svg",
             height = 75,
             width = 300,
             alt = "Sage Bionetworks"
