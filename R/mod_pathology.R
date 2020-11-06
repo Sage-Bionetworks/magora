@@ -16,33 +16,40 @@ mod_pathology_ui <- function(id) {
       shiny::tags$p(class = "tabDesc", shinipsum::random_text(nwords = 10)),
       shiny::hr()
     ),
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
-        width = 3,
+    shiny::fluidRow(
+      class = "frontp",
+      shiny::wellPanel(
+        style = "background: #EFF4F8;",
+        shiny::fluidRow(
+          shiny::column(
+            width = 4,
         shinyWidgets::pickerInput(
           ns("phenotype"),
-          "Select a phenotype",
+          "Phenotype",
           choices = unique(magora::phenotypes[["phenotype"]])
-        ),
+        )),
+        shiny::column(
+          width = 4,
         shinyWidgets::pickerInput(
           ns("mouse_line"),
-          "Select mouse lines",
+          "Mouse lines",
           choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
           multiple = TRUE,
           selected = c("C57BL6J", "5XFAD")
-        ),
+        )),
+        shiny::column(
+          width = 4,
         shinyWidgets::pickerInput(
           ns("tissue"),
-          "Select tissue",
+          "Tissue",
           choices = unique(magora::phenotypes[["tissue"]])
-        )
-      ),
-      shiny::mainPanel(
-        width = 9,
+        ))
+        )),
+      shiny::column(
+        width = 12,
         shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")))
       )
-    )
-  )
+    ))
 }
 
 #' Pathology page server function

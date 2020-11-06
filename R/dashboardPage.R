@@ -5,7 +5,7 @@ dashboardPage <-
     navbarClass <- "navbar navbar-default"
     tabs <- list(...)
     tabset <- shiny:::buildTabset(tabs, "nav navbar-nav", NULL, id)
-    containerDiv <- shiny::div(class = "container", tabset$navList)
+    containerDiv <- shiny::div(class = "navbar-container", tabset$navList)
     contentDiv <- shiny::div(class = "container-fluid")
     if (!is.null(header)) {
       contentDiv <- shiny::tagAppendChild(contentDiv, shiny::div(class = "row", header))
@@ -17,6 +17,7 @@ dashboardPage <-
     shiny::bootstrapPage(
       thead,
       shiny::tags$nav(class = navbarClass, role = "navigation", containerDiv),
+      shiny::hr(),
       contentDiv
     )
   }

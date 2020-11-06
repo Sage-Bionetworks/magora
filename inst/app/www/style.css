@@ -525,6 +525,14 @@ div.box-timeout {
    Looks better than the automatic widths if fixed correctly. */
 .navbar-default > .container {
    max-width: 1000px;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.navbar-container {
+   width: 13%;
+   margin-left: auto;
+   margin-right: auto;
 }
 
 /* Hide title and arrows */
