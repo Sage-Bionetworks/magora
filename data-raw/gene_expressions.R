@@ -24,10 +24,11 @@ options(scipen = 999) # So that casting mouse_id to character doesn't convert e.
 tpm_5xfad <- read.table(here::here("data-raw", "gene_expressions", "5xfad", "tpm_gene_5XFAD.txt"), header = TRUE) %>%
   pivot_longer(
     cols = starts_with("X"),
-    names_to = "mouse_id",
+    names_to = "specimen_id",
     names_prefix = "X",
     values_to = "value"
-  )
+  ) %>%
+  mutate(mouse_id = str_remove(specimen_id, "rh"))
 
 # htau_trem2 ----
 
@@ -123,11 +124,14 @@ individual_metadata %>%
 
 # 5xfad ----
 
-# Biospecimen data is wrong for 5xfad data - just set tissue to "right cerebral hemisphere"
+# synGet("syn22103213", downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
+
+biospecimen_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions", "5xfad", "Jax.IU.Pitt_5XFAD_biospecimen_metadata.csv"))
 
 tissue_5xfad <- tpm_5xfad %>%
-  distinct(mouse_id) %>%
-  mutate(tissue = "Right Cerebral Hemisphere")
+  distinct(mouse_id, specimen_id) %>%
+  left_join(biospecimen_metadata_5xfad, by = c("specimen_id" = "specimenID")) %>%
+  select(mouse_id, specimen_id, tissue)
 
 # htau_trem2 ----
 
@@ -196,7 +200,7 @@ genes %>%
 
 gene_expressions <- tpm %>%
   left_join(individual_metadata, by = "mouse_id") %>%
-  left_join(tissue, by = c("mouse_id", "specimen_id")) %>% # NAs join by default, so it shouldn't be an issue to join by specimen_id too even though the 5xfad data doesn't have a specimen id
+  left_join(tissue, by = c("mouse_id", "specimen_id")) %>%
   left_join(genes, by = "gene_id") %>%
   select(mouse_id, specimen_id, mouse_line, sex, age, tissue, gene, value)
 
