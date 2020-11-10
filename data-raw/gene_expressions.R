@@ -54,7 +54,7 @@ tpm <- tpm_5xfad %>%
 
 # 5XFAD ----
 
-#synGet("syn22103212", downloadLocation = here::here("data-raw"))
+# synGet("syn22103212", downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
 
 # Logic for mouse line:
 # if genotype is 5XFAD_carrier, then Mouse Line = 5XFAD
