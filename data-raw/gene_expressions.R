@@ -19,26 +19,35 @@ options(scipen = 999) # So that casting mouse_id to character doesn't convert e.
 
 # 5XFAD ----
 
-# synGet("syn22108848", downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
+# synGet("syn22108848", version = 2, downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
 
 tpm_5xfad <- read.table(here::here("data-raw", "gene_expressions", "5xfad", "tpm_gene_5XFAD.txt"), header = TRUE) %>%
   pivot_longer(
     cols = starts_with("X"),
-    names_to = "mouse_id",
+    names_to = "specimen_id",
     names_prefix = "X",
     values_to = "value"
-  )
+  ) %>%
+  mutate(mouse_id = str_remove(specimen_id, "rh"))
 
 # htau_trem2 ----
 
-# download_tpm_and_annotations("syn18694013", "htau_trem2")
+# Download htau_trem2 data with specific version
+# tpm_htau_trem2_files <- list_tpm_files("syn18694013") %>%
+#   mutate(version = 2)
+
+# download_tpm_and_annotations(tpm_htau_trem2_files, "htau_trem2")
 
 # Read and combine htau_trem2 data
 # tpm_htau_trem2 <- read_combine_tpm_and_annotations("htau_trem2")
 
 # app_ps1 ----
 
-# download_tpm_and_annotations("syn15666853", "app_ps1")
+# Download app_ps1 data with specific versions
+# tpm_app_ps1_files <- list_tpm_files("syn15666853") %>%
+#   mutate(version = 1)
+
+# download_tpm_and_annotations(tpm_app_ps1_files, "app_ps1")
 
 # Read and combine app_ps1 data
 tpm_app_ps1 <- read_combine_tpm_and_annotations("app_ps1")
@@ -53,7 +62,7 @@ tpm <- tpm_5xfad %>%
 
 # 5XFAD ----
 
-#synGet("syn22103212", downloadLocation = here::here("data-raw"))
+# synGet("syn22103212", version = 2, downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
 
 # Logic for mouse line:
 # if genotype is 5XFAD_carrier, then Mouse Line = 5XFAD
@@ -75,9 +84,9 @@ individual_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions",
 
 # htau_trem2 ----
 
-# synGet("syn22161041", downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
+# synGet("syn22161041", version = 4, downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
 
-# individual_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_individual_metdata.csv")) %>%
+# individual_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_individual_metadata.csv")) %>%
 #   mutate(
 #     sex = str_to_title(sex),
 #     mouse_line = genotype,
@@ -90,7 +99,7 @@ individual_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions",
 
 # app_ps1 ----
 
-# synGet("syn18879639", downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
+# synGet("syn18879639", version = 5, downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
 
 individual_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_individual_metadata.csv")) %>%
   mutate(
@@ -123,15 +132,18 @@ individual_metadata %>%
 
 # 5xfad ----
 
-# Biospecimen data is wrong for 5xfad data - just set tissue to "right cerebral hemisphere"
+# synGet("syn22103213", version = 3, downloadLocation = here::here("data-raw", "gene_expressions", "5xfad"))
+
+biospecimen_metadata_5xfad <- read_csv(here::here("data-raw", "gene_expressions", "5xfad", "Jax.IU.Pitt_5XFAD_biospecimen_metadata.csv"))
 
 tissue_5xfad <- tpm_5xfad %>%
-  distinct(mouse_id) %>%
-  mutate(tissue = "Right Cerebral Hemisphere")
+  distinct(mouse_id, specimen_id) %>%
+  left_join(biospecimen_metadata_5xfad, by = c("specimen_id" = "specimenID")) %>%
+  select(mouse_id, specimen_id, tissue)
 
 # htau_trem2 ----
 
-# synGet("syn18720956", downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
+# synGet("syn18720956", version = 4, downloadLocation = here::here("data-raw", "gene_expressions", "htau_trem2"))
 
 # biospecimen_metadata_htau_trem2 <- read_csv(here::here("data-raw", "gene_expressions", "htau_trem2", "Jax.IU.Pitt_hTau_Trem2_biospecimen_metadata.csv"))
 
@@ -142,7 +154,7 @@ tissue_5xfad <- tpm_5xfad %>%
 
 # app_ps1 -----
 
-# synGet("syn18879638", downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
+# synGet("syn18879638", version = 3, downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
 
 biospecimen_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_biospecimen_metadata.csv")) %>%
   mutate(individualID = as.character(individualID),
@@ -196,7 +208,7 @@ genes %>%
 
 gene_expressions <- tpm %>%
   left_join(individual_metadata, by = "mouse_id") %>%
-  left_join(tissue, by = c("mouse_id", "specimen_id")) %>% # NAs join by default, so it shouldn't be an issue to join by specimen_id too even though the 5xfad data doesn't have a specimen id
+  left_join(tissue, by = c("mouse_id", "specimen_id")) %>%
   left_join(genes, by = "gene_id") %>%
   select(mouse_id, specimen_id, mouse_line, sex, age, tissue, gene, value)
 
