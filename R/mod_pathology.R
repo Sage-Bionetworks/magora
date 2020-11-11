@@ -19,7 +19,7 @@ mod_pathology_ui <- function(id) {
     shiny::fluidRow(
       class = "frontp",
       shiny::wellPanel(
-        style = "background: #EFF4F8;",
+        style = "background: #e5f1f6;",
         shiny::fluidRow(
           shiny::column(
             width = 4,
@@ -52,7 +52,7 @@ mod_pathology_ui <- function(id) {
       shiny::column(
         width = 12,
         shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")),
-          color = "#88B8DE"
+          color = "#D3DCEF"
         )
       )
     )

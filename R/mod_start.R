@@ -30,7 +30,7 @@ mod_start_ui <- function() {
           shiny::div(
             class = "float box box-rear",
             shiny::tags$p(
-              shiny::tags$img(class = "rear-preview", src = "www/magora-logo.png"),
+              shiny::tags$img(class = "rear-preview", src = "www/MODEL AD.png"),
               shinipsum::random_text(nwords = 40)
             )
           )

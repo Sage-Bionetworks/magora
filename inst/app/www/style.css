@@ -119,7 +119,7 @@ p.intro {
 
 .intro-divider {
    height: 6px;
-   background: transparent linear-gradient(to right, #88B8DE 0%, #75C9D4 100%) repeat scroll 0% 0%;
+   background: transparent linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) repeat scroll 0% 0%;
    margin-top: 20px;
    margin-bottom: 20px;
 }
@@ -165,7 +165,7 @@ body {
 
 .magora-topbar {
    height: 6px;
-   background: transparent linear-gradient(to right, #88B8DE 0%, #75C9D4 100%) repeat scroll 0% 0%;
+   background: transparent linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) repeat scroll 0% 0%;
    margin-left: -15px;
    margin-right: -15px;
 }
@@ -440,7 +440,7 @@ div.front-banner {
    height: 342px;
 }
 div.front-banner > .imgcon {
-   background: url("sage-banner.jpg") center no-repeat;
+   background: url("AgoraBanner.svg") center no-repeat;
    background-size: cover;
    position: absolute;
    margin-top: -20px;
@@ -481,12 +481,12 @@ div.box-more {
    float: left;
    width: 33%;
    color: #3F3F3F;
-   background-color: #D6E8F7;
+   background-color: #D5E9F0;
    border-top: 2px solid transparent;
 }
 div.box-more:hover {
    background-color: #3F3F3F;
-   border-image: linear-gradient(to right, #88B8DE 0%, #75C9D4 100%) 1 1 stretch;
+   border-image: linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) 1 1 stretch;
 }
 div.box-more:hover > p{
    color: #FFFFFF;
@@ -502,7 +502,7 @@ div.box-rear {
 div.box-rear:hover {
    color: #FFFFFF;
    background-color: #3F3F3F;
-   border-image: linear-gradient(to right, #88B8DE 0%, #75C9D4 100%) 1 1 stretch;
+   border-image: linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) 1 1 stretch;
 }
 
 .bold {
@@ -566,7 +566,7 @@ div.box-timeout {
    border-top: 2px solid transparent;
 }
 .navbar-default .navbar-nav > li:hover {
-   border-image: linear-gradient(to right, #88B8DE 0%, #75C9D4 100%) 1 1 stretch;
+   border-image: linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) 1 1 stretch;
    border-image-width: 1 0 0 0;
 }
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:focus, .navbar-default .navbar-nav > .open > a:hover {

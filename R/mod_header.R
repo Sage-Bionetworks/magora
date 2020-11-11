@@ -9,14 +9,14 @@ mod_header_ui <- function() {
       shiny::div(
         class = "magora-brand",
         shiny::tags$a(
-          class = "magora-brand", href = "https://sagebionetworks.org/",
+          class = "magora-brand", href = "https://www.model-ad.org/",
           target = "_blank",
-          title = "Sage Bionetworks",
+          title = "MODEL-AD",
           tags$img(
-            src = "www/sage-bionetworks-logo.svg",
-            height = 75,
-            width = 300,
-            alt = "Sage Bionetworks"
+            src = "www/model-ad-logo-1.jpg",
+            width = "15%",
+            height = "15%",
+            alt = "MODEL-AD"
           )
         )
       )

@@ -19,7 +19,7 @@ mod_gene_expression_ui <- function(id) {
     shiny::fluidRow(
       class = "frontp",
       shiny::wellPanel(
-        style = "background: #EFF4F8;",
+        style = "background: #e5f1f6;",
         shiny::fluidRow(
           shiny::column(
             width = 4,
@@ -115,7 +115,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
       height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px"),
     ),
-    color = "#88B8DE"
+    color = "#D3DCEF"
     )
   })
 }

@@ -26,7 +26,7 @@ golem_add_external_resources <- function() {
   )
 
   shiny::tags$head(
-    golem::favicon(),
+    golem::favicon(ext = "png"),
     golem::bundle_resources(
       path = app_sys("app/www"),
       app_title = "Mouse Agora"
