@@ -29,6 +29,7 @@ phenotypes_df <- dplyr::bind_rows(phenotypes_df) %>%
 phenotypes_df <- phenotypes_df %>%
   dplyr::mutate(
     age = as.factor(age),
+    sex = as.factor(sex),
     mouse_line = ifelse(dplyr::row_number() %in% sample(1:nrow(phenotypes_df), round(nrow(phenotypes_df) / 2)), paste0("5XfAD;", mouse_line_group), mouse_line_group),
     value = ifelse(dplyr::row_number() %in% sample(1:nrow(phenotypes_df), 10), NA_real_, value)
   ) %>%
