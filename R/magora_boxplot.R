@@ -63,7 +63,7 @@ magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression"), 
     sagethemes::scale_fill_sage_d()
 
   if (use_theme_sage) {
-    p +
+    p <- p +
       sagethemes::theme_sage(base_size = 16)
   }
 
