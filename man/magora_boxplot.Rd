@@ -4,12 +4,18 @@
 \alias{magora_boxplot}
 \title{Boxplot for phenotypes or gene expressions}
 \usage{
-magora_boxplot(data, plot_type = c("phenotype", "gene expression"))
+magora_boxplot(
+  data,
+  plot_type = c("phenotype", "gene expression"),
+  use_theme_sage = TRUE
+)
 }
 \arguments{
 \item{data}{Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, or gene_expressions filtered by gene, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).}
 
 \item{plot_type}{Type of plot, used for generating annotations and y-axis labels. One of "phenotype" or "gene expression".}
+
+\item{use_theme_sage}{Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.}
 }
 \value{
 A ggplot2 object.

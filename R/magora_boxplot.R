@@ -2,10 +2,11 @@
 #'
 #' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, or gene_expressions filtered by gene, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).
 #' @param plot_type Type of plot, used for generating annotations and y-axis labels. One of "phenotype" or "gene expression".
+#' @param use_theme_sage Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.
 #'
 #' @return A ggplot2 object.
 #' @export
-magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression")) {
+magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression"), use_theme_sage = TRUE) {
   plot_type <- match.arg(plot_type)
 
   # Generate annotation for mouse lines (facets) that won't have any data
@@ -50,17 +51,23 @@ magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression")) 
     x_mid <- length(levels(data[["age"]])) / 2 + 0.5
 
     p <- p +
-      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 5, vjust = 0.5, family = "Lato")
+      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 5, vjust = 0.5, family = ifelse(use_theme_sage, "Lato", ""))
   }
 
-  p +
+  p <- p +
     ggplot2::scale_x_discrete(drop = FALSE) +
     ggplot2::labs(x = "Age", y = switch(plot_type,
       "phenotype" = unique(data[["phenotype"]]),
       "gene expression" = "Transcripts Per Million (TPM)"
     )) +
-    sagethemes::scale_fill_sage_d() +
-    sagethemes::theme_sage(base_size = 16) +
+    sagethemes::scale_fill_sage_d()
+
+  if (use_theme_sage) {
+    p +
+      sagethemes::theme_sage(base_size = 16)
+  }
+
+  p +
     ggplot2::theme(
       legend.title = ggplot2::element_blank(),
       legend.key = ggplot2::element_blank()
