@@ -50,7 +50,7 @@ magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression")) 
     x_mid <- length(levels(data[["age"]])) / 2 + 0.5
 
     p <- p +
-      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 5, vjust = 0.5)
+      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 5, vjust = 0.5, family = "Lato")
   }
 
   p +
