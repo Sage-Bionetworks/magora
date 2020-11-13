@@ -118,8 +118,7 @@
 <polyline points='498.39,545.13 498.39,39.41 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzI5LjM2fDYyMC40N3w1NDUuMTN8MzkuNDE=)' />
 <polyline points='545.34,545.13 545.34,39.41 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzI5LjM2fDYyMC40N3w1NDUuMTN8MzkuNDE=)' />
 <polyline points='592.30,545.13 592.30,39.41 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzI5LjM2fDYyMC40N3w1NDUuMTN8MzkuNDE=)' />
-<g clip-path='url(#cpMzI5LjM2fDYyMC40N3w1NDUuMTN8MzkuNDE=)'><text x='374.14' y='286.92' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='201.55px' lengthAdjust='spacingAndGlyphs'>This gene expression cannot be</text></g>
-<g clip-path='url(#cpMzI5LjM2fDYyMC40N3w1NDUuMTN8MzkuNDE=)'><text x='384.43' y='307.41' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='180.97px' lengthAdjust='spacingAndGlyphs'>measured in this mouse line.</text></g>
+<g clip-path='url(#cpMzI5LjM2fDYyMC40N3w1NDUuMTN8MzkuNDE=)'><text x='357.95' y='297.16' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='233.94px' lengthAdjust='spacingAndGlyphs'>There is no data for this combination.</text></g>
 <defs>
   <clipPath id='cpMC4wMHw3MjAuMDB8NTc2LjAwfDAuMDA='>
     <rect x='0.00' y='0.00' width='720.00' height='576.00' />

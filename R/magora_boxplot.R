@@ -13,7 +13,10 @@ magora_boxplot <- function(data, plot_type = c("phenotype", "gene expression"), 
   measured_annotation <- data %>%
     dplyr::count(.data$mouse_line, .drop = FALSE) %>%
     dplyr::filter(.data$n == 0) %>%
-    dplyr::mutate(label = paste("This", plot_type, "cannot be\nmeasured in this mouse line."))
+    dplyr::mutate(label = dplyr::case_when(
+      plot_type == "phenotype" ~ "This phenotype cannot be\nmeasured in this mouse line.",
+      plot_type == "gene expression" ~ "There is no data for this combination."
+    ))
 
   # If data only contains one sex, generate fake data and set alpha and color so that boxplot legend/dodging are correct
   data <- data %>%
