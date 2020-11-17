@@ -8,40 +8,18 @@ mod_start_ui <- function() {
       shiny::div(
         class = "front-banner",
         shiny::div(class = "imgcon"),
-        shiny::div(class = "hcon", shiny::h1("Mouse Agora")),
+        shiny::div(class = "hcon", shiny::h1("MODEL-AD Mouse Explorer")),
       ),
-      shiny::tags$p(class = "intro", shinipsum::random_text(nwords = 50)),
+      shiny::p(class = "intro", "Explore gene expression and pathology data from next generation mouse models of Alzheimer’s disease developed by the MODEL-AD consortium."),
       shiny::div(class = "intro-divider"),
-      shiny::tags$p(shinipsum::random_text(nwords = 30)),
-      shiny::div(
-        class = "box-con",
-        shiny::tags$a(
-          target = "_blank",
-          href = "https://sagebionetworks.org/",
-          shiny::div(
-            class = "float box box-more",
-            shiny::tags$p(class = "intro", shinipsum::random_text(nwords = 2)),
-            shiny::tags$p(shinipsum::random_text(nwords = 10))
-          )
-        ),
-        shiny::tags$a(
-          target = "_blank",
-          href = "https://sagebionetworks.org/",
-          shiny::div(
-            class = "float box box-rear",
-            shiny::tags$p(
-              shiny::tags$img(class = "rear-preview", src = "www/MODEL AD.png"),
-              shinipsum::random_text(nwords = 40)
-            )
-          )
-        )
-      ),
-      shiny::div(
-        class = "box box-timeout",
-        shiny::tags$p(
-          shinipsum::random_text(nwords = 20)
-        )
-      )
+      shiny::p(class = "intro", "MODEL-AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer’s disease in humans.", shiny::a("Learn more about MODEL-AD", href = "https://www.model-ad.org/", target = "_blank")),
+      shiny::h3("Characterization of MODEL-AD mice"),
+      shiny::p("New mouse models are phenotyped across multiple neuropathology, genomics, and behavioral levels. New data and analyses are regularly released and will be reflected by updates to the explorers on this site. Currently available models and data are depicted in this table."),
+      shiny::h3("Additional resources and data"),
+      shiny::p("All MODEL-AD mouse models and data are cataloged in the AD Knowledge Portal."),
+      shiny::a("View all data", href = "https://adknowledgeportal.synapse.org/Explore/Programs/DetailsPage?Program=MODEL-AD", target = "_blank"),
+      shiny::br(),
+      shiny::a("View mouse models", href = "https://adknowledgeportal.synapse.org/Explore/Experimental%20Tools?QueryWrapper0=%7B%22sql%22%3A%22select%20*%20from%20syn22219805%22%2C%22limit%22%3A25%2C%22offset%22%3A0%2C%22selectedFacets%22%3A%5B%7B%22concreteType%22%3A%22org.sagebionetworks.repo.model.table.FacetColumnValuesRequest%22%2C%22columnName%22%3A%22program%22%2C%22facetValues%22%3A%5B%22MODEL-AD%22%5D%7D%5D%7D", target = "_blank")
     )
   )
 }
