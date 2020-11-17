@@ -13,7 +13,7 @@ mod_start_ui <- function() {
       shiny::p(class = "intro", "Explore gene expression and pathology data from next generation mouse models of Alzheimer’s disease developed by the MODEL-AD consortium."),
       shiny::p(class = "intro", "MODEL-AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer’s disease in humans."),
       shiny::p(class = "intro", shiny::a("Learn more about MODEL-AD", href = "https://www.model-ad.org/", target = "_blank")),
-      shiny::div(class = "intro-divider"),
+      shiny::div(class = "start-divider"),
       shiny::h3("Characterization of MODEL-AD mice"),
       shiny::p("New mouse models are phenotyped across multiple neuropathology, genomics, and behavioral levels. New data and analyses are regularly released and will be reflected by updates to the explorers on this site. Currently available models and data are depicted in this table."),
       shiny::h3("Additional resources and data"),

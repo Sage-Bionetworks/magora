@@ -5,8 +5,8 @@
 app_ui <- function(request) {
   shiny::tagList(
     golem_add_external_resources(),
-    dashboardPage(
-      thead = mod_header_ui(),
+    magoraPage(
+      header = mod_header_ui(),
       mod_start_ui(),
       mod_pathology_ui("pathology"),
       mod_gene_expression_ui("gene_expression")
