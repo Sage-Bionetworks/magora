@@ -29,10 +29,7 @@ golem_add_external_resources <- function() {
     golem::favicon(ext = "png"),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "Mouse Agora"
+      app_title = "MODEL-AD Mouse Explorer"
     )
-    # shiny::tags$link(rel = "stylesheet", type = "text/css", "www/style.css")
-    # Add here other external resources
-    # for example, you can add shinyalert::useShinyalert()
   )
 }

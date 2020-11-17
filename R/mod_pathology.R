@@ -12,16 +12,14 @@ mod_pathology_ui <- function(id) {
   shiny::tabPanel(
     title,
     shiny::div(
-      shiny::h3(class = "tabTitle", title),
-      shiny::tags$p(class = "tabDesc", "This explorer shows changes in pathological hallmarks associated with AD."),
-      shiny::tags$p(class = "tabDesc", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
-      shiny::tags$p(class = "tabDesc", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
+      shiny::h3(class = "tab-title", title),
+      shiny::tags$p(class = "tab-description", "This explorer shows changes in pathological hallmarks associated with AD."),
+      shiny::tags$p(class = "tab-description", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
+      shiny::tags$p(class = "tab-description", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
       shiny::hr()
     ),
     shiny::fluidRow(
-      class = "frontp",
-      shiny::wellPanel(
-        style = "background: #e5f1f6;",
+      class = "magora-page",
         shiny::fluidRow(
           shiny::column(
             width = 4,
@@ -49,7 +47,6 @@ mod_pathology_ui <- function(id) {
               choices = unique(magora::phenotypes[["tissue"]])
             )
           )
-        )
       ),
       shiny::column(
         width = 12,

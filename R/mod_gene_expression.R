@@ -12,14 +12,12 @@ mod_gene_expression_ui <- function(id) {
   shiny::tabPanel(
     title,
     shiny::div(
-      shiny::h3(class = "tabTitle", title),
-      shiny::tags$p(class = "tabDesc", shinipsum::random_text(nwords = 15)),
+      shiny::h3(class = "tab-title", title),
+      shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
       shiny::hr()
     ),
     shiny::fluidRow(
-      class = "frontp",
-      shiny::wellPanel(
-        style = "background: #e5f1f6;",
+      class = "magora-page",
         shiny::fluidRow(
           shiny::column(
             width = 4,
@@ -47,7 +45,6 @@ mod_gene_expression_ui <- function(id) {
               ns("tissue"),
               "Tissue",
               choices = magora::gene_expression_tissues
-            )
           )
         )
       ),
