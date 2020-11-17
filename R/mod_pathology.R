@@ -13,7 +13,9 @@ mod_pathology_ui <- function(id) {
     title,
     shiny::div(
       shiny::h3(class = "tabTitle", title),
-      shiny::tags$p(class = "tabDesc", shinipsum::random_text(nwords = 10)),
+      shiny::tags$p(class = "tabDesc", "This explorer shows changes in pathological hallmarks associated with AD."),
+      shiny::tags$p(class = "tabDesc", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
+      shiny::tags$p(class = "tabDesc", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
       shiny::hr()
     ),
     shiny::fluidRow(
