@@ -23,12 +23,12 @@ mod_gene_expression_ui <- function(id) {
         shiny::fluidRow(
           shiny::column(
             width = 4,
-            shiny::selectizeInput(
+            shinyWidgets::pickerInput(
               ns("gene"),
               "Gene",
               choices = magora::gene_expression_genes,
               multiple = FALSE,
-              options = list(maxOptions = length(magora::gene_expression_genes))
+              options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
             )
           ),
           shiny::column(
