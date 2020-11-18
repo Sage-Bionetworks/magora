@@ -143,18 +143,14 @@ div.divflex {
 
 /* ------ Navbar ------ */
 
-/* Size of navbar container */
-.navbar-default > .container {
-   max-width: 1000px;
-   margin-left: auto;
-   margin-right: auto;
+/* Manually setting width so navbar items are centred - this isn't perfect yet */
+.navbar .navbar-nav {
+    display: inline-block;
+    float: none;
 }
 
-/* Manually setting width so navbar items are centred - this isn't perfect yet */
-.navbar-container {
-   width: 13%;
-   margin-left: auto;
-   margin-right: auto;
+.navbar .navbar-container {
+    text-align: center;
 }
 
 /* Bold active tab name */
