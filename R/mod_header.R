@@ -14,8 +14,8 @@ mod_header_ui <- function() {
           title = "MODEL-AD",
           tags$img(
             src = "www/model-ad-logo-1.jpg",
-            width = "10%",
-            height = "10%",
+            width = "290px",
+            height = "100px",
             alt = "MODEL-AD"
           )
         )
