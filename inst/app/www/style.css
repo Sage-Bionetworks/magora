@@ -1,4 +1,6 @@
-/* Header and font styles */
+/* MODEL-AD Mouse Explorer Styles */
+
+/* ------  Header and font styles ------ */
 h1, h2, h3, h4, h5, h6 {
    line-height: 1em;
    padding-top: 10px;
@@ -54,7 +56,7 @@ body {
    font-size: 19px;
 }
 
-/* General page elements */
+/* ------ General page elements ------ */
 .magora-page {
    max-width: 1000px;
    margin-left: auto;
@@ -79,7 +81,7 @@ body {
    padding-bottom: 24px;
 }
 
-/* Start page elements */
+/* ------ Start page elements ------ */
 .start-divider {
    height: 6px;
    background: transparent linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) repeat scroll 0 0;
@@ -109,7 +111,7 @@ body {
    padding: 10px 20px 10px 20px;
 }
 
-/* Other page elements */
+/* ------ Other page elements ------ */
 
 .tab-title {
    text-align: center;
@@ -137,48 +139,43 @@ div.divflex {
    }
 }
 
-/* Navbar styles */
+/* ------ Navbar ------ */
+
+/* Size of navbar container */
 .navbar-default > .container {
    max-width: 1000px;
    margin-left: auto;
    margin-right: auto;
 }
 
+/* Manually setting width so navbar items are centred - this isn't perfect yet */
 .navbar-container {
    width: 13%;
    margin-left: auto;
    margin-right: auto;
 }
 
-.navbar-header, .navbar-default .caret {
-   display: none;
-}
-
-/* Set fonts */
-.navbar-default .navbar-nav > li > a, .dropdown-menu > li > a {
-   font-family: "Lato";
-   font-size: 16px;
-   font-weight: 200;
-   color: #666666;
-}
+/* Bold active tab name */
 .navbar-default .navbar-nav > li.active > a, .dropdown-menu > li.active > a {
    font-weight: 400;
 }
 
-/* Navbar background */
+/* Add gradient on hover of navbar tabs */
+.navbar-default .navbar-nav > li {
+   border-top: 2px solid transparent;
+}
+
+.navbar-default .navbar-nav > li:hover {
+   border-image: linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) 1 1 stretch;
+   border-image-width: 1 0 0 0;
+}
+
+/* Remove background from navbar and tabs */
 .navbar-default {
    background-color: transparent;
    border-color: transparent;
 }
 
-/* Top-level nav buttons */
-.navbar-default .navbar-nav > li {
-   border-top: 2px solid transparent;
-}
-.navbar-default .navbar-nav > li:hover {
-   border-image: linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) 1 1 stretch;
-   border-image-width: 1 0 0 0;
-}
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:focus, .navbar-default .navbar-nav > .open > a:hover {
    background-color: transparent;
    text-decoration: underline;
