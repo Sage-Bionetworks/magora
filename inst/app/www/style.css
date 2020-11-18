@@ -1,6 +1,8 @@
 /* MODEL-AD Mouse Explorer Styles */
 
 /* ------  Header and font styles ------ */
+@import url('//fonts.googleapis.com/css2?family=Lato:100,200,300,400');
+
 h1, h2, h3, h4, h5, h6 {
    line-height: 1em;
    padding-top: 10px;
@@ -9,49 +11,49 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 42px;
    font-weight: 100;
 }
 
 h2 {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 32px;
    font-weight: 100;
 }
 
 h3 {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 25px;
    font-weight: 300;
 }
 
 h4 {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 18px;
    font-weight: 300;
 }
 
 h5 {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 17px;
    font-weight: 300;
 }
 
 h6 {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 16px;
    font-weight: 300;
 }
 
 body {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-size: 16px;
    font-weight: 300;
 }
 
 .intro {
-   font-family: "Lato";
+   font-family: "Lato", Sans-Serif;
    font-weight: 200;
    font-size: 19px;
 }
