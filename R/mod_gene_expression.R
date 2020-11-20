@@ -93,7 +93,8 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     shiny::mainPanel(
       width = 9,
       shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
-                                                     height = paste0(ceiling(length(input$mouse_line)/2)*400, "px")))
+        height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px")
+      ))
     )
   })
 }

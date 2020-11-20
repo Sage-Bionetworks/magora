@@ -158,8 +158,10 @@ tissue_5xfad <- tpm_5xfad %>%
 # synGet("syn18879638", version = 3, downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
 
 biospecimen_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_biospecimen_metadata.csv")) %>%
-  mutate(individualID = as.character(individualID),
-         specimenID = as.character(specimenID))
+  mutate(
+    individualID = as.character(individualID),
+    specimenID = as.character(specimenID)
+  )
 
 tissue_app_ps1 <- tpm_app_ps1 %>%
   distinct(mouse_id, specimen_id) %>%
@@ -244,7 +246,11 @@ usethis::use_data(gene_expression_tissues, overwrite = TRUE)
 
 # Save tissues relevant for each mouse line to update selector
 gene_expressions_mouse_line_tissues <- split(gene_expressions, gene_expressions$mouse_line) %>%
-  lapply(function(x) distinct(x, tissue) %>% pull(tissue) %>% as.character())
+  lapply(function(x) {
+    distinct(x, tissue) %>%
+      pull(tissue) %>%
+      as.character()
+  })
 usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
 
 # Save parquet, partitioned by the first letter of the gene
@@ -252,10 +258,12 @@ usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
 gene_expressions <- gene_expressions %>%
   mutate(partition = tolower(str_sub(gene, 1, 1)))
 
-walk(unique(gene_expressions[["partition"]]),
-    function(x) {
-      fs::dir_create(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x)))
-      gene_expressions %>%
-        filter(partition == x) %>%
-        write_parquet(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x), paste0(x, ".parquet")), compression = "uncompressed")
-    })
+walk(
+  unique(gene_expressions[["partition"]]),
+  function(x) {
+    fs::dir_create(here::here("inst", "extdata", "gene_expressions", paste0("partition=", x)))
+    gene_expressions %>%
+      filter(partition == x) %>%
+      write_parquet(here::here("inst", "extdata", "gene_expressions", paste0("partition=", x), paste0(x, ".parquet")), compression = "uncompressed")
+  }
+)
