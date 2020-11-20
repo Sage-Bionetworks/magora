@@ -5,7 +5,7 @@
 \alias{gene_expression_genes}
 \title{Gene expressions genes}
 \format{
-An object of class \code{character} of length 10000.
+An object of class \code{character} of length 55773.
 }
 \usage{
 gene_expression_genes

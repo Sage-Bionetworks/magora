@@ -1,7 +1,7 @@
 library(vdiffr)
 context("magora_boxplot") # Required by vdiffr still
 
-gene_expressions <- arrow::open_dataset(here::here("inst", "extdata", "gene_expressions"))
+gene_expressions <- arrow::open_dataset(system.file("extdata", "gene_expressions", package = "magora"))
 gene_filter <- "Gna12"
 
 # Set up fake phenotypes data for testing on
