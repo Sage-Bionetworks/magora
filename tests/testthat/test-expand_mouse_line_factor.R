@@ -1,4 +1,5 @@
-gene_expressions <- readRDS(system.file("extdata/gene_expressions.rds", package = "magora"))
+gene_expressions <- arrow::open_dataset(here::here("inst", "extdata", "gene_expressions")) %>%
+  dplyr::collect()
 
 test_that("expand_mouse_line_factor_from_selection only includes factors selected", {
   mouse_line_selection <- c("C57BL6J", "5XFAD")
