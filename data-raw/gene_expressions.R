@@ -241,5 +241,5 @@ walk(unique(gene_expressions[["partition"]]),
       fs::dir_create(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x)))
       gene_expressions %>%
         filter(partition == x) %>%
-        write_parquet(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x), paste0(x, ".parquet")))
+        write_parquet(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x), paste0(x, ".parquet")), compression = "uncompressed")
     })
