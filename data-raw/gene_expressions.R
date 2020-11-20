@@ -8,6 +8,7 @@ library(lubridate)
 library(stringr)
 library(forcats)
 library(purrr)
+library(arrow)
 
 source(here::here("data-raw/gene_expressions_data_functions.R"))
 
@@ -221,23 +222,6 @@ nrow(tpm) == nrow(gene_expressions)
 gene_expressions <- gene_expressions %>%
   filter(age != 22)
 
-# Sample of 10,000 genes ----
-# Sampling by % of zeros to get a good idea of what plots will look like
-
-set.seed(1234)
-
-sample_genes <- gene_expressions %>%
-  mutate(zero = value == 0) %>%
-  group_by(gene) %>%
-  summarise(prop_zero = mean(zero)) %>%
-  mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%
-  group_by(prop_zero_group) %>%
-  sample_n(2500) %>%
-  pull(gene)
-
-gene_expressions <- gene_expressions %>%
-  filter(gene %in% sample_genes)
-
 # Make variables into factors to save space when saving, remove unused columns
 
 gene_expressions <- gene_expressions %>%
@@ -247,20 +231,9 @@ gene_expressions <- gene_expressions %>%
 
 # Save data ----
 
-# Saving mouse line, genes, and tissues separately to be used as inputs - tried out generating them via renderUI() but there's a considerable slowdown versus saving as objects directly
+# Save parquet, partitioned by the first letter of the gene
 
-gene_expression_genes <- sort(levels(gene_expressions[["gene"]]))
-usethis::use_data(gene_expression_genes, overwrite = TRUE)
+gene_expressions <- gene_expressions %>%
+  mutate(partition = tolower(str_sub(gene, 1, 1)))
 
-gene_expression_mouse_lines <- c("C57BL6J", "5XFAD", "APP/PS1_hemizygous")
-usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
-
-gene_expression_tissues <- sort(levels(gene_expressions[["tissue"]]))
-usethis::use_data(gene_expression_tissues, overwrite = TRUE)
-
-# Save tissues relevant for each mouse line to update selector
-gene_expressions_mouse_line_tissues <- split(gene_expressions, gene_expressions$mouse_line) %>%
-  lapply(function(x) distinct(x, tissue) %>% pull(tissue) %>% as.character())
-usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
-
-saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions.rds"))
+write_dataset(gene_expressions, here::here("inst", "extdata", "gene_expressions"), format = "parquet", partitioning = "partition")
