@@ -231,6 +231,22 @@ gene_expressions <- gene_expressions %>%
 
 # Save data ----
 
+# Saving mouse line, genes, and tissues separately to be used as inputs - tried out generating them via renderUI() but there's a considerable slowdown versus saving as objects directly
+
+gene_expression_genes <- sort(levels(gene_expressions[["gene"]]))
+usethis::use_data(gene_expression_genes, overwrite = TRUE)
+
+gene_expression_mouse_lines <- c("C57BL6J", "5XFAD", "APP/PS1_hemizygous")
+usethis::use_data(gene_expression_mouse_lines, overwrite = TRUE)
+
+gene_expression_tissues <- sort(levels(gene_expressions[["tissue"]]))
+usethis::use_data(gene_expression_tissues, overwrite = TRUE)
+
+# Save tissues relevant for each mouse line to update selector
+gene_expressions_mouse_line_tissues <- split(gene_expressions, gene_expressions$mouse_line) %>%
+  lapply(function(x) distinct(x, tissue) %>% pull(tissue) %>% as.character())
+usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
+
 # Save parquet, partitioned by the first letter of the gene
 
 gene_expressions <- gene_expressions %>%
