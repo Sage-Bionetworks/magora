@@ -236,4 +236,10 @@ gene_expressions <- gene_expressions %>%
 gene_expressions <- gene_expressions %>%
   mutate(partition = tolower(str_sub(gene, 1, 1)))
 
-write_dataset(gene_expressions, here::here("inst", "extdata", "gene_expressions"), format = "parquet", partitioning = "partition")
+walk(unique(gene_expressions[["partition"]]),
+    function(x) {
+      fs::dir_create(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x)))
+      gene_expressions %>%
+        filter(partition == x) %>%
+        write_parquet(here::here("inst", "extdata", "gene_expressions", paste0("partition=",x), paste0(x, ".parquet")))
+    })
