@@ -683,15 +683,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.10.0-60",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "renv",
-      "RemoteUsername": "rstudio",
-      "RemoteRef": "master",
-      "RemoteSha": "bd5bafddc180890dfcd86c561b2dfc4ba1dd87a9",
-      "Hash": "d374397939f187c2a257af37704c3756"
+      "Version": "0.12.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "398cc1ea892e1aade66d1ecbb2874d24"
     },
     "rex": {
       "Package": "rex",
@@ -751,15 +746,15 @@
     },
     "sagethemes": {
       "Package": "sagethemes",
-      "Version": "0.0.0.9002",
+      "Version": "0.0.0.9003",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "sagethemes",
       "RemoteUsername": "Sage-Bionetworks",
       "RemoteRef": "main",
-      "RemoteSha": "f84dff32c8b4afb0e016d14b2272b600c359c6e4",
-      "Hash": "18b9429b7497b249ff9bc30dbc228a0b"
+      "RemoteSha": "41f572b391e9043d69e46f4d8c230edcdee76e8e",
+      "Hash": "cb9f847acc5940e794a5022d4693e727"
     },
     "scales": {
       "Package": "scales",
@@ -896,10 +891,10 @@
     },
     "vdiffr": {
       "Package": "vdiffr",
-      "Version": "0.3.3",
+      "Version": "0.3.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "9db1c86984c98611a8f4cc635968e5e6"
+      "Hash": "f54737d35c5f37586977da47b95b40db"
     },
     "viridisLite": {
       "Package": "viridisLite",
