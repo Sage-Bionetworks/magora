@@ -253,17 +253,5 @@ gene_expressions_mouse_line_tissues <- split(gene_expressions, gene_expressions$
   })
 usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
 
-# Save parquet, partitioned by the first letter of the gene
-
-gene_expressions <- gene_expressions %>%
-  mutate(partition = tolower(str_sub(gene, 1, 1)))
-
-walk(
-  unique(gene_expressions[["partition"]]),
-  function(x) {
-    fs::dir_create(here::here("inst", "extdata", "gene_expressions", paste0("partition=", x)))
-    gene_expressions %>%
-      filter(partition == x) %>%
-      write_parquet(here::here("inst", "extdata", "gene_expressions", paste0("partition=", x), paste0(x, ".parquet")), compression = "uncompressed")
-  }
-)
+# Save RDA for putting on github, then convert to parquet files on the server using data-raw/gene_expressions_parquet.R
+save(gene_expressions, file = here::here("inst", "extdata", "gene_expressions.rda"), compress = "bzip2", version = 2)
