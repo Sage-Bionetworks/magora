@@ -130,7 +130,6 @@ test_that("All levels of age are shown in the plot even if not present in the fi
     dplyr::filter(
       gene == gene_filter
     ) %>%
-    dplyr::collect() %>%
     dplyr::filter(
       mouse_line %in% c("C57BL6J", "5XFAD")
     ) %>%
@@ -146,7 +145,6 @@ test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expressi
       gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
-    dplyr::collect() %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
     magora_boxplot(use_theme_sage = FALSE, plot_type = "gene expression")
   expect_doppelganger("gene-expression-no-data", p)
@@ -158,7 +156,6 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
       gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
-    dplyr::collect() %>%
     expand_mouse_line_factor_from_selection("5XFAD") %>%
     magora_boxplot(use_theme_sage = FALSE, plot_type = "gene expression")
   expect_doppelganger("gene-expression-single-mouse-line", p)
@@ -167,7 +164,6 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
     dplyr::filter(
       gene == gene_filter
     ) %>%
-    dplyr::collect() %>%
     dplyr::filter(
       mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
@@ -181,7 +177,6 @@ test_that("magora_boxplot shows facets in the order selected", {
     dplyr::filter(
       gene == gene_filter
     ) %>%
-    dplyr::collect() %>%
     dplyr::filter(
       mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
@@ -193,7 +188,6 @@ test_that("magora_boxplot shows facets in the order selected", {
     dplyr::filter(
       phenotype %in% "Plasma AB 40"
     ) %>%
-    dplyr::collect() %>%
     dplyr::filter(
       mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
@@ -209,7 +203,6 @@ test_that("magora_boxplot dodges correctly and shows both Female/Male in legend 
       gene == gene_filter,
       mouse_line == c("APP/PS1_hemizygous")
     ) %>%
-    dplyr::collect() %>%
     expand_mouse_line_factor_from_selection("APP/PS1_hemizygous") %>%
     magora_boxplot(use_theme_sage = FALSE, plot_type = "gene expression")
   expect_doppelganger("boxplot-female-only", p)
@@ -219,7 +212,6 @@ test_that("magora_boxplot dodges correctly and shows both Female/Male in legend 
       gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
-    dplyr::collect() %>%
     dplyr::filter(sex == "Male") %>%
     expand_mouse_line_factor_from_selection("5XFAD") %>%
     magora_boxplot(use_theme_sage = FALSE, plot_type = "gene expression")
