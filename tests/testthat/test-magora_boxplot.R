@@ -1,7 +1,7 @@
 library(vdiffr)
 context("magora_boxplot") # Required by vdiffr still
 
-gene_expressions <- arrow::open_dataset(system.file("extdata", "gene_expressions", package = "magora"))
+load(system.file("extdata", "gene_expressions.rda", package = "magora"))
 gene_filter <- "Gna12"
 
 # Set up fake phenotypes data for testing on
@@ -128,7 +128,6 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter
     ) %>%
     dplyr::collect() %>%
@@ -144,7 +143,6 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expression' in annotations and has a TPM y-axis label", {
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
@@ -157,7 +155,6 @@ test_that("magora_boxplot with plot_type = 'gene expression' uses 'gene expressi
 test_that("magora_boxplot shows all, and only, mouse lines selected", {
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
@@ -168,7 +165,6 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
 
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter
     ) %>%
     dplyr::collect() %>%
@@ -183,7 +179,6 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
 test_that("magora_boxplot shows facets in the order selected", {
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter
     ) %>%
     dplyr::collect() %>%
@@ -211,7 +206,6 @@ test_that("magora_boxplot shows facets in the order selected", {
 test_that("magora_boxplot dodges correctly and shows both Female/Male in legend even when only one sex appears", {
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter,
       mouse_line == c("APP/PS1_hemizygous")
     ) %>%
@@ -222,7 +216,6 @@ test_that("magora_boxplot dodges correctly and shows both Female/Male in legend 
 
   p <- gene_expressions %>%
     dplyr::filter(
-      partition == tolower(stringr::str_sub(gene_filter, 1, 1)),
       gene == gene_filter,
       mouse_line == "5XFAD"
     ) %>%
