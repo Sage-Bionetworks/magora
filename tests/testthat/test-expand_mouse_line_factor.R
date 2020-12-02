@@ -1,4 +1,4 @@
-gene_expressions <- readRDS(system.file("extdata/gene_expressions.rds", package = "magora"))
+load(system.file("extdata", "gene_expressions.rda", package = "magora"))
 
 test_that("expand_mouse_line_factor_from_selection only includes factors selected", {
   mouse_line_selection <- c("C57BL6J", "5XFAD")

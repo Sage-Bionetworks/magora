@@ -11,12 +11,12 @@ list_tpm_files <- function(id) {
 }
 
 download_tpm_and_annotations <- function(tpm_files, folder) {
-
   tpm_list <- list(id = tpm_files[["id"]], name = tpm_files[["name"]], version = tpm_files[["version"]])
 
   # Pull and save data from synapse
   # Save then rename to synapse ID so we can connect to the annotation data later on without having to pull each more than once (e.g. for iterating on code)
-  purrr::pmap(tpm_list,
+  purrr::pmap(
+    tpm_list,
     function(id, name, version) {
       synapser::synGet(id, version = version, downloadLocation = here::here("data-raw", "gene_expressions", folder))
       fs::file_move(here::here("data-raw", "gene_expressions", folder, name), here::here("data-raw", "gene_expressions", folder, paste0(id, ".txt")))

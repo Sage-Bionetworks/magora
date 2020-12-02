@@ -1,7 +1,7 @@
 library(vdiffr)
 context("magora_boxplot") # Required by vdiffr still
 
-gene_expressions <- readRDS(system.file("extdata/gene_expressions.rds", package = "magora"))
+load(system.file("extdata", "gene_expressions.rda", package = "magora"))
 gene_filter <- "Gna12"
 
 # Set up fake phenotypes data for testing on
@@ -128,8 +128,10 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == gene_filter,
-      .data$mouse_line %in% c("C57BL6J", "5XFAD"),
+      gene == gene_filter
+    ) %>%
+    dplyr::filter(
+      mouse_line %in% c("C57BL6J", "5XFAD")
     ) %>%
     dplyr::filter(!(mouse_line == "C57BL6J" & age == 4)) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
@@ -160,7 +162,9 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
 
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == gene_filter,
+      gene == gene_filter
+    ) %>%
+    dplyr::filter(
       mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
@@ -171,7 +175,9 @@ test_that("magora_boxplot shows all, and only, mouse lines selected", {
 test_that("magora_boxplot shows facets in the order selected", {
   p <- gene_expressions %>%
     dplyr::filter(
-      gene == gene_filter,
+      gene == gene_filter
+    ) %>%
+    dplyr::filter(
       mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
@@ -180,8 +186,10 @@ test_that("magora_boxplot shows facets in the order selected", {
 
   p <- phenotypes %>%
     dplyr::filter(
-      .data$phenotype %in% "Plasma AB 40",
-      .data$mouse_line %in% c("5XFAD", "C57BL6J")
+      phenotype %in% "Plasma AB 40"
+    ) %>%
+    dplyr::filter(
+      mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
     magora_boxplot(use_theme_sage = FALSE)
@@ -202,13 +210,10 @@ test_that("magora_boxplot dodges correctly and shows both Female/Male in legend 
   p <- gene_expressions %>%
     dplyr::filter(
       gene == gene_filter,
-      mouse_line == c("APP/PS1_hemizygous")
+      mouse_line == "5XFAD"
     ) %>%
-    dplyr::mutate(sex = "Male") %>%
-    dplyr::mutate(sex = forcats::fct_expand(sex, levels(gene_expressions[["sex"]])),
-                  sex = forcats::fct_relevel(sex, levels(gene_expressions[["sex"]]))) %>%
-    expand_mouse_line_factor_from_selection("APP/PS1_hemizygous") %>%
+    dplyr::filter(sex == "Male") %>%
+    expand_mouse_line_factor_from_selection("5XFAD") %>%
     magora_boxplot(use_theme_sage = FALSE, plot_type = "gene expression")
   expect_doppelganger("boxplot-male-only", p)
-
 })

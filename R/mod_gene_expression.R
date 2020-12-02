@@ -13,12 +13,11 @@ mod_gene_expression_ui <- function(id) {
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         width = 3,
-        shiny::selectizeInput(
+        shinyWidgets::pickerInput(
           ns("gene"),
           "Select a gene",
           choices = magora::gene_expression_genes,
-          multiple = FALSE,
-          options= list(maxOptions = length(magora::gene_expression_genes))
+          options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
         ),
         shinyWidgets::pickerInput(
           ns("mouse_line"),
@@ -64,11 +63,14 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
 
     gene_expressions %>%
+      # Cannot use .data pronoun because it is meaningful (for something else) in Arrow
       dplyr::filter(
-        .data$gene %in% input$gene,
-        .data$mouse_line %in% input$mouse_line,
-        .data$tissue %in% input$tissue
-      )
+        partition == tolower(stringr::str_sub(input$gene, 1, 1)),
+        gene == input$gene,
+        tissue == input$tissue
+      ) %>%
+      dplyr::collect() %>%
+      dplyr::filter(mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
   })
 
   output$gene_expression_plot <- shiny::renderPlot({
@@ -91,8 +93,9 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     shiny::mainPanel(
       width = 9,
       shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
-        height = paste0(ceiling(length(input$mouse_line)/2)*400, "px")))
-      )
+        height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px")
+      ))
+    )
   })
 }
 

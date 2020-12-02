@@ -8,6 +8,7 @@ library(lubridate)
 library(stringr)
 library(forcats)
 library(purrr)
+library(arrow)
 
 source(here::here("data-raw/gene_expressions_data_functions.R"))
 
@@ -157,8 +158,10 @@ tissue_5xfad <- tpm_5xfad %>%
 # synGet("syn18879638", version = 3, downloadLocation = here::here("data-raw", "gene_expressions", "app_ps1"))
 
 biospecimen_metadata_app_ps1 <- read_csv(here::here("data-raw", "gene_expressions", "app_ps1", "Jax.IU.Pitt_APP.PS1_biospecimen_metadata.csv")) %>%
-  mutate(individualID = as.character(individualID),
-         specimenID = as.character(specimenID))
+  mutate(
+    individualID = as.character(individualID),
+    specimenID = as.character(specimenID)
+  )
 
 tissue_app_ps1 <- tpm_app_ps1 %>%
   distinct(mouse_id, specimen_id) %>%
@@ -221,23 +224,6 @@ nrow(tpm) == nrow(gene_expressions)
 gene_expressions <- gene_expressions %>%
   filter(age != 22)
 
-# Sample of 10,000 genes ----
-# Sampling by % of zeros to get a good idea of what plots will look like
-
-set.seed(1234)
-
-sample_genes <- gene_expressions %>%
-  mutate(zero = value == 0) %>%
-  group_by(gene) %>%
-  summarise(prop_zero = mean(zero)) %>%
-  mutate(prop_zero_group = cut(prop_zero, breaks = seq(0, 1, 0.25), include.lowest = TRUE)) %>%
-  group_by(prop_zero_group) %>%
-  sample_n(2500) %>%
-  pull(gene)
-
-gene_expressions <- gene_expressions %>%
-  filter(gene %in% sample_genes)
-
 # Make variables into factors to save space when saving, remove unused columns
 
 gene_expressions <- gene_expressions %>%
@@ -260,7 +246,12 @@ usethis::use_data(gene_expression_tissues, overwrite = TRUE)
 
 # Save tissues relevant for each mouse line to update selector
 gene_expressions_mouse_line_tissues <- split(gene_expressions, gene_expressions$mouse_line) %>%
-  lapply(function(x) distinct(x, tissue) %>% pull(tissue) %>% as.character())
+  lapply(function(x) {
+    distinct(x, tissue) %>%
+      pull(tissue) %>%
+      as.character()
+  })
 usethis::use_data(gene_expressions_mouse_line_tissues, overwrite = TRUE)
 
-saveRDS(gene_expressions, here::here("inst", "extdata", "gene_expressions.rds"))
+# Save RDA for putting on github, then convert to parquet files on the server using data-raw/gene_expressions_parquet.R
+save(gene_expressions, file = here::here("inst", "extdata", "gene_expressions.rda"), compress = "bzip2", version = 2)
