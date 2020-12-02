@@ -1,0 +1,6 @@
+external.libraries:
+ignored.packages: synapser, AnnotationDbi, EnsDb.Mmusculus.v79, magora
+package.dependency.fields: Imports, Depends, LinkingTo
+snapshot.type: implicit
+use.cache: TRUE
+vcs.ignore.library: TRUE
