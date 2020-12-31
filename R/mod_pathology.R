@@ -7,32 +7,52 @@
 #' @noRd
 mod_pathology_ui <- function(id) {
   ns <- shiny::NS(id)
+  title <- "Pathology"
+
   shiny::tabPanel(
-    "Pathology",
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
-        width = 3,
-        shinyWidgets::pickerInput(
-          ns("phenotype"),
-          "Select a phenotype",
-          choices = unique(magora::phenotypes[["phenotype"]])
-        ),
-        shinyWidgets::pickerInput(
-          ns("mouse_line"),
-          "Select mouse lines",
-          choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
-          multiple = TRUE,
-          selected = c("C57BL6J", "5XFAD")
-        ),
-        shinyWidgets::pickerInput(
-          ns("tissue"),
-          "Select tissue",
-          choices = unique(magora::phenotypes[["tissue"]])
-        )
+    title,
+    shiny::div(
+      shiny::h3(class = "tab-title", title),
+      shiny::tags$p(class = "tab-description", "This explorer shows changes in pathological hallmarks associated with AD."),
+      shiny::tags$p(class = "tab-description", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
+      shiny::tags$p(class = "tab-description", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
+      shiny::hr()
+    ),
+    shiny::fluidRow(
+      class = "magora-page",
+        shiny::fluidRow(
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("phenotype"),
+              "Phenotype",
+              choices = unique(magora::phenotypes[["phenotype"]])
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("mouse_line"),
+              "Mouse lines",
+              choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
+              multiple = TRUE,
+              selected = c("C57BL6J", "5XFAD")
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("tissue"),
+              "Tissue",
+              choices = unique(magora::phenotypes[["tissue"]])
+            )
+          )
       ),
-      shiny::mainPanel(
-        width = 9,
-        shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")))
+      shiny::column(
+        width = 12,
+        shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")),
+          color = "#D3DCEF"
+        )
       )
     )
   )

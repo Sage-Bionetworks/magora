@@ -7,32 +7,51 @@
 #' @noRd
 mod_gene_expression_ui <- function(id) {
   ns <- shiny::NS(id)
+  title <- "Gene Expression"
 
   shiny::tabPanel(
-    "Gene Expression",
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
-        width = 3,
-        shinyWidgets::pickerInput(
-          ns("gene"),
-          "Select a gene",
-          choices = magora::gene_expression_genes,
-          options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
-        ),
-        shinyWidgets::pickerInput(
-          ns("mouse_line"),
-          "Select mouse lines",
-          choices = magora::gene_expression_mouse_lines,
-          multiple = TRUE,
-          selected = c("5XFAD", "C57BL6J")
-        ),
-        shinyWidgets::pickerInput(
-          ns("tissue"),
-          "Select tissue",
-          choices = magora::gene_expression_tissues
+    title,
+    shiny::div(
+      shiny::h3(class = "tab-title", title),
+      shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
+      shiny::hr()
+    ),
+    shiny::fluidRow(
+      class = "magora-page",
+        shiny::fluidRow(
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("gene"),
+              "Gene",
+              choices = magora::gene_expression_genes,
+              multiple = FALSE,
+              options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("mouse_line"),
+              "Mouse lines",
+              choices = magora::gene_expression_mouse_lines,
+              multiple = TRUE,
+              selected = c("5XFAD", "C57BL6J")
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("tissue"),
+              "Tissue",
+              choices = magora::gene_expression_tissues
+          )
         )
       ),
-      shiny::uiOutput(ns("gene_expression_plot_ui"))
+      shiny::column(
+        width = 12,
+        shiny::uiOutput(ns("gene_expression_plot_ui"))
+      )
     )
   )
 }
@@ -90,11 +109,10 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
     )
 
-    shiny::mainPanel(
-      width = 9,
-      shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
-        height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px")
-      ))
+    shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
+      height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px"),
+    ),
+    color = "#D3DCEF"
     )
   })
 }

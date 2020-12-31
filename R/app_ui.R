@@ -5,8 +5,9 @@
 app_ui <- function(request) {
   shiny::tagList(
     golem_add_external_resources(),
-    shiny::navbarPage(
-      title = "Mouse-Agora",
+    magoraPage(
+      header = mod_header_ui(),
+      mod_start_ui(),
       mod_pathology_ui("pathology"),
       mod_gene_expression_ui("gene_expression")
     )
@@ -25,12 +26,10 @@ golem_add_external_resources <- function() {
   )
 
   shiny::tags$head(
-    golem::favicon(),
+    golem::favicon(ext = "png"),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "magora"
+      app_title = "MODEL-AD Mouse Explorer"
     )
-    # Add here other external resources
-    # for example, you can add shinyalert::useShinyalert()
   )
 }
