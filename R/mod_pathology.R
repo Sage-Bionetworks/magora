@@ -22,7 +22,7 @@ mod_pathology_ui <- function(id) {
       class = "magora-page",
         shiny::fluidRow(
           shiny::column(
-            width = 4,
+            width = 3,
             shinyWidgets::pickerInput(
               ns("phenotype"),
               "Phenotype",
@@ -30,7 +30,7 @@ mod_pathology_ui <- function(id) {
             )
           ),
           shiny::column(
-            width = 4,
+            width = 3,
             shinyWidgets::pickerInput(
               ns("mouse_line"),
               "Mouse lines",
@@ -40,12 +40,16 @@ mod_pathology_ui <- function(id) {
             )
           ),
           shiny::column(
-            width = 4,
+            width = 3,
             shinyWidgets::pickerInput(
               ns("tissue"),
               "Tissue",
               choices = unique(magora::phenotypes[["tissue"]])
             )
+          ),
+          shiny::column(
+            width = 3,
+              shiny::downloadButton(ns("save_plot_data"), "Download plot and data")
           )
       ),
       shiny::column(
@@ -91,17 +95,43 @@ mod_pathology_server <- function(input, output, session) {
       )
   })
 
-  output$phenotype_plot <- shiny::renderPlot({
-    shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
+  phenotype_plot <- shiny::reactive({
+      shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
 
-    shiny::validate(
-      shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
-    )
+      shiny::validate(
+        shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
+      )
 
-    filtered_phenotypes() %>%
-      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
-      magora_boxplot(plot_type = "phenotype")
+      filtered_phenotypes() %>%
+        expand_mouse_line_factor_from_selection(input$mouse_line) %>%
+        magora_boxplot(plot_type = "phenotype")
+    })
+
+
+  output$phenotype_plot <- shiny::renderPlot(phenotype_plot())
+
+  save_name <- reactive({
+    glue::glue("Pathology_{input$phenotype}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}")
   })
+
+  output$save_plot_data <- shiny::downloadHandler(
+      filename = function() {
+        glue::glue("{save_name()}.zip")
+      },
+      content = function(file) {
+        plot_file <- glue::glue("{save_name()}_plot.png")
+        ggplot2::ggsave(filename = plot_file, plot = phenotype_plot(), device = "png")
+
+        data_file <- glue::glue("{save_name()}_data.csv")
+        data_cols <- filtered_phenotypes() %>%
+          dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
+          dplyr::arrange(mouse_line, age, sex)
+
+        readr::write_csv(data_cols, path = data_file)
+
+        zip(file, files = c(data_file, plot_file))
+      }
+    )
 }
 
 ## To be copied in the UI
