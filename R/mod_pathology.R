@@ -20,37 +20,37 @@ mod_pathology_ui <- function(id) {
     ),
     shiny::fluidRow(
       class = "magora-page",
-        shiny::fluidRow(
-          shiny::column(
-            width = 3,
-            shinyWidgets::pickerInput(
-              ns("phenotype"),
-              "Phenotype",
-              choices = unique(magora::phenotypes[["phenotype"]])
-            )
-          ),
-          shiny::column(
-            width = 3,
-            shinyWidgets::pickerInput(
-              ns("mouse_line"),
-              "Mouse lines",
-              choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
-              multiple = TRUE,
-              selected = c("C57BL6J", "5XFAD")
-            )
-          ),
-          shiny::column(
-            width = 3,
-            shinyWidgets::pickerInput(
-              ns("tissue"),
-              "Tissue",
-              choices = unique(magora::phenotypes[["tissue"]])
-            )
-          ),
-          shiny::column(
-            width = 3,
-              shiny::downloadButton(ns("save_plot_data"), "Download plot and data")
+      shiny::fluidRow(
+        shiny::column(
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("phenotype"),
+            "Phenotype",
+            choices = unique(magora::phenotypes[["phenotype"]])
           )
+        ),
+        shiny::column(
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("mouse_line"),
+            "Mouse lines",
+            choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
+            multiple = TRUE,
+            selected = c("C57BL6J", "5XFAD")
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("tissue"),
+            "Tissue",
+            choices = unique(magora::phenotypes[["tissue"]])
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shiny::downloadButton(ns("save_plot_data"), "Download plot and data")
+        )
       ),
       shiny::column(
         width = 12,
@@ -96,16 +96,16 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   phenotype_plot <- shiny::reactive({
-      shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
+    shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
 
-      shiny::validate(
-        shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
-      )
+    shiny::validate(
+      shiny::need(nrow(filtered_phenotypes()) > 0, message = "There is no data for the selected combination.")
+    )
 
-      filtered_phenotypes() %>%
-        expand_mouse_line_factor_from_selection(input$mouse_line) %>%
-        magora_boxplot(plot_type = "phenotype")
-    })
+    filtered_phenotypes() %>%
+      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
+      magora_boxplot(plot_type = "phenotype")
+  })
 
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot())
@@ -115,23 +115,23 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   output$save_plot_data <- shiny::downloadHandler(
-      filename = function() {
-        glue::glue("{save_name()}.zip")
-      },
-      content = function(file) {
-        plot_file <- glue::glue("{save_name()}_plot.png")
-        ggplot2::ggsave(filename = plot_file, plot = phenotype_plot(), device = "png")
+    filename = function() {
+      glue::glue("{save_name()}.zip")
+    },
+    content = function(file) {
+      plot_file <- glue::glue("{save_name()}_plot.png")
+      ggplot2::ggsave(filename = plot_file, plot = phenotype_plot(), width = 10, height = 5, units = "in", dpi = 300)
 
-        data_file <- glue::glue("{save_name()}_data.csv")
-        data_cols <- filtered_phenotypes() %>%
-          dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
-          dplyr::arrange(mouse_line, age, sex)
+      data_file <- glue::glue("{save_name()}_data.csv")
+      data_cols <- filtered_phenotypes() %>%
+        dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
+        dplyr::arrange(mouse_line, age, sex)
 
-        readr::write_csv(data_cols, path = data_file)
+      readr::write_csv(data_cols, path = data_file)
 
-        zip(file, files = c(data_file, plot_file))
-      }
-    )
+      zip(file, files = c(data_file, plot_file))
+    }
+  )
 }
 
 ## To be copied in the UI
