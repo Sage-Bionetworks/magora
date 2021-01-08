@@ -26,7 +26,10 @@ Imports:
     arrow,
     here,
     stringr,
-    shinipsum
+    shinipsum,
+    readr,
+    glue,
+    fs
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0

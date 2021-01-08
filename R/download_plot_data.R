@@ -11,7 +11,7 @@ save_plot_data <- function(plot, data, name) {
       data_file <- glue::glue("{name}_data.csv")
       readr::write_csv(data, path = data_file)
 
-      zip(file, files = c(data_file, plot_file))
+      utils::zip(file, files = c(data_file, plot_file))
 
       fs::file_delete(plot_file)
       fs::file_delete(data_file)
