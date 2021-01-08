@@ -12,6 +12,9 @@ save_plot_data <- function(plot, data, name) {
       readr::write_csv(data, path = data_file)
 
       zip(file, files = c(data_file, plot_file))
+
+      fs::file_delete(plot_file)
+      fs::file_delete(data_file)
     }
   )
 }
