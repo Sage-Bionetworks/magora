@@ -68,6 +68,8 @@ mod_pathology_ui <- function(id) {
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
+  # Update tissue options available based on phenotype selected -----
+
   shiny::observeEvent(input$phenotype, {
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
 
@@ -82,6 +84,8 @@ mod_pathology_server <- function(input, output, session) {
     )
   })
 
+  # Filter data based on inputs ----
+
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
@@ -95,6 +99,8 @@ mod_pathology_server <- function(input, output, session) {
       )
   })
 
+  # Generate plot ----
+
   phenotype_plot <- shiny::reactive({
     shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
 
@@ -107,8 +113,9 @@ mod_pathology_server <- function(input, output, session) {
       magora_boxplot(plot_type = "phenotype")
   })
 
-
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot())
+
+  # Save output ----
 
   save_name <- reactive({
     glue::glue("Pathology_{input$phenotype}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}")

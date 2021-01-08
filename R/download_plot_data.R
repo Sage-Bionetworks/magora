@@ -4,7 +4,6 @@ save_plot_data <- function(plot, data, name, height = 5, width = 10) {
       glue::glue("{name}.zip")
     },
     content = function(file) {
-
       plot_file <- glue::glue("{name}_plot.png")
       ggplot2::ggsave(filename = plot_file, plot = plot, width = width, height = height, units = "in", dpi = 300)
 

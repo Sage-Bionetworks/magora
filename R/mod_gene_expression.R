@@ -66,6 +66,8 @@ mod_gene_expression_ui <- function(id) {
 mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
 
+  # Update tissue options based on gene expression selected ----
+
   shiny::observeEvent(input$mouse_line, {
     available_tissue <- unique(unlist(magora::gene_expressions_mouse_line_tissues[input$mouse_line]))
 
@@ -79,6 +81,8 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
       selected = selected_tissue
     )
   })
+
+  # Filter data based on inputs ----
 
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
@@ -95,6 +99,8 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
       dplyr::collect() %>%
       dplyr::filter(mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
   })
+
+  # Generate plot ----
 
   gene_expression_plot <- shiny::reactive({
     shiny::validate(
@@ -124,6 +130,13 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     ),
     color = "#D3DCEF"
     )
+  })
+
+  # Save output ----
+
+  # Only enable button if there is data available
+  observe({
+    shinyjs::toggleState(id = "save_plot_data", condition = nrow(filtered_gene_expressions()) > 0)
   })
 
   save_name <- reactive({
