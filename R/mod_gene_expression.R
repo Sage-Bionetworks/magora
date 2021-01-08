@@ -139,14 +139,10 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     shinyjs::toggleState(id = "download_plot_data", condition = nrow(filtered_gene_expressions()) > 0)
   })
 
-  save_name <- reactive({
-    fs::path_sanitize(glue::glue("Gene_Expressions_{input$gene}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}"))
-  })
-
   output$download_plot_data <- download_plot_data(
     plot = gene_expression_plot(),
     data = filtered_gene_expressions(),
-    name = save_name(),
+    name = download_name("gene_expression", input$gene, input$mouse_line, input$tissue),
     height = gene_expression_plot_n_row() * 5,
     width = 10
   )

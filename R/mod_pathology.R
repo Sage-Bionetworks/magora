@@ -117,15 +117,11 @@ mod_pathology_server <- function(input, output, session) {
 
   # Save output ----
 
-  save_name <- reactive({
-    glue::glue("Pathology_{input$phenotype}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}")
-  })
-
   output$download_plot_data <- download_plot_data(
     plot = phenotype_plot(),
     data = filtered_phenotypes() %>%
       dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
       dplyr::arrange(mouse_line, age, sex),
-    name = save_name()
+    name = download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
   )
 }
