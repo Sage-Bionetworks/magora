@@ -49,7 +49,7 @@ mod_gene_expression_ui <- function(id) {
         ),
         shiny::column(
           width = 3,
-          shiny::downloadButton(ns("save_plot_data"), "Download plot and data")
+          shiny::downloadButton(ns("download_plot_data"), "Download plot and data")
         )
       ),
       shiny::column(
@@ -136,14 +136,14 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   # Only enable button if there is data available
   observe({
-    shinyjs::toggleState(id = "save_plot_data", condition = nrow(filtered_gene_expressions()) > 0)
+    shinyjs::toggleState(id = "download_plot_data", condition = nrow(filtered_gene_expressions()) > 0)
   })
 
   save_name <- reactive({
     fs::path_sanitize(glue::glue("Gene_Expressions_{input$gene}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}"))
   })
 
-  output$save_plot_data <- save_plot_data(
+  output$download_plot_data <- download_plot_data(
     plot = gene_expression_plot(),
     data = filtered_gene_expressions(),
     name = save_name(),

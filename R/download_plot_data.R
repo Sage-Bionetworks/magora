@@ -1,4 +1,4 @@
-save_plot_data <- function(plot, data, name, height = 5, width = 10) {
+download_plot_data <- function(plot, data, name, height = 5, width = 10) {
   shiny::downloadHandler(
     filename = function() {
       glue::glue("{name}.zip")

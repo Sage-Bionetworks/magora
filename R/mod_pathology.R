@@ -49,7 +49,7 @@ mod_pathology_ui <- function(id) {
         ),
         shiny::column(
           width = 3,
-          shiny::downloadButton(ns("save_plot_data"), "Download plot and data")
+          shiny::downloadButton(ns("download_plot_data"), "Download plot and data")
         )
       ),
       shiny::column(
@@ -121,7 +121,7 @@ mod_pathology_server <- function(input, output, session) {
     glue::glue("Pathology_{input$phenotype}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}")
   })
 
-  output$save_plot_data <- save_plot_data(
+  output$download_plot_data <- download_plot_data(
     plot = phenotype_plot(),
     data = filtered_phenotypes() %>%
       dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
