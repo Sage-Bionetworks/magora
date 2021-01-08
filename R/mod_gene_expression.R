@@ -106,8 +106,10 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
       magora_boxplot(plot_type = "gene expression")
   })
 
-  output$gene_expression_plot <- shiny::renderPlot({
-    gene_expression_plot()
+  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot())
+
+  gene_expression_plot_n_row <- reactive({
+    ceiling(length(input$mouse_line) / 2)
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
@@ -118,7 +120,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
-      height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px"),
+      height = paste0(gene_expression_plot_n_row() * 400, "px"),
     ),
     color = "#D3DCEF"
     )
@@ -131,6 +133,8 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   output$save_plot_data <- save_plot_data(
     plot = gene_expression_plot(),
     data = filtered_gene_expressions(),
-    name = save_name()
+    name = save_name(),
+    height = gene_expression_plot_n_row() * 5,
+    width = 10
   )
 }
