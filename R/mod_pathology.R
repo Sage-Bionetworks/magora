@@ -114,28 +114,11 @@ mod_pathology_server <- function(input, output, session) {
     glue::glue("Pathology_{input$phenotype}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}")
   })
 
-  output$save_plot_data <- shiny::downloadHandler(
-    filename = function() {
-      glue::glue("{save_name()}.zip")
-    },
-    content = function(file) {
-      plot_file <- glue::glue("{save_name()}_plot.png")
-      ggplot2::ggsave(filename = plot_file, plot = phenotype_plot(), width = 10, height = 5, units = "in", dpi = 300)
-
-      data_file <- glue::glue("{save_name()}_data.csv")
-      data_cols <- filtered_phenotypes() %>%
-        dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
-        dplyr::arrange(mouse_line, age, sex)
-
-      readr::write_csv(data_cols, path = data_file)
-
-      zip(file, files = c(data_file, plot_file))
-    }
+  output$save_plot_data <- save_plot_data(
+    plot = phenotype_plot(),
+    data = filtered_phenotypes() %>%
+      dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
+      dplyr::arrange(mouse_line, age, sex),
+    name = save_name()
   )
 }
-
-## To be copied in the UI
-# mod_pathology_ui("pathology")
-
-## To be copied in the server
-# callModule(mod_pathology_server, "pathology")

@@ -18,33 +18,33 @@ mod_gene_expression_ui <- function(id) {
     ),
     shiny::fluidRow(
       class = "magora-page",
-        shiny::fluidRow(
-          shiny::column(
-            width = 3,
-            shinyWidgets::pickerInput(
-              ns("gene"),
-              "Gene",
-              choices = magora::gene_expression_genes,
-              multiple = FALSE,
-              options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
-            )
-          ),
-          shiny::column(
-            width = 3,
-            shinyWidgets::pickerInput(
-              ns("mouse_line"),
-              "Mouse lines",
-              choices = magora::gene_expression_mouse_lines,
-              multiple = TRUE,
-              selected = c("5XFAD", "C57BL6J")
-            )
-          ),
-          shiny::column(
-            width = 3,
-            shinyWidgets::pickerInput(
-              ns("tissue"),
-              "Tissue",
-              choices = magora::gene_expression_tissues
+      shiny::fluidRow(
+        shiny::column(
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("gene"),
+            "Gene",
+            choices = magora::gene_expression_genes,
+            multiple = FALSE,
+            options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("mouse_line"),
+            "Mouse lines",
+            choices = magora::gene_expression_mouse_lines,
+            multiple = TRUE,
+            selected = c("5XFAD", "C57BL6J")
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("tissue"),
+            "Tissue",
+            choices = magora::gene_expression_tissues
           )
         ),
         shiny::column(
@@ -128,25 +128,9 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     fs::path_sanitize(glue::glue("Gene_Expressions_{input$gene}_{paste0(input$mouse_line, collapse = '_')}_{input$tissue}"))
   })
 
-  output$save_plot_data <- shiny::downloadHandler(
-    filename = function() {
-      glue::glue("{save_name()}.zip")
-    },
-    content = function(file) {
-      plot_file <- glue::glue("{save_name()}_plot.png")
-      ggplot2::ggsave(filename = plot_file, plot = gene_expression_plot(), width = 10, height = 5, units = "in", dpi = 300)
-
-      data_file <- glue::glue("{save_name()}_data.csv")
-
-      readr::write_csv(filtered_gene_expressions(), path = data_file)
-
-      zip(file, files = c(data_file, plot_file))
-    }
+  output$save_plot_data <- save_plot_data(
+    plot = gene_expression_plot(),
+    data = filtered_gene_expressions(),
+    name = save_name()
   )
 }
-
-## To be copied in the UI
-# mod_gene_expression_ui("gene_expression")
-
-## To be copied in the server
-# callModule(mod_gene_expression_server, "gene_expression")
