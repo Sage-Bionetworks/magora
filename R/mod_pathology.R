@@ -49,7 +49,8 @@ mod_pathology_ui <- function(id) {
         ),
         shiny::column(
           width = 3,
-          shiny::downloadButton(ns("download_plot_data"), "Download plot and data")
+          mod_download_data_ui(ns("download_data")),
+          mod_download_plot_ui(ns("download_plot"))
         )
       ),
       shiny::column(
@@ -117,11 +118,32 @@ mod_pathology_server <- function(input, output, session) {
 
   # Save output ----
 
-  output$download_plot_data <- download_plot_data(
-    plot = phenotype_plot(),
-    data = filtered_phenotypes() %>%
-      dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
-      dplyr::arrange(mouse_line, age, sex),
-    name = download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
+  phenotype_plot_dims <- reactive({
+    list(
+      nrow = ceiling(length(input$mouse_line) / 2),
+      ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
+    )
+  })
+
+  save_name <- reactive({
+    download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
+  })
+
+  # Data
+
+  callModule(mod_download_data_server,
+    "download_data",
+    data = filtered_phenotypes,
+    save_name = save_name
+  )
+
+  # Plot
+
+  callModule(mod_download_plot_server,
+    "download_plot",
+    plot = phenotype_plot,
+    data = filtered_phenotypes,
+    save_name = save_name,
+    plot_dims = phenotype_plot_dims
   )
 }

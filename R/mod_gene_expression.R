@@ -26,6 +26,7 @@ mod_gene_expression_ui <- function(id) {
             "Gene",
             choices = magora::gene_expression_genes,
             multiple = FALSE,
+            selected = "0610007P14Rik",
             options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
           )
         ),
@@ -49,7 +50,8 @@ mod_gene_expression_ui <- function(id) {
         ),
         shiny::column(
           width = 3,
-          shiny::downloadButton(ns("download_plot_data"), "Download plot and data")
+          mod_download_data_ui(ns("download_data")),
+          mod_download_plot_ui(ns("download_plot"))
         )
       ),
       shiny::column(
@@ -114,8 +116,11 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot())
 
-  gene_expression_plot_n_row <- reactive({
-    ceiling(length(input$mouse_line) / 2)
+  gene_expression_plot_dims <- reactive({
+    list(
+      nrow = ceiling(length(input$mouse_line) / 2),
+      ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
+    )
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
@@ -126,7 +131,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
-      height = paste0(gene_expression_plot_n_row() * 400, "px"),
+      height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
     ),
     color = "#D3DCEF"
     )
@@ -134,16 +139,25 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   # Save output ----
 
-  # Only enable button if there is data available
-  observe({
-    shinyjs::toggleState(id = "download_plot_data", condition = nrow(filtered_gene_expressions()) > 0)
+  save_name <- reactive({
+    download_name("gene_expression", input$gene, input$mouse_line, input$tissue)
   })
 
-  output$download_plot_data <- download_plot_data(
-    plot = gene_expression_plot(),
-    data = filtered_gene_expressions(),
-    name = download_name("gene_expression", input$gene, input$mouse_line, input$tissue),
-    height = gene_expression_plot_n_row() * 5,
-    width = 10
+  # Data
+
+  callModule(mod_download_data_server,
+    "download_data",
+    data = filtered_gene_expressions,
+    save_name = save_name
+  )
+
+  # Plot
+
+  callModule(mod_download_plot_server,
+    "download_plot",
+    plot = gene_expression_plot,
+    data = filtered_gene_expressions,
+    save_name = save_name,
+    plot_dims = gene_expression_plot_dims
   )
 }
