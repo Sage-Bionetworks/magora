@@ -111,7 +111,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
         tissue == input$tissue
       ) %>%
       dplyr::collect() %>%
-      dplyr::filter(mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
+      dplyr::filter(.data$mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
   })
 
   # Generate plot ----
@@ -128,7 +128,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot())
 
-  gene_expression_plot_dims <- reactive({
+  gene_expression_plot_dims <- shiny::reactive({
     list(
       nrow = ceiling(length(input$mouse_line) / 2),
       ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
@@ -151,20 +151,20 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   # Save output ----
 
-  gene_expression_data_download <- reactive({
+  gene_expression_data_download <- shiny::reactive({
     filtered_gene_expressions() %>%
-      dplyr::select(mouse_line, tissue, age, sex, gene, value) %>%
-      dplyr::arrange(mouse_line, tissue, age, sex) %>%
+      dplyr::select(.data$mouse_line, .data$tissue, .data$age, .data$sex, .data$gene, .data$value) %>%
+      dplyr::arrange(.data$mouse_line, .data$tissue, .data$age, .data$sex) %>%
       dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
   })
 
-  save_name <- reactive({
+  save_name <- shiny::reactive({
     download_name("gene_expression", input$gene, input$mouse_line, input$tissue)
   })
 
   # Data
 
-  callModule(mod_download_data_server,
+  shiny::callModule(mod_download_data_server,
     "download_data",
     data = gene_expression_data_download,
     save_name = save_name
@@ -172,7 +172,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   # Plot
 
-  callModule(mod_download_plot_server,
+  shiny::callModule(mod_download_plot_server,
     "download_plot",
     plot = gene_expression_plot,
     data = gene_expression_data_download,

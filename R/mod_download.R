@@ -7,10 +7,8 @@
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd
-#'
-#' @importFrom shiny NS tagList
 mod_download_data_ui <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   magora_download_button(ns("download_data"), "Save data")
 }
 
@@ -21,7 +19,7 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
   ns <- session$ns
 
   # Only enable button if there is data available
-  observe({
+  shiny::observe({
     shinyjs::toggleState(id = "download_data", condition = nrow(data()) > 0)
   })
 
@@ -44,10 +42,8 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd
-#'
-#' @importFrom shiny NS tagList
 mod_download_plot_ui <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   magora_download_button(ns("download_plot"), "Save plot")
 }
 
@@ -58,11 +54,11 @@ mod_download_plot_server <- function(input, output, session, plot, data, save_na
   ns <- session$ns
 
   # Only enable button if there is data available
-  observe({
+  shiny::observe({
     shinyjs::toggleState(id = "download_plot", condition = nrow(data()) > 0)
   })
 
-  save_dims <- reactive({
+  save_dims <- shiny::reactive({
     list(
       height = plot_dims()[["nrow"]] * 5,
       width = ifelse(plot_dims()[["ncol"]] == 1, 6, plot_dims()[["ncol"]] * 5)

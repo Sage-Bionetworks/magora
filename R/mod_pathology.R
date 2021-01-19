@@ -130,27 +130,27 @@ mod_pathology_server <- function(input, output, session) {
 
   # Save output ----
 
-  phenotype_plot_dims <- reactive({
+  phenotype_plot_dims <- shiny::reactive({
     list(
       nrow = ceiling(length(input$mouse_line) / 2),
       ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
     )
   })
 
-  phenotype_data_download <- reactive({
+  phenotype_data_download <- shiny::reactive({
     filtered_phenotypes() %>%
-      dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
-      dplyr::arrange(mouse_line, tissue, age, sex) %>%
+      dplyr::select(.data$mouse_line, .data$tissue, .data$age, .data$sex, .data$phenotype, .data$value) %>%
+      dplyr::arrange(.data$mouse_line, .data$tissue, .data$age, .data$sex) %>%
       dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
   })
 
-  save_name <- reactive({
+  save_name <- shiny::reactive({
     download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
   })
 
   # Data
 
-  callModule(mod_download_data_server,
+  shiny::callModule(mod_download_data_server,
     "download_data",
     data = phenotype_data_download,
     save_name = save_name
@@ -158,7 +158,7 @@ mod_pathology_server <- function(input, output, session) {
 
   # Plot
 
-  callModule(mod_download_plot_server,
+  shiny::callModule(mod_download_plot_server,
     "download_plot",
     plot = phenotype_plot,
     data = phenotype_data_download,
