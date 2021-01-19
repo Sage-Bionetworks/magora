@@ -221,9 +221,21 @@ ns_vs_ampad_fc <- ns_fc %>%
   ungroup() %>%
   select(-cor_test)
 
-# Save data ----
+# Process for plotting ----
 
-nanostring <- ns_vs_ampad_fc %>%
-  select(module, model, sex, age, estimate, p_value)
+# Filter significant results only, adjust format
+nanostring_significant <- ns_vs_ampad_fc %>%
+  select(module, model, sex, age, estimate, p_value) %>%
+  filter(p_value <= 0.05) %>%
+  select(module, model, sex, age, estimate, p_value) %>%
+  mutate(model_new = glue::glue("{model}_{sex}_{age}")) %>%
+  select(module, model_new, estimate) %>%
+  pivot_wider(names_from = module, values_from = estimate, values_fill = 0)
+
+# Convert to matrix for plotting
+nanostring <- as.matrix(nanostring_significant[ , -1])
+rownames(nanostring) <- nanostring_significant[["model_new"]]
+
+# Save data ----
 
 usethis::use_data(nanostring, overwrite = TRUE)
