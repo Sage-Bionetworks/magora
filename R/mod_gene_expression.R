@@ -13,11 +13,11 @@ mod_gene_expression_ui <- function(id) {
     title,
     shiny::fluidPage(
       class = "magora-page",
-    shiny::div(
-      shiny::h3(class = "tab-title", title),
-      shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
-      shiny::hr()
-    ),
+      shiny::div(
+        shiny::h3(class = "tab-title", title),
+        shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
+        shiny::hr()
+      ),
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
@@ -50,27 +50,27 @@ mod_gene_expression_ui <- function(id) {
           )
         ),
       ),
-    shiny::fluidRow(
-      class = "magora-row",
-      shiny::column(
-        width = 3,
-        offset = 9,
+      shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
-          width = 6,
-          mod_download_data_ui(ns("download_data"))
-        ),
+          width = 3,
+          offset = 9,
+          shiny::column(
+            width = 6,
+            mod_download_data_ui(ns("download_data"))
+          ),
 
+          shiny::column(
+            width = 6,
+            mod_download_plot_ui(ns("download_plot"))
+          )
+        ),
         shiny::column(
-          width = 6,
-          mod_download_plot_ui(ns("download_plot"))
+          width = 12,
+          shiny::uiOutput(ns("gene_expression_plot_ui"))
         )
-      ),
-      shiny::column(
-        width = 12,
-        shiny::uiOutput(ns("gene_expression_plot_ui"))
       )
     )
-  )
   )
 }
 
@@ -151,6 +151,13 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   # Save output ----
 
+  gene_expression_data_download <- reactive({
+    filtered_gene_expressions() %>%
+      dplyr::select(mouse_line, tissue, age, sex, gene, value) %>%
+      dplyr::arrange(mouse_line, tissue, age, sex) %>%
+      dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
+  })
+
   save_name <- reactive({
     download_name("gene_expression", input$gene, input$mouse_line, input$tissue)
   })
@@ -159,7 +166,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   callModule(mod_download_data_server,
     "download_data",
-    data = filtered_gene_expressions,
+    data = gene_expression_data_download,
     save_name = save_name
   )
 
@@ -168,7 +175,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   callModule(mod_download_plot_server,
     "download_plot",
     plot = gene_expression_plot,
-    data = filtered_gene_expressions,
+    data = gene_expression_data_download,
     save_name = save_name,
     plot_dims = gene_expression_plot_dims
   )

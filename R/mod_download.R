@@ -11,7 +11,7 @@
 #' @importFrom shiny NS tagList
 mod_download_data_ui <- function(id) {
   ns <- NS(id)
-  shiny::downloadButton(ns("download_data"), "Save data")
+  magora_download_button(ns("download_data"), "Save data")
 }
 
 #' Download Data Server Function
@@ -48,7 +48,7 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
 #' @importFrom shiny NS tagList
 mod_download_plot_ui <- function(id) {
   ns <- NS(id)
-  shiny::downloadButton(ns("download_plot"), "Save plot")
+  magora_download_button(ns("download_plot"), "Save plot")
 }
 
 #' Download Data Server Function
@@ -85,11 +85,13 @@ mod_download_plot_server <- function(input, output, session, plot, data, save_na
 
 # Utils ----
 
-magora_button <- function(outputId, label = "Download", class = NULL, ...) {
-  shiny::tags$a(id = outputId, class = paste(
-    "btn btn-default shiny-download-link",
-    class
-  ), href = "", target = "_blank", download = NA, NULL, label, ...)
+# Create a download button with a different icon
+magora_download_button <- function(outputId, label = "Download", class = NULL, ...) {
+  shiny::tags$a(
+    id = outputId,
+    class = paste("btn btn-default shiny-download-link", class),
+    href = "", target = "_blank", download = NA, shiny::icon("download", lib = "glyphicon"), label, ...
+  )
 }
 
 download_name <- function(data_type = c("phenotype", "gene_expression"), ...) {

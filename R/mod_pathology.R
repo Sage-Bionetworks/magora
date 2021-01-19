@@ -137,6 +137,13 @@ mod_pathology_server <- function(input, output, session) {
     )
   })
 
+  phenotype_data_download <- reactive({
+    filtered_phenotypes() %>%
+      dplyr::select(mouse_line, tissue, age, sex, phenotype, value) %>%
+      dplyr::arrange(mouse_line, tissue, age, sex) %>%
+      dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
+  })
+
   save_name <- reactive({
     download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
   })
@@ -145,7 +152,7 @@ mod_pathology_server <- function(input, output, session) {
 
   callModule(mod_download_data_server,
     "download_data",
-    data = filtered_phenotypes,
+    data = phenotype_data_download,
     save_name = save_name
   )
 
@@ -154,7 +161,7 @@ mod_pathology_server <- function(input, output, session) {
   callModule(mod_download_plot_server,
     "download_plot",
     plot = phenotype_plot,
-    data = filtered_phenotypes,
+    data = phenotype_data_download,
     save_name = save_name,
     plot_dims = phenotype_plot_dims
   )
