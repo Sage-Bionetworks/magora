@@ -10,7 +10,8 @@ app_ui <- function(request) {
       header = mod_header_ui(),
       mod_start_ui(),
       mod_pathology_ui("pathology"),
-      mod_gene_expression_ui("gene_expression")
+      mod_gene_expression_ui("gene_expression"),
+      mod_nanostring_ui("nanostring")
     )
   )
 }
