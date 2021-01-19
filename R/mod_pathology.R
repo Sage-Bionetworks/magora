@@ -12,17 +12,18 @@ mod_pathology_ui <- function(id) {
   shiny::tabPanel(
     title,
     shiny::div(
-      shiny::h3(class = "tab-title", title),
-      shiny::tags$p(class = "tab-description", "This explorer shows changes in pathological hallmarks associated with AD."),
-      shiny::tags$p(class = "tab-description", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
-      shiny::tags$p(class = "tab-description", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
-      shiny::hr()
-    ),
-    shiny::fluidRow(
       class = "magora-page",
+      shiny::div(
+        shiny::h3(class = "tab-title", title),
+        shiny::tags$p(class = "tab-description", "This explorer shows changes in pathological hallmarks associated with AD."),
+        shiny::tags$p(class = "tab-description", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
+        shiny::tags$p(class = "tab-description", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
+        shiny::hr()
+      ),
       shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
-          width = 3,
+          width = 4,
           shinyWidgets::pickerInput(
             ns("phenotype"),
             "Phenotype",
@@ -30,7 +31,7 @@ mod_pathology_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 3,
+          width = 4,
           shinyWidgets::pickerInput(
             ns("mouse_line"),
             "Mouse lines",
@@ -40,17 +41,28 @@ mod_pathology_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 3,
+          width = 4,
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
             choices = unique(magora::phenotypes[["tissue"]])
           )
-        ),
+        )
+      ),
+      shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
           width = 3,
-          mod_download_data_ui(ns("download_data")),
-          mod_download_plot_ui(ns("download_plot"))
+          offset = 9,
+          shiny::column(
+            width = 6,
+            mod_download_data_ui(ns("download_data"))
+          ),
+
+          shiny::column(
+            width = 6,
+            mod_download_plot_ui(ns("download_plot"))
+          )
         )
       ),
       shiny::column(

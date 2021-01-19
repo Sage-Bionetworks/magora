@@ -11,16 +11,17 @@ mod_gene_expression_ui <- function(id) {
 
   shiny::tabPanel(
     title,
+    shiny::fluidPage(
+      class = "magora-page",
     shiny::div(
       shiny::h3(class = "tab-title", title),
       shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
       shiny::hr()
     ),
-    shiny::fluidRow(
-      class = "magora-page",
       shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
-          width = 3,
+          width = 4,
           shinyWidgets::pickerInput(
             ns("gene"),
             "Gene",
@@ -31,7 +32,7 @@ mod_gene_expression_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 3,
+          width = 4,
           shinyWidgets::pickerInput(
             ns("mouse_line"),
             "Mouse lines",
@@ -41,16 +42,26 @@ mod_gene_expression_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 3,
+          width = 4,
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
             choices = magora::gene_expression_tissues
           )
         ),
+      ),
+    shiny::fluidRow(
+      class = "magora-row",
+      shiny::column(
+        width = 3,
+        offset = 9,
         shiny::column(
-          width = 3,
-          mod_download_data_ui(ns("download_data")),
+          width = 6,
+          mod_download_data_ui(ns("download_data"))
+        ),
+
+        shiny::column(
+          width = 6,
           mod_download_plot_ui(ns("download_plot"))
         )
       ),
@@ -59,6 +70,7 @@ mod_gene_expression_ui <- function(id) {
         shiny::uiOutput(ns("gene_expression_plot_ui"))
       )
     )
+  )
   )
 }
 

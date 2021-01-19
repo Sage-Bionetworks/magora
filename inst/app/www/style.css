@@ -83,6 +83,12 @@ body {
    padding-bottom: 24px;
 }
 
+/* Class "row" has margin-right and -left -15px - set to 0 to retain consistent widths with other divs */
+.magora-row {
+   margin-right: 0;
+   margin-left: 0;
+}
+
 /* ------ Start page elements ------ */
 .start-divider {
    height: 6px;
