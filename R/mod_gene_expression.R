@@ -15,7 +15,7 @@ mod_gene_expression_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
+        shiny::tags$p(class = "tab-description", "Please select a gene, mouse line, and tissue from the dropdown lists."),
         shiny::hr()
       ),
       shiny::fluidRow(

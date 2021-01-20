@@ -26,7 +26,6 @@ Imports:
     arrow,
     here,
     stringr,
-    shinipsum,
     readr,
     glue,
     fs,

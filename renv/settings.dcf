@@ -1,5 +1,5 @@
 external.libraries:
-ignored.packages: synapser, AnnotationDbi, EnsDb.Mmusculus.v79, magora
+ignored.packages: synapser, AnnotationDbi, EnsDb.Mmusculus.v79, limma, magora
 package.dependency.fields: Imports, Depends, LinkingTo
 snapshot.type: implicit
 use.cache: TRUE
