@@ -67,6 +67,7 @@ mod_gene_expression_ui <- function(id) {
         ),
         shiny::column(
           width = 12,
+          align = "center",
           shiny::uiOutput(ns("gene_expression_plot_ui"))
         )
       )
@@ -144,6 +145,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
       height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
+      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
     ),
     color = "#D3DCEF"
     )
