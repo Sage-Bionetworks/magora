@@ -67,9 +67,8 @@ mod_pathology_ui <- function(id) {
       ),
       shiny::column(
         width = 12,
-        shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot")),
-          color = "#D3DCEF"
-        )
+        align = "center",
+        shiny::uiOutput(ns("phenotype_plot_ui"))
       )
     )
   )
@@ -128,14 +127,29 @@ mod_pathology_server <- function(input, output, session) {
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot())
 
-  # Save output ----
-
   phenotype_plot_dims <- shiny::reactive({
     list(
       nrow = ceiling(length(input$mouse_line) / 2),
       ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
     )
   })
+
+  output$phenotype_plot_ui <- shiny::renderUI({
+
+    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
+    shiny::validate(
+      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+    )
+
+    shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
+      height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
+      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+    ),
+    color = "#D3DCEF"
+    )
+  })
+
+  # Save output ----
 
   phenotype_data_download <- shiny::reactive({
     filtered_phenotypes() %>%
