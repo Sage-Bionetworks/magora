@@ -24,4 +24,4 @@ magoraPage <- function(header, ...) {
     shiny::hr(),
     div_content
   )
-  }
+}

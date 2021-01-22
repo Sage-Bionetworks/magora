@@ -12,7 +12,7 @@ mod_header_ui <- function() {
           class = "magora-brand", href = "https://www.model-ad.org/",
           target = "_blank",
           title = "MODEL-AD",
-          tags$img(
+          shiny::tags$img(
             src = "www/model-ad-logo-1.jpg",
             width = "290px",
             height = "100px",

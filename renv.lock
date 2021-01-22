@@ -212,13 +212,6 @@
       "Repository": "CRAN",
       "Hash": "2b7d10581cc730804e9ed178c8374bd6"
     },
-    "data.table": {
-      "Package": "data.table",
-      "Version": "1.13.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "907b184e0fd13bc19154a8f322920015"
-    },
     "desc": {
       "Package": "desc",
       "Version": "1.2.0",
@@ -260,13 +253,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "4011f62581a34080e44105d4aa05a97f"
-    },
-    "dygraphs": {
-      "Package": "dygraphs",
-      "Version": "1.1.1.6",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "716869fffc16e282c118f8894e082a7d"
     },
     "ellipsis": {
       "Package": "ellipsis",
@@ -421,13 +407,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "2c0406b8e0a4c3516ab37be62da74e3c"
-    },
-    "hexbin": {
-      "Package": "hexbin",
-      "Version": "1.28.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "3d59212f2814d65dff517e6899813c58"
     },
     "highr": {
       "Package": "highr",
@@ -632,13 +611,6 @@
       "Repository": "CRAN",
       "Hash": "b6b150cd4709e0c0c9b5d51ac4376282"
     },
-    "plotly": {
-      "Package": "plotly",
-      "Version": "4.9.2.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "b08edf378e0e38959a6983e3d5902795"
-    },
     "praise": {
       "Package": "praise",
       "Version": "1.0.0",
@@ -812,18 +784,6 @@
       "Repository": "CRAN",
       "Hash": "308013098befe37484df72c39cf90d6e"
     },
-    "shinipsum": {
-      "Package": "shinipsum",
-      "Version": "0.0.0.9000",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "shinipsum",
-      "RemoteUsername": "Thinkr-open",
-      "RemoteRef": "master",
-      "RemoteSha": "36cf3a36034af3907948ebbcca8e2a00ce652a0d",
-      "Hash": "e3f5bf7074d5c060dfeee9e0701954d1"
-    },
     "shiny": {
       "Package": "shiny",
       "Version": "1.5.0",
@@ -844,6 +804,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "f39bb3c44a9b496723ec7e86f9a771d8"
+    },
+    "shinyjs": {
+      "Package": "shinyjs",
+      "Version": "2.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9ddfc91d4280eaa34c2103951538976f"
     },
     "snakecase": {
       "Package": "snakecase",
@@ -999,26 +966,12 @@
       "Repository": "CRAN",
       "Hash": "b8acdf8af494d9ec19ccb2481a9b11c2"
     },
-    "xts": {
-      "Package": "xts",
-      "Version": "0.12.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "ca2fd4ad8ef78cca3aa2b30f992798a8"
-    },
     "yaml": {
       "Package": "yaml",
       "Version": "2.2.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "2826c5d9efb0a88f657c7a679c7106db"
-    },
-    "zoo": {
-      "Package": "zoo",
-      "Version": "1.8-8",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "c2ea03282caa1f6972dc84fc5bf671cc"
     }
   }
 }

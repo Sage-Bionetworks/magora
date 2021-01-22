@@ -11,46 +11,65 @@ mod_gene_expression_ui <- function(id) {
 
   shiny::tabPanel(
     title,
-    shiny::div(
-      shiny::h3(class = "tab-title", title),
-      shiny::tags$p(class = "tab-description", shinipsum::random_text(nwords = 15)),
-      shiny::hr()
-    ),
-    shiny::fluidRow(
+    shiny::fluidPage(
       class = "magora-page",
-        shiny::fluidRow(
-          shiny::column(
-            width = 4,
-            shinyWidgets::pickerInput(
-              ns("gene"),
-              "Gene",
-              choices = magora::gene_expression_genes,
-              multiple = FALSE,
-              options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
-            )
-          ),
-          shiny::column(
-            width = 4,
-            shinyWidgets::pickerInput(
-              ns("mouse_line"),
-              "Mouse lines",
-              choices = magora::gene_expression_mouse_lines,
-              multiple = TRUE,
-              selected = c("5XFAD", "C57BL6J")
-            )
-          ),
-          shiny::column(
-            width = 4,
-            shinyWidgets::pickerInput(
-              ns("tissue"),
-              "Tissue",
-              choices = magora::gene_expression_tissues
-          )
-        )
+      shiny::div(
+        shiny::h3(class = "tab-title", title),
+        shiny::tags$p(class = "tab-description", "Please select a gene, mouse line, and tissue from the dropdown lists."),
+        shiny::hr()
       ),
-      shiny::column(
-        width = 12,
-        shiny::uiOutput(ns("gene_expression_plot_ui"))
+      shiny::fluidRow(
+        class = "magora-row",
+        shiny::column(
+          width = 4,
+          shinyWidgets::pickerInput(
+            ns("gene"),
+            "Gene",
+            choices = magora::gene_expression_genes,
+            multiple = FALSE,
+            selected = "0610007P14Rik",
+            options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
+          )
+        ),
+        shiny::column(
+          width = 4,
+          shinyWidgets::pickerInput(
+            ns("mouse_line"),
+            "Mouse lines",
+            choices = magora::gene_expression_mouse_lines,
+            multiple = TRUE,
+            selected = c("5XFAD", "C57BL6J")
+          )
+        ),
+        shiny::column(
+          width = 4,
+          shinyWidgets::pickerInput(
+            ns("tissue"),
+            "Tissue",
+            choices = magora::gene_expression_tissues
+          )
+        ),
+      ),
+      shiny::fluidRow(
+        class = "magora-row",
+        shiny::column(
+          width = 3,
+          offset = 9,
+          shiny::column(
+            width = 6,
+            mod_download_data_ui(ns("download_data"))
+          ),
+
+          shiny::column(
+            width = 6,
+            mod_download_plot_ui(ns("download_plot"))
+          )
+        ),
+        shiny::column(
+          width = 12,
+          align = "center",
+          shiny::uiOutput(ns("gene_expression_plot_ui"))
+        )
       )
     )
   )
@@ -61,6 +80,8 @@ mod_gene_expression_ui <- function(id) {
 #' @noRd
 mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
+
+  # Update tissue options based on gene expression selected ----
 
   shiny::observeEvent(input$mouse_line, {
     available_tissue <- unique(unlist(magora::gene_expressions_mouse_line_tissues[input$mouse_line]))
@@ -76,6 +97,8 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
   })
 
+  # Filter data based on inputs ----
+
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
       shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
@@ -89,10 +112,12 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
         tissue == input$tissue
       ) %>%
       dplyr::collect() %>%
-      dplyr::filter(mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
+      dplyr::filter(.data$mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
   })
 
-  output$gene_expression_plot <- shiny::renderPlot({
+  # Generate plot ----
+
+  gene_expression_plot <- shiny::reactive({
     shiny::validate(
       shiny::need(nrow(filtered_gene_expressions()) > 0, message = "There is no data for the selected combination.")
     )
@@ -100,6 +125,15 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     filtered_gene_expressions() %>%
       expand_mouse_line_factor_from_selection(input$mouse_line) %>%
       magora_boxplot(plot_type = "gene expression")
+  })
+
+  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot())
+
+  gene_expression_plot_dims <- shiny::reactive({
+    list(
+      nrow = ceiling(length(input$mouse_line) / 2),
+      ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
+    )
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
@@ -110,15 +144,41 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
-      height = paste0(ceiling(length(input$mouse_line) / 2) * 400, "px"),
+      height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
+      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
     ),
     color = "#D3DCEF"
     )
   })
+
+  # Save output ----
+
+  gene_expression_data_download <- shiny::reactive({
+    filtered_gene_expressions() %>%
+      dplyr::select(.data$mouse_line, .data$tissue, .data$age, .data$sex, .data$gene, .data$value) %>%
+      dplyr::arrange(.data$mouse_line, .data$tissue, .data$age, .data$sex) %>%
+      dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
+  })
+
+  save_name <- shiny::reactive({
+    download_name("gene_expression", input$gene, input$mouse_line, input$tissue)
+  })
+
+  # Data
+
+  shiny::callModule(mod_download_data_server,
+    "download_data",
+    data = gene_expression_data_download,
+    save_name = save_name
+  )
+
+  # Plot
+
+  shiny::callModule(mod_download_plot_server,
+    "download_plot",
+    plot = gene_expression_plot,
+    data = gene_expression_data_download,
+    save_name = save_name,
+    plot_dims = gene_expression_plot_dims
+  )
 }
-
-## To be copied in the UI
-# mod_gene_expression_ui("gene_expression")
-
-## To be copied in the server
-# callModule(mod_gene_expression_server, "gene_expression")

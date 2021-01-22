@@ -19,11 +19,11 @@ mod_start_ui <- function() {
       shiny::h3("Additional resources and data"),
       shiny::p("All MODEL-AD mouse models and data are cataloged in the AD Knowledge Portal."),
       shiny::p(
-      shiny::a("View all data", href = "https://adknowledgeportal.synapse.org/Explore/Programs/DetailsPage?Program=MODEL-AD", target = "_blank")
-    ),
-    shiny::p(
-      shiny::a("View mouse models", href = "https://adknowledgeportal.synapse.org/Explore/Experimental%20Tools?QueryWrapper0=%7B%22sql%22%3A%22select%20*%20from%20syn22219805%22%2C%22limit%22%3A25%2C%22offset%22%3A0%2C%22selectedFacets%22%3A%5B%7B%22concreteType%22%3A%22org.sagebionetworks.repo.model.table.FacetColumnValuesRequest%22%2C%22columnName%22%3A%22program%22%2C%22facetValues%22%3A%5B%22MODEL-AD%22%5D%7D%5D%7D", target = "_blank")
-    )
+        shiny::a("View all data", href = "https://adknowledgeportal.synapse.org/Explore/Programs/DetailsPage?Program=MODEL-AD", target = "_blank")
+      ),
+      shiny::p(
+        shiny::a("View mouse models", href = "https://adknowledgeportal.synapse.org/Explore/Experimental%20Tools?QueryWrapper0=%7B%22sql%22%3A%22select%20*%20from%20syn22219805%22%2C%22limit%22%3A25%2C%22offset%22%3A0%2C%22selectedFacets%22%3A%5B%7B%22concreteType%22%3A%22org.sagebionetworks.repo.model.table.FacetColumnValuesRequest%22%2C%22columnName%22%3A%22program%22%2C%22facetValues%22%3A%5B%22MODEL-AD%22%5D%7D%5D%7D", target = "_blank")
+      )
     )
   )
 }

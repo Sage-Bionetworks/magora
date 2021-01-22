@@ -4,6 +4,7 @@
 #' @noRd
 app_ui <- function(request) {
   shiny::tagList(
+    shinyjs::useShinyjs(),
     golem_add_external_resources(),
     magoraPage(
       header = mod_header_ui(),
