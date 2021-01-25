@@ -46,7 +46,6 @@ magora_corrplot <- function(data) {
 #' }
 single_age_corrplot <- function(data) {
   ggplot2::ggplot(data) +
-    # ggplot2::geom_tile(ggplot2::aes(y = model_sex, x = module), fill = "white", colour = "black") +
     ggplot2::geom_point(ggplot2::aes(x = module, y = model_sex, colour = estimate, size = abs(estimate))) +
     ggplot2::scale_x_discrete(position = "top", drop = FALSE) +
     ggplot2::scale_size(guide = "none", limits = c(0, 0.5)) +

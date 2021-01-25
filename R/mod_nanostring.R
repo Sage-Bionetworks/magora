@@ -21,7 +21,7 @@ mod_nanostring_ui <- function(id) {
       shiny::hr(),
       shiny::column(
         width = 12,
-        shiny::plotOutput(ns("nanostring_plot"))
+        shiny::plotOutput(ns("nanostring_plot"), width = "100%", height = "600px")
       )
     )
   )
@@ -34,7 +34,7 @@ mod_nanostring_server <- function(input, output, session) {
   ns <- session$ns
 
   output$nanostring_plot <- shiny::renderPlot(
-    magora_corrplot(magora::nanostring_for_plot)
+    magora_corrplot(magora::nanostring_for_plot), res = 96
   )
 }
 

@@ -126,7 +126,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
       magora_boxplot(plot_type = "gene expression")
   })
 
-  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot())
+  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot(), res = 96)
 
   gene_expression_plot_dims <- shiny::reactive({
     list(
