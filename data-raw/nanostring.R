@@ -6,7 +6,8 @@ library(tidyr)
 library(stringr)
 library(lubridate)
 library(purrr)
-library(synapser)
+library(forcats)
+# library(synapser)
 
 # Get data -----
 
@@ -203,7 +204,19 @@ ns_fc <- ns_variant_control %>%
   unnest(dea_res) %>%
   filter(!(is.na(gene) & is.na(ns_fc)))
 
+# What combinations were lost?
+
+ns_fc_models <- ns_fc %>%
+  distinct(model, sex, age)
+
+ns_variant_control %>%
+  anti_join(ns_fc_models, by = c("model", "sex", "age"))
+
+# Looks like they're all lost in cases where there's not repeated samples in the variant (all models have 1 sample for the control only, so seems that the variant is the issue) - from the link above/googling the error "No residual degrees of freedom in linear model fits" lots of notes about no variability
+
 # Correlation between log_fc of mouse models and AMPAD modules -----
+
+# Only have data for 4, 6, 9, and 12 months, so will not do same collapsing of ages as in the paper
 
 # Calculate correlation and p-value, joining by gene and sex, for each module, model, sex, and age
 
@@ -221,21 +234,28 @@ ns_vs_ampad_fc <- ns_fc %>%
   ungroup() %>%
   select(-cor_test)
 
-# Process for plotting ----
+# Process data for plotting ----
 
-# Filter significant results only, adjust format
-nanostring_significant <- ns_vs_ampad_fc %>%
-  select(module, model, sex, age, estimate, p_value) %>%
-  filter(p_value <= 0.05) %>%
-  select(module, model, sex, age, estimate, p_value) %>%
-  mutate(model_new = glue::glue("{model}_{sex}_{age}")) %>%
-  select(module, model_new, estimate) %>%
-  pivot_wider(names_from = module, values_from = estimate, values_fill = 0)
+# Filter significant results only (p < 0.05)
 
-# Convert to matrix for plotting
-nanostring <- as.matrix(nanostring_significant[ , -1])
-rownames(nanostring) <- nanostring_significant[["model_new"]]
+nanostring <- ns_vs_ampad_fc %>%
+  filter(p_value < 0.05) %>%
+  select(module, model, sex, age, estimate, p_value)
+
+# Create a version of the data for plotting - clean up naming, order factors, etc
+
+nanostring_for_plot <- nanostring  %>%
+  mutate(module = as_factor(module),
+         model_sex = glue::glue("{model} ({str_to_title(sex)})"),
+         age_months = glue::glue("{age} Months")) %>%
+  arrange(model_sex) %>%
+  mutate(model_sex = fct_inorder(model_sex),
+         model_sex = fct_rev(model_sex),) %>%
+  group_by(age_months) %>%
+  mutate(n_rows = n_distinct(model_sex)) %>%
+  ungroup()
 
 # Save data ----
 
 usethis::use_data(nanostring, overwrite = TRUE)
+usethis::use_data(nanostring_for_plot, overwrite = TRUE)

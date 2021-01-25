@@ -34,7 +34,7 @@ mod_nanostring_server <- function(input, output, session) {
   ns <- session$ns
 
   output$nanostring_plot <- shiny::renderPlot(
-    corrplot::corrplot(magora::nanostring, order = "original", method = "circle", cl.lim = c(-0.5, 0.5), insig = "blank", is.corr = FALSE, cl.length = 3, tl.col = "black")
+    magora_corrplot(magora::nanostring_for_plot)
   )
 }
 
