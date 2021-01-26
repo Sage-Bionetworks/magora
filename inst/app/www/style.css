@@ -52,8 +52,7 @@ body {
    font-weight: 300;
 }
 
-.intro {
-   font-family: "Lato", Sans-Serif;
+.magora-page > p {
    font-weight: 200;
    font-size: 19px;
 }
