@@ -11,7 +11,7 @@ mod_gene_expression_ui <- function(id) {
 
   shiny::tabPanel(
     title,
-    shiny::fluidPage(
+    shiny::div(
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
