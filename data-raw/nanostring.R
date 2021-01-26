@@ -191,7 +191,7 @@ differential_expression_analysis <- function(data_variant, data_control) {
   # fit_contrasts_ebayes <- eBayes(fit_contrasts)
   # log_fc <- topTable(fit_contrasts_ebayes, n = Inf, sort = "none")["logFC"]
 
-  log_fc <- fit_contrasts$coefficients[,1]
+  log_fc <- fit_contrasts$coefficients[, 1]
 
   data_variant_control %>%
     mutate(ns_fc = log_fc) %>%
@@ -244,15 +244,26 @@ nanostring <- ns_vs_ampad_fc %>%
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
-nanostring_for_plot <- nanostring  %>%
-  mutate(module = as_factor(module),
-         model_sex = glue::glue("{model} ({str_to_title(sex)})"),
-         age_months = glue::glue("{age} Months")) %>%
+nanostring_for_plot <- nanostring %>%
+  mutate(
+    age_months = case_when(
+      age %in% c(4, 5) ~ "4 - 5 Months",
+      age %in% 6:9 ~ "6 - 9 Months",
+      age %in% 10:14 ~ "10 - 14 Months"
+    ),
+    module = as_factor(module),
+    model_sex = glue::glue("{model} ({str_to_title(sex)})"),
+  ) %>%
   arrange(model_sex) %>%
-  mutate(model_sex = fct_inorder(model_sex),
-         model_sex = fct_rev(model_sex),) %>%
+  mutate(
+    model_sex = fct_inorder(model_sex),
+    model_sex = fct_rev(model_sex),
+  ) %>%
   group_by(age_months) %>%
-  mutate(n_rows = n_distinct(model_sex)) %>%
+  mutate(
+    n_rows = n_distinct(model_sex),
+    age = min(age)
+  ) %>%
   ungroup()
 
 # Save data ----
