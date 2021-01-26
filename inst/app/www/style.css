@@ -52,6 +52,8 @@ body {
    font-weight: 300;
 }
 
+/* Paragraph text that is a direct descendent of a div with class .magora-page */
+/* i.e. the text on the start page */
 .magora-page > p {
    font-weight: 200;
    font-size: 19px;
