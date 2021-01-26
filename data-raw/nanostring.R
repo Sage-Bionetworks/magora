@@ -185,21 +185,21 @@ differential_expression_analysis <- function(data_variant, data_control) {
     design
   )
   fit_contrasts <- contrasts.fit(fit, contrast)
-  fit_contrasts_ebayes <- eBayes(fit_contrasts)
-  log_fc <- topTable(fit_contrasts_ebayes, n = Inf, sort = "none")["logFC"]
+  # eBayes is not necessary - just shrinks the standard errors, but does not affect logFC
+  # Also fails when there is not more than one sample, which we have some of
+  # The coefficients are identical with or without eBayes - so skip this step
+  # fit_contrasts_ebayes <- eBayes(fit_contrasts)
+  # log_fc <- topTable(fit_contrasts_ebayes, n = Inf, sort = "none")["logFC"]
+
+  log_fc <- fit_contrasts$coefficients[,1]
 
   data_variant_control %>%
-    bind_cols(log_fc) %>%
-    select(gene, ns_fc = logFC)
+    mutate(ns_fc = log_fc) %>%
+    select(gene, ns_fc)
 }
 
-# Will fail on cases where there's not repeated samples: https://support.bioconductor.org/p/59168/
-# Run function with possibly()
-
-possible_differential_expression_analysis <- possibly(differential_expression_analysis, otherwise = tibble(gene = NA, ns_fc = NA))
-
 ns_fc <- ns_variant_control %>%
-  mutate(dea_res = map2(data_variant, data_control, possible_differential_expression_analysis)) %>%
+  mutate(dea_res = map2(data_variant, data_control, differential_expression_analysis)) %>%
   select(-data_variant, -data_control) %>%
   unnest(dea_res) %>%
   filter(!(is.na(gene) & is.na(ns_fc)))
@@ -212,7 +212,7 @@ ns_fc_models <- ns_fc %>%
 ns_variant_control %>%
   anti_join(ns_fc_models, by = c("model", "sex", "age"))
 
-# Looks like they're all lost in cases where there's not repeated samples in the variant (all models have 1 sample for the control only, so seems that the variant is the issue) - from the link above/googling the error "No residual degrees of freedom in linear model fits" lots of notes about no variability
+# None!
 
 # Correlation between log_fc of mouse models and AMPAD modules -----
 
