@@ -116,12 +116,10 @@ ampad_modules <- ampad_modules_raw %>%
 
 ## AMPA-D Modules logFC ----
 
-# Filter out sex "all" to match on sex
 ampad_fc <- ampad_fc_raw %>%
   as_tibble() %>%
   select(tissue = Tissue, gene = hgnc_symbol, sex = Sex, ampad_fc = logFC) %>%
-  mutate(sex = tolower(sex)) %>%
-  filter(sex != "all")
+  mutate(sex = tolower(sex))
 
 # Combine with modules so correlation can be done per module
 ampad_modules_fc <- ampad_modules %>%
@@ -216,8 +214,6 @@ ns_variant_control %>%
 
 # Correlation between log_fc of mouse models and AMPAD modules -----
 
-# Only have data for 4, 6, 9, and 12 months, so will not do same collapsing of ages as in the paper
-
 # Calculate correlation and p-value, joining by gene and sex, for each module, model, sex, and age
 
 ns_vs_ampad_fc <- ns_fc %>%
@@ -225,7 +221,7 @@ ns_vs_ampad_fc <- ns_fc %>%
   inner_join(ampad_modules_fc, by = c("gene", "sex")) %>%
   select(module, model, sex, age, gene, ns_fc, ampad_fc) %>%
   group_by(module, model, sex, age) %>%
-  nest() %>%
+  nest(data = c(gene, ns_fc, ampad_fc)) %>%
   mutate(
     cor_test = map(data, ~ cor.test(.x[["ns_fc"]], .x[["ampad_fc"]], method = "pearson")),
     estimate = map_dbl(cor_test, "estimate"),
@@ -244,13 +240,27 @@ nanostring <- ns_vs_ampad_fc %>%
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
-nanostring_for_plot <- nanostring %>%
+# Check that there would be no overlapping by combining ages into groups - e.g. that the same module, model, and sex does not have multiple results in a single age grouping (like results for both 4 and 5 months)
+
+nanostring_age_group <- nanostring %>%
   mutate(
-    age_months = case_when(
+    age_group = case_when(
       age %in% c(4, 5) ~ "4 - 5 Months",
       age %in% 6:9 ~ "6 - 9 Months",
       age %in% 10:14 ~ "10 - 14 Months"
-    ),
+    ))
+
+nanostring_age_group %>%
+  add_count(module, model, sex, age_group) %>%
+  filter(n > 1) %>%
+  arrange(module, model, sex, age_group)
+
+# There is some overlap - how to handle? Should age groups have been collapsed prior to calculating the correlation?
+
+# TODO
+
+nanostring_for_plot <- nanostring_age_group %>%
+  mutate(
     module = as_factor(module),
     model_sex = glue::glue("{model} ({str_to_title(sex)})"),
   ) %>%
