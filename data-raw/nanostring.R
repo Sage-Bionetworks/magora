@@ -47,6 +47,50 @@ ampad_modules_raw <- map_dfr(modules, ~ get(.x)[["df"]]) %>%
 
 rm(list = modules)
 
+## Module clusters ----
+
+# From the paper: TODO LINK
+
+module_clusters <- tribble(
+  ~cluster, ~module,
+  "Consensus Cluster A (ECM organization)", "TCXblue",
+  "Consensus Cluster A (ECM organization)", "PHGyellow",
+  "Consensus Cluster A (ECM organization)", "IFGyellow",
+
+  "Consensus Cluster B (Immune system)", "DLPFCblue",
+  "Consensus Cluster B (Immune system)", "CBEturquoise",
+  "Consensus Cluster B (Immune system)", "STGblue",
+  "Consensus Cluster B (Immune system)", "PHGturquoise",
+  "Consensus Cluster B (Immune system)", "IFGturquoise",
+  "Consensus Cluster B (Immune system)", "TCXturquoise",
+  "Consensus Cluster B (Immune system)", "FPturquoise",
+
+  "Consensus Cluster C (Neuronal system)", "IFGbrown",
+  "Consensus Cluster C (Neuronal system)", "STGbrown",
+  "Consensus Cluster C (Neuronal system)", "DLPFCyellow",
+  "Consensus Cluster C (Neuronal system)", "TCXgreen",
+  "Consensus Cluster C (Neuronal system)", "FPyellow",
+  "Consensus Cluster C (Neuronal system)", "CBEyellow",
+  "Consensus Cluster C (Neuronal system)", "PHGbrown",
+
+  "Consensus Cluster D (Cell Cycle, NMD)", "DLPFCbrown",
+  "Consensus Cluster D (Cell Cycle, NMD)", "STGyellow",
+  "Consensus Cluster D (Cell Cycle, NMD)", "PHGgreen",
+  "Consensus Cluster D (Cell Cycle, NMD)", "CBEbrown",
+  "Consensus Cluster D (Cell Cycle, NMD)", "TCXyellow",
+  "Consensus Cluster D (Cell Cycle, NMD)", "IFGblue",
+  "Consensus Cluster D (Cell Cycle, NMD)", "FPblue",
+
+  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "FPbrown",
+  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "CBEblue",
+  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "DLPFCturquoise",
+  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "TCXbrown",
+  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "STGturquoise",
+  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "PHGblue"
+) %>%
+  mutate(cluster = fct_inorder(cluster))
+
+
 ## AMPA-D Modules logFC (human data) ----
 
 # synGet("syn14237651", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
@@ -232,11 +276,12 @@ ns_vs_ampad_fc <- ns_fc %>%
 
 # Process data for plotting ----
 
-# Filter significant results only (p < 0.05)
+# Flag for significant results, add cluster information to modules
 
 nanostring <- ns_vs_ampad_fc %>%
-  filter(p_value < 0.05) %>%
-  select(module, model, sex, age, estimate, p_value)
+  mutate(significant = p_value < 0.05) %>%
+  left_join(module_clusters, by = "module") %>%
+  select(cluster, module, model, sex, age, estimate, p_value, significant)
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
@@ -248,14 +293,15 @@ nanostring_age_group <- nanostring %>%
       age %in% c(4, 5) ~ "4 - 5 Months",
       age %in% 6:9 ~ "6 - 9 Months",
       age %in% 10:14 ~ "10 - 14 Months"
-    ))
+    )
+  )
 
 nanostring_age_group %>%
   add_count(module, model, sex, age_group) %>%
   filter(n > 1) %>%
   arrange(module, model, sex, age_group)
 
-# There is some overlap - how to handle? Should age groups have been collapsed prior to calculating the correlation?
+# There is overlap - how to handle? Should age groups have been collapsed prior to calculating the correlation?
 
 # TODO
 
@@ -269,7 +315,7 @@ nanostring_for_plot <- nanostring_age_group %>%
     model_sex = fct_inorder(model_sex),
     model_sex = fct_rev(model_sex),
   ) %>%
-  group_by(age_months) %>%
+  group_by(age_group) %>%
   mutate(
     n_rows = n_distinct(model_sex),
     age = min(age)
