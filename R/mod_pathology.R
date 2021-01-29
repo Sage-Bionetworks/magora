@@ -15,9 +15,7 @@ mod_pathology_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        shiny::tags$p(class = "tab-description", "This explorer shows changes in pathological hallmarks associated with AD."),
-        shiny::tags$p(class = "tab-description", "Measurements include amyloid beta (Ab) levels in brain and plasma as well as counts of neurons and glia from immunofluorescent stains."),
-        shiny::tags$p(class = "tab-description", "Please select a phenotype, mouse line, and tissue from the dropdown lists."),
+        shiny::includeMarkdown(app_sys("app", "www", "pathology_content.md")),
         shiny::hr()
       ),
       shiny::fluidRow(

@@ -52,8 +52,9 @@ body {
    font-weight: 300;
 }
 
-.intro {
-   font-family: "Lato", Sans-Serif;
+/* Paragraph text that is a direct descendent of a div with class .magora-page */
+/* i.e. the text on the start page */
+.magora-page > p {
    font-weight: 200;
    font-size: 19px;
 }
@@ -122,14 +123,7 @@ body {
 /* ------ Other page elements ------ */
 
 .tab-title {
-   text-align: center;
    color: #4D4D4D;
-}
-
-.tab-description {
-   text-align: center;
-   padding-left: 4em;
-   padding-right: 4em;
 }
 
 .float {
