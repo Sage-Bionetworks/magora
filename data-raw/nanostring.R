@@ -258,13 +258,30 @@ ns_variant_control %>%
 
 # Correlation between log_fc of mouse models and AMPAD modules -----
 
+# Collapse age groups at this point, and do correlation *within* each age group
+# Order age groups factor level based on min age for plotting
+
+ns_fc <- ns_fc %>%
+  mutate(
+    age_group = case_when(
+      age %in% c(4, 5) ~ "4 - 5 Months",
+      age %in% 6:9 ~ "6 - 9 Months",
+      age %in% 10:14 ~ "10 - 14 Months"
+    )
+  ) %>%
+  group_by(age_group) %>%
+  mutate(min_age = min(age)) %>%
+  ungroup() %>%
+  mutate(age_group = fct_reorder(age_group, min_age, .fun = min)) %>%
+  select(-min_age)
+
 # Calculate correlation and p-value, joining by gene and sex, for each module, model, sex, and age
 
 ns_vs_ampad_fc <- ns_fc %>%
   mutate(gene = toupper(gene)) %>%
   inner_join(ampad_modules_fc, by = c("gene", "sex")) %>%
-  select(module, model, sex, age, gene, ns_fc, ampad_fc) %>%
-  group_by(module, model, sex, age) %>%
+  select(module, model, sex, age_group, gene, ns_fc, ampad_fc) %>%
+  group_by(module, model, sex, age_group) %>%
   nest(data = c(gene, ns_fc, ampad_fc)) %>%
   mutate(
     cor_test = map(data, ~ cor.test(.x[["ns_fc"]], .x[["ampad_fc"]], method = "pearson")),
@@ -281,33 +298,14 @@ ns_vs_ampad_fc <- ns_fc %>%
 nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
-  select(cluster, module, model, sex, age, estimate, p_value, significant)
+  select(cluster, module, model, sex, age_group, estimate, p_value, significant)
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
-# Check that there would be no overlapping by combining ages into groups - e.g. that the same module, model, and sex does not have multiple results in a single age grouping (like results for both 4 and 5 months)
-
-nanostring_age_group <- nanostring %>%
+nanostring_for_plot <- nanostring %>%
+  arrange(cluster) %>%
   mutate(
-    age_group = case_when(
-      age %in% c(4, 5) ~ "4 - 5 Months",
-      age %in% 6:9 ~ "6 - 9 Months",
-      age %in% 10:14 ~ "10 - 14 Months"
-    )
-  )
-
-nanostring_age_group %>%
-  add_count(module, model, sex, age_group) %>%
-  filter(n > 1) %>%
-  arrange(module, model, sex, age_group)
-
-# There is overlap - how to handle? Should age groups have been collapsed prior to calculating the correlation?
-
-# TODO
-
-nanostring_for_plot <- nanostring_age_group %>%
-  mutate(
-    module = as_factor(module),
+    module = fct_inorder(module),
     model_sex = glue::glue("{model} ({str_to_title(sex)})"),
   ) %>%
   arrange(model_sex) %>%
@@ -317,8 +315,7 @@ nanostring_for_plot <- nanostring_age_group %>%
   ) %>%
   group_by(age_group) %>%
   mutate(
-    n_rows = n_distinct(model_sex),
-    age = min(age)
+    n_rows = n_distinct(model_sex)
   ) %>%
   ungroup()
 
