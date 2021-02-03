@@ -105,14 +105,13 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
 
     gene_expressions %>%
-      # Cannot use .data pronoun because it is meaningful (for something else) in Arrow
       dplyr::filter(
-        partition == tolower(stringr::str_sub(input$gene, 1, 1)),
-        gene == input$gene,
-        tissue == input$tissue
+        .data$partition == tolower(stringr::str_sub(input$gene, 1, 1)),
+        .data$gene == input$gene,
+        .data$tissue == input$tissue,
+        .data$mouse_line %in% input$mouse_line
       ) %>%
-      dplyr::collect() %>%
-      dplyr::filter(.data$mouse_line %in% input$mouse_line) # Arrow seems to have issue with %in%, so collect, then do the last filter
+      dplyr::collect()
   })
 
   # Generate plot ----
