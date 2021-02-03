@@ -112,7 +112,8 @@ individual_metadata <- individual_metadata %>%
       str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
       str_ends(genotype, "_noncarrier") ~ genotype_background
     ),
-    mouse_line = as_factor(mouse_line)
+    mouse_line = as_factor(mouse_line),
+    tissue = str_to_title(tissue)
   ) %>%
   select(-date_birth, -date_death, -age_interval, -genotype, -genotype_background, -age) %>%
   rename(age = age_factor)
