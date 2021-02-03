@@ -117,11 +117,13 @@ individual_metadata <- individual_metadata %>%
   select(-date_birth, -date_death, -age_interval, -genotype, -genotype_background, -age) %>%
   rename(age = age_factor)
 
-## Combine data
+## Combine data ----
+
+# For now, use inner_join() so that we only end up with samples that also have metadata
 
 phenotypes <- phenotype_data %>%
-  left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
-  left_join(individual_metadata, by = "individual_id") %>%
+  inner_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  inner_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_line, sex, age, tissue, phenotype, value)
 
 # Save data ----
