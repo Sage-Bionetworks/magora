@@ -1,56 +1,136 @@
-library(readxl)
+library(readr)
 library(dplyr)
 library(tidyr)
 library(janitor)
 library(forcats)
+library(fs)
+library(purrr)
+library(stringr)
+library(lubridate)
 
-phenotypes_raw <- read_excel(here::here("data-raw", "5xfAD Phenotyping Sheet - Finalized - 06-17-2020 - JP.xlsx"),
-  sheet = "5xfAD 4-18mo phenotype sheet "
-)
+# Download and read phenotype data ----
 
-phenotypes <- phenotypes_raw %>%
-  remove_empty("rows") %>%
-  mutate(
-    Age = gsub("mon", "", Age),
-    Age = as.numeric(Age)
-  ) %>%
-  arrange(Age) %>%
-  mutate(
-    Age = as_factor(Age),
-    tissue = stringr::str_to_title(Tissue),
-    sex = as_factor(Sex)
-  ) %>%
-  separate(`Mouse Line`, into = c("experiment", "mouse_line_group"), fill = "left", remove = FALSE) %>%
-  mutate(
-    mouse_line_type = ifelse(`Mouse Line` == mouse_line_group, 1, 2)
+# Read file that contains the phenotype name, synapse ID, field to use, and values of Stain to filter for
+phenotype_files <- read_csv(here::here("data-raw", "pathology", "5xfad_data_sources.csv"))
+
+# The code below is commented out because it downloads the files - if they have already been downloaded, no need to run this.
+
+# library(synapser)
+# synLogin()
+#
+# # Download data
+#
+# phenotype_distinct_files <- phenotype_files %>%
+#   distinct(syn_id, version)
+#
+# walk2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local"))
+
+# Function to read in, filter + clean data, and return relevant fields
+read_clean_phenotype <- function(field, stain_filter, file) {
+  res <- readr::read_csv(here::here("data-raw", "pathology", file), na = c("N/A", ""))
+
+  res <- res %>%
+    janitor::clean_names()
+
+  if (!is.na(stain_filter)) {
+    res <- res %>%
+      dplyr::filter(stain == stain_filter)
+  }
+
+  res %>%
+    dplyr::select(tidyselect::all_of(c("individual_id", "specimen_id", value = janitor::make_clean_names(field)))) %>%
+    dplyr::mutate_all(as.character) %>%
+    janitor::remove_empty("rows")
+}
+
+# Read in data
+
+phenotype_data <- phenotype_files %>%
+  mutate(data = pmap(list(field, stain_filter, file), read_clean_phenotype)) %>%
+  select(syn_id, phenotype, data) %>%
+  unnest(cols = data) %>%
+  mutate(value = as.numeric(value)) %>%
+  filter(!is.na(value))
+
+# Metadata ----
+
+## Biospecimen metadata ----
+
+# synGet("syn18876530", version = 6, downloadLocation = here::here("data-raw", "pathology"))
+
+biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_biospecimen_metadata.csv")) %>%
+  mutate(individualID = as.character(individualID)) %>%
+  clean_names() %>%
+  select(individual_id, specimen_id, tissue)
+
+## Individual metadata ----
+
+# synGet("syn18880070", version = 6, downloadLocation = here::here("data-raw", "pathology"))
+
+individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_individual_metadata.csv")) %>%
+  mutate(individualID = as.character(individualID)) %>%
+  clean_names() %>%
+  select(individual_id, sex, genotype, genotype_background, date_birth, date_death)
+
+## Check missing IDs ----
+
+# Check which IDs are missing from metadata
+phenotype_data %>%
+  anti_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  distinct(individual_id, specimen_id) %>%
+  write_csv(here::here("data-raw", "pathology", "mice_missing_from_biospecimen_metadata.csv"))
+
+phenotype_data %>%
+  anti_join(individual_metadata, by = "individual_id") %>%
+  distinct(individual_id) %>%
+  write_csv(here::here("data-raw", "pathology", "mice_missing_from_individual_metadata.csv"))
+
+# Clean data ----
+
+## Derive age, mouse line, etc from individual metadata
+
+# Some different date formats to contend with: excel (e.g. 43154), mdy (e.g. 10/1/18), and ydm (e.g. 2019-29-01)
+
+clean_date <- function(date) {
+  case_when(
+    nchar(date) == 5 ~ excel_numeric_to_date(as.numeric(date)),
+    str_detect(date, "-") ~ ydm(date),
+    TRUE ~ mdy(date)
   )
+}
 
-mouse_line_order <- phenotypes %>%
-  arrange(mouse_line_group) %>%
-  distinct(mouse_line_group) %>%
-  mutate(mouse_line_order = row_number())
-
-phenotypes <- phenotypes %>%
-  left_join(mouse_line_order, by = "mouse_line_group") %>%
+individual_metadata <- individual_metadata %>%
   mutate(
-    mouse_line_factor = as.numeric(paste0(mouse_line_order, mouse_line_type)),
-    `Mouse Line` = case_when(
-      `Mouse Line` == "BL6" ~ "C57BL6J",
-      `Mouse Line` == "5XfAD;BL6" ~ "5XFAD"
+    sex = str_to_title(sex),
+    sex = as_factor(sex),
+    across(c(date_birth, date_death), clean_date),
+    age_interval = interval(date_birth, date_death),
+    age = round(age_interval / months(1)),
+    age_factor = as_factor(age),
+    age_factor = fct_reorder(age_factor, age),
+    mouse_line = case_when(
+      str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
+      str_ends(genotype, "_noncarrier") ~ genotype_background
     ),
-    `Mouse Line` = fct_reorder(`Mouse Line`, mouse_line_factor)
+    mouse_line = as_factor(mouse_line)
   ) %>%
-  pivot_longer(
-    cols = c(`Plaque #`:`Plasma AB 42`),
-    names_to = "phenotype",
-    values_to = "value"
-  ) %>%
-  filter(!is.na(value)) %>%
-  select(mouse_id = `mouse ID`, tissue, sex, mouse_line = `Mouse Line`, mouse_line_group, age = Age, phenotype, value)
+  select(-date_birth, -date_death, -age_interval, -genotype, -genotype_background, -age) %>%
+  rename(age = age_factor)
+
+## Combine data
+
+phenotypes <- phenotype_data %>%
+  left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  left_join(individual_metadata, by = "individual_id") %>%
+  select(individual_id, specimen_id, mouse_line, sex, age, tissue, phenotype, value)
+
+# Save data ----
 
 usethis::use_data(phenotypes, overwrite = TRUE)
 
+# Separately save tissue available for each phenotype, for easily changing inputs available
+
 phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
-  lapply(function(x) distinct(x, tissue) %>% pull(tissue))
+  map(function(x) distinct(x, tissue) %>% pull(tissue))
 
 usethis::use_data(phenotype_tissue, overwrite = TRUE)
