@@ -23,7 +23,7 @@ Imports:
     rlang,
     pkgload,
     shinycssloaders,
-    arrow,
+    arrow (>= 3.0.0),
     here,
     stringr,
     readr,
