@@ -46,7 +46,7 @@ mod_nanostring_ui <- function(id) {
 mod_nanostring_server <- function(input, output, session) {
   ns <- session$ns
 
-  nanostring_plot <- reactive({
+  nanostring_plot <- shiny::reactive({
     magora_corrplot(magora::nanostring_for_plot)
   })
 

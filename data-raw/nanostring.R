@@ -34,7 +34,7 @@ nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostri
 nanostring_individual_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_individual_metadata.csv")) %>%
   remove_empty(c("rows", "cols"))
 
-## AMPA-D Modules -----
+## AMP-AD Modules -----
 
 # synGet("syn21483261", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
 
@@ -88,7 +88,7 @@ module_clusters <- cluster_a %>%
   bind_rows(cluster_e) %>%
   mutate(cluster_label = fct_inorder(cluster_label))
 
-## AMPA-D Modules logFC (human data) ----
+## AMP-AD Modules logFC (human data) ----
 
 # synGet("syn14237651", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
 
@@ -150,12 +150,12 @@ nanostring_with_metadata <- nanostring_with_metadata %>%
     )
   )
 
-## AMPA-D Modules ----
+## AMP-AD Modules ----
 
 ampad_modules <- ampad_modules_raw %>%
   distinct(tissue = brainRegion, module = Module, gene = external_gene_name)
 
-## AMPA-D Modules logFC ----
+## AMP-AD Modules logFC ----
 
 ampad_fc <- ampad_fc_raw %>%
   as_tibble() %>%

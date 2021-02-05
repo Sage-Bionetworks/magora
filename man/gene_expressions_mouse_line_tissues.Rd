@@ -3,7 +3,7 @@
 \docType{data}
 \name{gene_expressions_mouse_line_tissues}
 \alias{gene_expressions_mouse_line_tissues}
-\title{Gene expressions mouse line itssues}
+\title{Gene expressions mouse line tissues}
 \format{
 An object of class \code{list} of length 3.
 }
