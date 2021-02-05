@@ -316,6 +316,9 @@ nanostring_for_plot <- nanostring %>%
   ) %>%
   ungroup()
 
+nanostring <- nanostring %>%
+  select(-cluster_label)
+
 # Save data ----
 
 usethis::use_data(nanostring, overwrite = TRUE)

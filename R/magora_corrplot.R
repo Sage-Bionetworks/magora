@@ -15,13 +15,14 @@ magora_corrplot <- function(data) {
     ggplot2::scale_color_gradient2(limits = c(-0.5, 0.5), breaks = c(-0.5, 0, 0.5), low = "#2166AC", high = "#B2182B", name = "Correlation", guide = ggplot2::guide_colorbar(ticks = FALSE)) +
     ggplot2::labs(x = NULL, y = NULL) +
     ggplot2::facet_grid(rows = dplyr::vars(age_group), cols = dplyr::vars(cluster_label), scales = "free", space = "free") +
-    sagethemes::theme_sage() +
+    sagethemes::theme_sage(base_size = 10) +
     ggplot2::theme(
       strip.text.x = ggplot2::element_text(size = 7),
       axis.ticks = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 0),
       panel.background = ggplot2::element_blank(),
       plot.title.position = "plot",
-      panel.grid = ggplot2::element_blank()
+      panel.grid = ggplot2::element_blank(),
+      legend.position = "bottom"
     )
 }

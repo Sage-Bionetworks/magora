@@ -34,7 +34,7 @@ mod_nanostring_ui <- function(id) {
       ),
       shiny::column(
         width = 12,
-        shiny::plotOutput(ns("nanostring_plot"), width = "100%", height = "800px")
+        shiny::plotOutput(ns("nanostring_plot"), width = "1000px", height = "666px")
       )
     )
   )
@@ -60,8 +60,9 @@ mod_nanostring_server <- function(input, output, session) {
   nanostring_name <- shiny::reactive(
     "nanostring"
   )
+  # Save size will be height = nrow * 5, width = ncol * 5
   nanostring_plot_dims <- shiny::reactive({
-    list(nrow = 1.5, ncol = 2)
+    list(nrow = 1.5, ncol = 2.5)
   })
 
   # Data
