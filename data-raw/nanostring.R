@@ -309,12 +309,7 @@ nanostring_for_plot <- nanostring %>%
   mutate(
     model_sex = fct_inorder(model_sex),
     model_sex = fct_rev(model_sex),
-  ) %>%
-  group_by(age_group) %>%
-  mutate(
-    n_rows = n_distinct(model_sex)
-  ) %>%
-  ungroup()
+  )
 
 nanostring <- nanostring %>%
   select(-cluster_label)
