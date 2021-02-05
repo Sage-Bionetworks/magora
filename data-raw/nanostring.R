@@ -49,47 +49,44 @@ rm(list = modules)
 
 ## Module clusters ----
 
-# From the paper: TODO LINK
+# From the paper: https://molecularneurodegeneration.biomedcentral.com/articles/10.1186/s13024-020-00412-5
 
-module_clusters <- tribble(
-  ~cluster, ~module,
-  "Consensus Cluster A (ECM organization)", "TCXblue",
-  "Consensus Cluster A (ECM organization)", "PHGyellow",
-  "Consensus Cluster A (ECM organization)", "IFGyellow",
+cluster_a <- tibble(
+  module = c("TCXblue", "PHGyellow", "IFGyellow"),
+  cluster = "Consensus Cluster A (ECM organization)",
+  cluster_label = "Consensus Cluster A\n(ECM organization)"
+)
 
-  "Consensus Cluster B (Immune system)", "DLPFCblue",
-  "Consensus Cluster B (Immune system)", "CBEturquoise",
-  "Consensus Cluster B (Immune system)", "STGblue",
-  "Consensus Cluster B (Immune system)", "PHGturquoise",
-  "Consensus Cluster B (Immune system)", "IFGturquoise",
-  "Consensus Cluster B (Immune system)", "TCXturquoise",
-  "Consensus Cluster B (Immune system)", "FPturquoise",
+cluster_b <- tibble(
+  module = c("DLPFCblue", "CBEturquoise", "STGblue", "PHGturquoise", "IFGturquoise", "TCXturquoise", "FPturquoise"),
+  cluster = "Consensus Cluster B (Immune system)",
+  cluster_label = "Consensus Cluster B\n(Immune system)"
+)
 
-  "Consensus Cluster C (Neuronal system)", "IFGbrown",
-  "Consensus Cluster C (Neuronal system)", "STGbrown",
-  "Consensus Cluster C (Neuronal system)", "DLPFCyellow",
-  "Consensus Cluster C (Neuronal system)", "TCXgreen",
-  "Consensus Cluster C (Neuronal system)", "FPyellow",
-  "Consensus Cluster C (Neuronal system)", "CBEyellow",
-  "Consensus Cluster C (Neuronal system)", "PHGbrown",
+cluster_c <- tibble(
+  module = c("IFGbrown", "STGbrown", "DLPFCyellow", "TCXgreen", "FPyellow", "CBEyellow", "PHGbrown"),
+  cluster = "Consensus Cluster C (Neuronal system)",
+  cluster_label = "Consensus Cluster C\n(Neuronal system)"
+)
 
-  "Consensus Cluster D (Cell Cycle, NMD)", "DLPFCbrown",
-  "Consensus Cluster D (Cell Cycle, NMD)", "STGyellow",
-  "Consensus Cluster D (Cell Cycle, NMD)", "PHGgreen",
-  "Consensus Cluster D (Cell Cycle, NMD)", "CBEbrown",
-  "Consensus Cluster D (Cell Cycle, NMD)", "TCXyellow",
-  "Consensus Cluster D (Cell Cycle, NMD)", "IFGblue",
-  "Consensus Cluster D (Cell Cycle, NMD)", "FPblue",
+cluster_d <- tibble(
+  module = c("DLPFCbrown", "STGyellow", "PHGgreen", "CBEbrown", "TCXyellow", "IFGblue", "FPblue"),
+  cluster = "Consensus Cluster D (Cell Cycle, NMD)",
+  cluster_label = "Consensus Cluster D\n(Cell Cycle, NMD)"
+)
 
-  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "FPbrown",
-  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "CBEblue",
-  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "DLPFCturquoise",
-  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "TCXbrown",
-  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "STGturquoise",
-  "Consensus Cluster E (Organelle Biogensis, Cellular stress response)", "PHGblue"
-) %>%
-  mutate(cluster = fct_inorder(cluster))
+cluster_e <- tibble(
+  module = c("FPbrown", "CBEblue", "DLPFCturquoise", "TCXbrown", "STGturquoise", "PHGblue"),
+  cluster = "Consensus Cluster E (Organelle Biogensis, Cellular stress response)",
+  cluster_label = "Consensus Cluster E\n(Organelle Biogensis,\nCellular stress response)"
+)
 
+module_clusters <- cluster_a %>%
+  bind_rows(cluster_b) %>%
+  bind_rows(cluster_c) %>%
+  bind_rows(cluster_d) %>%
+  bind_rows(cluster_e) %>%
+  mutate(cluster_label = fct_inorder(cluster_label))
 
 ## AMPA-D Modules logFC (human data) ----
 
@@ -298,7 +295,7 @@ ns_vs_ampad_fc <- ns_fc %>%
 nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
-  select(cluster, module, model, sex, age_group, estimate, p_value, significant)
+  select(cluster, cluster_label, module, model, sex, age_group, estimate, p_value, significant)
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 

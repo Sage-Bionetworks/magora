@@ -7,13 +7,6 @@
 #' @return A ggplot2 object.
 magora_corrplot <- function(data) {
 
-  data <- data %>%
-    dplyr::mutate(cluster_label = as.character(cluster),
-                  cluster_label = dplyr::case_when(stringr::str_detect(cluster_label, "A \\(|B \\(|C \\(|D \\(") ~ stringr::str_replace(cluster_label, " \\(", "\n\\("),
-                                                  TRUE ~ "Consensus Cluster E\n(Organelle Biogensis,\nCellular stress response)"),
-                  cluster_label = forcats::fct_reorder(cluster_label, as.numeric(cluster)))
-
-
   ggplot2::ggplot() +
     ggplot2::geom_tile(data = data, ggplot2::aes(x = module, y = model_sex), colour = "black", fill = "white") +
     ggplot2::geom_point(data = dplyr::filter(data, significant), ggplot2::aes(x = module, y = model_sex, colour = estimate, size = abs(estimate))) +
