@@ -34,7 +34,7 @@ mod_nanostring_ui <- function(id) {
       ),
       shiny::column(
         width = 12,
-        shiny::plotOutput(ns("nanostring_plot"), width = "1000px", height = "666px")
+        shinycssloaders::withSpinner(shiny::plotOutput(ns("nanostring_plot"), width = "1000px", height = "666px"), color = "#D3DCEF")
       )
     )
   )
