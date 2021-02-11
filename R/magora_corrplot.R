@@ -12,7 +12,7 @@ magora_corrplot <- function(data) {
     ggplot2::geom_point(data = dplyr::filter(data, .data$significant), ggplot2::aes(x = .data$module, y = .data$model_sex, colour = .data$estimate, size = abs(.data$estimate))) +
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::scale_size(guide = "none", limits = c(0, 0.5)) +
-    ggplot2::scale_color_gradient2(limits = c(-0.5, 0.5), breaks = c(-0.5, 0, 0.5), low = "#2166AC", high = "#B2182B", name = "Correlation", guide = ggplot2::guide_colorbar(ticks = FALSE)) +
+    ggplot2::scale_color_gradient2(limits = c(-0.5, 0.5), breaks = c(-0.5, 0, 0.5), low = "#164B6E", high = "#85070C", name = "Correlation", guide = ggplot2::guide_colorbar(ticks = FALSE)) +
     ggplot2::labs(x = NULL, y = NULL) +
     ggplot2::facet_grid(rows = dplyr::vars(.data$age_group), cols = dplyr::vars(.data$cluster_label), scales = "free", space = "free") +
     sagethemes::theme_sage(base_size = 10) +
