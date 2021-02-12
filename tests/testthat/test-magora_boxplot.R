@@ -38,9 +38,9 @@ phenotypes_df <- phenotypes_df %>%
 test_that("magora_boxplot produces box plots comparing the phenotype by mouse line, age, and sex", {
   p <- phenotypes %>%
     dplyr::filter(
-      .data$phenotype %in% "GFAP+ cell #",
+      .data$phenotype %in% "GFAP+ Cell Density",
       .data$mouse_line %in% c("C57BL6J", "5XFAD"),
-      .data$tissue %in% "Cortex"
+      .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
@@ -73,9 +73,9 @@ test_that("magora_boxplot adds text to any facet without data", {
   p <- phenotypes %>%
     dplyr::filter(mouse_line != "5XFAD") %>%
     dplyr::filter(
-      .data$phenotype %in% "Microglia #",
+      .data$phenotype %in% "Microglia Density",
       .data$mouse_line %in% c("5XFAD", "C57BL6J"),
-      .data$tissue %in% "Cortex"
+      .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
@@ -84,9 +84,9 @@ test_that("magora_boxplot adds text to any facet without data", {
   p <- phenotypes %>%
     dplyr::filter(mouse_line != "C57BL6J") %>%
     dplyr::filter(
-      .data$phenotype %in% "Microglia #",
+      .data$phenotype %in% "Microglia Density",
       .data$mouse_line %in% c("5XFAD", "C57BL6J"),
-      .data$tissue %in% "Cortex"
+      .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
@@ -118,7 +118,7 @@ test_that("magora_boxplot adds text to any facet without data", {
 test_that("All levels of age are shown in the plot even if not present in the filtered data", {
   p <- phenotypes %>%
     dplyr::filter(
-      .data$phenotype %in% "Plasma AB 40",
+      .data$phenotype %in% "Plasma Ab 40",
       .data$mouse_line %in% c("C57BL6J", "5XFAD"),
       .data$tissue %in% "Plasma"
     ) %>%
@@ -186,9 +186,7 @@ test_that("magora_boxplot shows facets in the order selected", {
 
   p <- phenotypes %>%
     dplyr::filter(
-      phenotype %in% "Plasma AB 40"
-    ) %>%
-    dplyr::filter(
+      phenotype %in% "Plasma Ab 40",
       mouse_line %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
