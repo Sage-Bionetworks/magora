@@ -65,7 +65,7 @@ biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_
 
 ## Individual metadata ----
 
-# synGet("syn18880070", version = 6, downloadLocation = here::here("data-raw", "pathology"))
+# synGet("syn18880070", version = 7, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
 individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_individual_metadata.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
@@ -77,13 +77,11 @@ individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_i
 # Check which IDs are missing from metadata
 phenotype_data %>%
   anti_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
-  distinct(individual_id, specimen_id) %>%
-  write_csv(here::here("data-raw", "pathology", "mice_missing_from_biospecimen_metadata.csv"))
+  distinct(individual_id, specimen_id)
 
 phenotype_data %>%
   anti_join(individual_metadata, by = "individual_id") %>%
-  distinct(individual_id) %>%
-  write_csv(here::here("data-raw", "pathology", "mice_missing_from_individual_metadata.csv"))
+  distinct(individual_id)
 
 # Clean data ----
 
@@ -112,19 +110,19 @@ individual_metadata <- individual_metadata %>%
       str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
       str_ends(genotype, "_noncarrier") ~ genotype_background
     ),
-    mouse_line = as_factor(mouse_line),
-    tissue = str_to_title(tissue)
+    mouse_line = as_factor(mouse_line)
   ) %>%
   select(-date_birth, -date_death, -age_interval, -genotype, -genotype_background, -age) %>%
   rename(age = age_factor)
 
+biospecimen_metadata <- biospecimen_metadata %>%
+  mutate(tissue = str_to_title(tissue))
+
 ## Combine data ----
 
-# For now, use inner_join() so that we only end up with samples that also have metadata
-
 phenotypes <- phenotype_data %>%
-  inner_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
-  inner_join(individual_metadata, by = "individual_id") %>%
+  left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  left_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_line, sex, age, tissue, phenotype, value)
 
 # Save data ----
