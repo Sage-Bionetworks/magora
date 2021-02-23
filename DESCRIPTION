@@ -6,6 +6,10 @@ Authors@R:
              family = "Gelfand",
              role = c("aut", "cre"),
              email = "sharla.gelfand@sagebase.org"),
+      person(given = "Ravi",
+             family = "Pandey",
+             role = c("ctb"),
+             email = "Ravi.Pandey@jax.org"),
       person(given = "Sage Bionetworks",
              role = "cph"))
 Description: Explore Mouse-Agora data.
