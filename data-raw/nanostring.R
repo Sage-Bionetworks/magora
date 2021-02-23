@@ -150,6 +150,16 @@ nanostring_with_metadata <- nanostring_with_metadata %>%
     )
   )
 
+# Create age groups
+
+nanostring_with_metadata <- nanostring_with_metadata %>%
+  mutate(age_group = case_when(
+    age %in% 2:5 ~ "2 - 5 Months",
+    age %in% 6:9 ~ "6 - 9 Months",
+    age %in% 10:14 ~ "10 - 14 Months"
+  )
+)
+
 ## AMP-AD Modules ----
 
 ampad_modules <- ampad_modules_raw %>%
@@ -174,9 +184,9 @@ ampad_modules_fc <- ampad_modules %>%
 
 widen_and_nest_samples <- function(data) {
   data %>%
-    select(gene, specimen_id, value, sex, age, model, type) %>%
+    select(gene, specimen_id, value, sex, age_group, model, type) %>%
     pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
-    group_by(sex, age, model, type) %>%
+    group_by(sex, age_group, model, type) %>%
     nest() %>%
     ungroup() %>%
     mutate(data = map(data, ~ remove_empty(.x, "cols")))
@@ -195,14 +205,14 @@ ns_variant <- nanostring_with_metadata %>%
 # Summarise what combinations are available
 
 ns_variant %>%
-  select(model, sex, age, variant = type) %>%
+  select(model, sex, age_group, variant = type) %>%
   full_join(ns_control %>%
-    select(model, sex, age, control = type)) %>%
-  arrange(model, sex, age)
+    select(model, sex, age_group, control = type)) %>%
+  arrange(model, sex, age_group)
 
 ns_variant_control <- ns_variant %>%
-  inner_join(ns_control, by = c("sex", "age", "model"), suffix = c("_variant", "_control")) %>%
-  select(model, sex, age, data_variant, data_control)
+  inner_join(ns_control, by = c("sex", "age_group", "model"), suffix = c("_variant", "_control")) %>%
+  select(model, sex, age_group, data_variant, data_control)
 
 # For each group (model, sex, age), do the differential expression analysis with comparisons to the appropriate control
 
@@ -246,33 +256,16 @@ ns_fc <- ns_variant_control %>%
 # What combinations were lost?
 
 ns_fc_models <- ns_fc %>%
-  distinct(model, sex, age)
+  distinct(model, sex, age_group)
 
 ns_variant_control %>%
-  anti_join(ns_fc_models, by = c("model", "sex", "age"))
+  anti_join(ns_fc_models, by = c("model", "sex", "age_group"))
 
 # None!
 
 # Correlation between log_fc of mouse models and AMPAD modules -----
 
-# Collapse age groups at this point, and do correlation *within* each age group
-# Order age groups factor level based on min age for plotting
-
-ns_fc <- ns_fc %>%
-  mutate(
-    age_group = case_when(
-      age %in% c(4, 5) ~ "4 - 5 Months",
-      age %in% 6:9 ~ "6 - 9 Months",
-      age %in% 10:14 ~ "10 - 14 Months"
-    )
-  ) %>%
-  group_by(age_group) %>%
-  mutate(min_age = min(age)) %>%
-  ungroup() %>%
-  mutate(age_group = fct_reorder(age_group, min_age, .fun = min)) %>%
-  select(-min_age)
-
-# Calculate correlation and p-value, joining by gene and sex, for each module, model, sex, and age
+# Calculate correlation and p-value, joining by gene and sex, for each module, model, sex, and age group
 
 ns_vs_ampad_fc <- ns_fc %>%
   mutate(gene = toupper(gene)) %>%
@@ -309,7 +302,9 @@ nanostring_for_plot <- nanostring %>%
   mutate(
     model_sex = fct_inorder(model_sex),
     model_sex = fct_rev(model_sex),
-  )
+  ) %>%
+  separate(age_group, into = "min_age", sep = " -", remove = FALSE, convert = TRUE, extra = "drop") %>%
+  mutate(age_group = fct_reorder(age_group, min_age))
 
 nanostring <- nanostring %>%
   select(-cluster_label)
