@@ -167,14 +167,26 @@ ampad_modules <- ampad_modules_raw %>%
 
 ## AMP-AD Modules logFC ----
 
+# Filter only to include those with Model = "Diagnosis", and Comparison = "AD-CONTROL"
+# These have sex "all" - not joining by sex, just comparing to all
+
 ampad_fc <- ampad_fc_raw %>%
   as_tibble() %>%
-  select(tissue = Tissue, gene = hgnc_symbol, sex = Sex, ampad_fc = logFC) %>%
-  mutate(sex = tolower(sex))
+  filter(Model == "Diagnosis", Comparison == "AD-CONTROL") %>%
+  select(tissue = Tissue, gene = hgnc_symbol, ampad_fc = logFC) %>%
+  filter(gene != "")
 
 # Combine with modules so correlation can be done per module
 ampad_modules_fc <- ampad_modules %>%
   inner_join(ampad_fc, by = c("gene", "tissue"))
+
+# Double check that there is just one value for each tissue and module (for paired sampling)
+
+ampad_modules_fc %>%
+  count(module, gene) %>%
+  count(n)
+
+# All looks good!
 
 # Differential expression analysis ----
 
@@ -263,13 +275,14 @@ ns_variant_control %>%
 
 # None!
 
-# Correlation between log_fc of mouse models and AMPAD modules -----
+# Correlation between log_fc of mouse models and AMP-AD modules -----
 
-# Calculate correlation and p-value, joining by gene and sex, for each module, model, sex, and age group
+# Calculate correlation and p-value, joining by gene (not sex), for each module, model, sex, and age group
+# These are paired properly because there is only one value from the nanostring data for each model, sex, and age group (the log fold change), AND only one value from the AMP-AD data for each module
 
 ns_vs_ampad_fc <- ns_fc %>%
   mutate(gene = toupper(gene)) %>%
-  inner_join(ampad_modules_fc, by = c("gene", "sex")) %>%
+  inner_join(ampad_modules_fc, by = "gene") %>%
   select(module, model, sex, age_group, gene, ns_fc, ampad_fc) %>%
   group_by(module, model, sex, age_group) %>%
   nest(data = c(gene, ns_fc, ampad_fc)) %>%
