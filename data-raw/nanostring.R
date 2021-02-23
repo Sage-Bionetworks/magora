@@ -178,40 +178,40 @@ ampad_modules_fc <- ampad_modules %>%
 
 # Differential expression analysis ----
 
-# DEA compares each mouse model to its control (with the same sex and age)
+# DEA compares each mouse model to ALL controls (with the same sex and age)
 
 # Separate out variants and controls, rename and keep relevant columns only
 
-widen_and_nest_samples <- function(data) {
-  data %>%
-    select(gene, specimen_id, value, sex, age_group, model, type) %>%
-    pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
-    group_by(sex, age_group, model, type) %>%
-    nest() %>%
-    ungroup() %>%
-    mutate(data = map(data, ~ remove_empty(.x, "cols")))
-}
-
 ns_control <- nanostring_with_metadata %>%
   filter(type == "control") %>%
-  widen_and_nest_samples()
+  select(gene, specimen_id, value, sex, age_group, type) %>%
+  pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
+  group_by(sex, age_group, type) %>%
+  nest() %>%
+  ungroup() %>%
+  mutate(data = map(data, ~ remove_empty(.x, "cols")))
 
 ns_variant <- nanostring_with_metadata %>%
   filter(type == "variant") %>%
-  widen_and_nest_samples()
+  select(gene, specimen_id, value, sex, age_group, model, type) %>%
+  pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
+  group_by(sex, age_group, model, type) %>%
+  nest() %>%
+  ungroup() %>%
+  mutate(data = map(data, ~ remove_empty(.x, "cols")))
 
-# Only iterate over ns_variant that actually have a control
+# Only iterate over ns_variant that actually have a control - since not joining by model, just ensuring that each variant has controls of the same age group / sex
 
 # Summarise what combinations are available
 
 ns_variant %>%
-  select(model, sex, age_group, variant = type) %>%
+  distinct(sex, age_group, variant = type) %>%
   full_join(ns_control %>%
-    select(model, sex, age_group, control = type)) %>%
-  arrange(model, sex, age_group)
+    select(sex, age_group, control = type), by = c("sex", "age_group")) %>%
+  arrange(sex, age_group)
 
 ns_variant_control <- ns_variant %>%
-  inner_join(ns_control, by = c("sex", "age_group", "model"), suffix = c("_variant", "_control")) %>%
+  inner_join(ns_control, by = c("sex", "age_group"), suffix = c("_variant", "_control")) %>%
   select(model, sex, age_group, data_variant, data_control)
 
 # For each group (model, sex, age), do the differential expression analysis with comparisons to the appropriate control
