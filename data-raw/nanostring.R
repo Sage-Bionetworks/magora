@@ -301,7 +301,7 @@ ns_vs_ampad_fc <- ns_fc %>%
 nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
-  select(cluster, cluster_label, module, model, sex, age_group, estimate, p_value, significant)
+  select(cluster, cluster_label, module, model, sex, age_group, correlation = estimate, p_value, significant)
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
