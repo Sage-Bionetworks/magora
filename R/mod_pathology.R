@@ -123,7 +123,7 @@ mod_pathology_server <- function(input, output, session) {
       magora_boxplot(plot_type = "phenotype")
   })
 
-  output$phenotype_plot <- shiny::renderPlot(phenotype_plot())
+  output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)
 
   phenotype_plot_dims <- shiny::reactive({
     list(

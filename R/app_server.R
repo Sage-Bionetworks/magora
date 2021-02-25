@@ -7,4 +7,6 @@ app_server <- function(input, output, session) {
 
   gene_expressions <- golem::get_golem_options("gene_expressions")
   shiny::callModule(mod_gene_expression_server, "gene_expression", gene_expressions)
+
+  shiny::callModule(mod_nanostring_server, "nanostring")
 }
