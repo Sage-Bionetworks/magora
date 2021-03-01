@@ -17,17 +17,14 @@ mod_nanostring_ui <- function(id) {
       shiny::includeMarkdown(app_sys("app", "www", "nanostring_content.md")),
       shiny::hr(),
       shiny::fluidRow(
+
         class = "magora-row",
         shiny::column(
-          width = 3,
-          offset = 9,
-          shiny::column(
-            width = 6,
-            mod_download_data_ui(ns("download_data"))
-          ),
+          width = 2,
+          offset = 10,
 
           shiny::column(
-            width = 6,
+            width = 12,
             mod_download_plot_ui(ns("download_plot"))
           )
         )
@@ -64,14 +61,6 @@ mod_nanostring_server <- function(input, output, session) {
   nanostring_plot_dims <- shiny::reactive({
     list(nrow = 2.75, ncol = 2.5)
   })
-
-  # Data
-
-  shiny::callModule(mod_download_data_server,
-    "download_data",
-    data = nanostring_data,
-    save_name = nanostring_name
-  )
 
   # Plot
 
