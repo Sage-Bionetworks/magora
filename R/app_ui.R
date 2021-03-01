@@ -11,6 +11,7 @@ app_ui <- function(request) {
       mod_start_ui(),
       mod_pathology_ui("pathology"),
       mod_gene_expression_ui("gene_expression"),
+      mod_gene_expression_volcano_ui("gene_expression_volcano"),
       mod_nanostring_ui("nanostring")
     )
   )
