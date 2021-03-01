@@ -3,10 +3,34 @@ library(EnsDb.Mmusculus.v79)
 library(janitor)
 library(readr)
 library(dplyr)
+library(purrr)
+library(tidyr)
+library(synapser)
+
+synLogin()
 
 # Read data ----
 
-gene_expressions_for_volcano <- read_csv(here::here("data-raw", "gene_expressions", "5XFAD_Male_4M.csv"))
+# Get IDs of all data in folder syn24243915
+syn_ids <- synGetChildren("syn24243915") %>%
+  as.list() %>%
+  transpose() %>%
+  as_tibble() %>%
+  select(id, name) %>%
+  unnest(cols = c(id, name)) %>%
+  mutate(version = 1) # Using version 1 for all - will update if new versions are used
+
+# Download all
+
+pmap(syn_ids, function(id, name, version) {
+  synGet(id, version = version, ifcollision = "overwrite.local", downloadLocation = here::here("data-raw", "gene_expressions", "volcano"))
+})
+
+# Read in and combine
+
+gene_expressions_for_volcano <- map_dfr(syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", "volcano", .x), col_types = "dccdcddd"))
+
+# Clean data ----
 
 gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
   clean_names() %>%
@@ -30,7 +54,5 @@ genes <- genes %>%
 
 gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
   left_join(genes, by = "gene_id")
-
-EnhancedVolcano(gene_expressions_for_volcano, lab = rownames(gene_expressions_for_volcano), x = "log2fold_change", y = "padj", pCutoff = 0.05, FCcutoff = 1)
 
 usethis::use_data(gene_expressions_for_volcano, overwrite = TRUE)
