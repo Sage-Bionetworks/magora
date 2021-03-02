@@ -13,11 +13,12 @@ mod_nanostring_ui <- function(id) {
     title,
     shiny::div(
       class = "magora-page",
-      shiny::h3(class = "tab-title", title),
-      shiny::includeMarkdown(app_sys("app", "www", "nanostring_content.md")),
-      shiny::hr(),
+      shiny::div(
+        shiny::h3(class = "tab-title", title),
+        shiny::includeMarkdown(app_sys("app", "www", "nanostring_content.md")),
+        shiny::hr()
+      ),
       shiny::fluidRow(
-
         class = "magora-row",
         shiny::column(
           width = 2,
