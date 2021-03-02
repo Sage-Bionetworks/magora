@@ -53,15 +53,11 @@ mod_gene_expression_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 3,
-          offset = 9,
-          shiny::column(
-            width = 6,
-            mod_download_data_ui(ns("download_data"))
-          ),
+          width = 2,
+          offset = 10,
 
           shiny::column(
-            width = 6,
+            width = 12,
             mod_download_plot_ui(ns("download_plot"))
           )
         ),
@@ -162,14 +158,6 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   save_name <- shiny::reactive({
     download_name("gene_expression", input$gene, input$mouse_line, input$tissue)
   })
-
-  # Data
-
-  shiny::callModule(mod_download_data_server,
-    "download_data",
-    data = gene_expression_data_download,
-    save_name = save_name
-  )
 
   # Plot
 
