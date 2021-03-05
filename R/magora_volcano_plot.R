@@ -27,7 +27,7 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
     ggplot2::geom_vline(xintercept = c(-log_fc_cutoff, log_fc_cutoff), linetype = "dashed") +
     ggplot2::geom_hline(yintercept = -log10(pvalue_cutoff), linetype = "dashed") +
     ggrepel::geom_text_repel(ggplot2::aes(label = label), show.legend = FALSE, seed = 1234) +
-    ggplot2::scale_colour_manual(values = c("#164B6E", "darkgrey", "#85070C"), name = NULL, ) +
+    ggplot2::scale_colour_manual(values = c("#164B6E", "darkgrey", "#85070C"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3))) +
     ggplot2::labs(x = bquote(~Log[2]~ "Fold change"), y = bquote(~-Log[10]~"P-Value")) +
     ggplot2::facet_grid(rows = dplyr::vars(sex), cols = dplyr::vars(age)) +
     sagethemes::theme_sage() +

@@ -75,8 +75,8 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   gene_expression_plot_dims <- shiny::reactive({
     list(
-      nrow = 2,
-      ncol = 2
+      nrow = length(unique(filtered_gene_expressions()[["sex"]])),
+      ncol = length(unique(filtered_gene_expressions()[["age"]]))
     )
   })
 
