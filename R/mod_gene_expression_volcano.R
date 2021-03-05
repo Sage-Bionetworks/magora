@@ -15,7 +15,7 @@ mod_gene_expression_volcano_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        shiny::includeMarkdown(app_sys("app", "www", "gene_expression_content.md")),
+        "Please select a strain and tissue from the dropdown lists.",
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -29,6 +29,21 @@ mod_gene_expression_volcano_ui <- function(id) {
             multiple = FALSE
           )
         ),
+        shiny::column(
+          width = 4,
+          shinyWidgets::pickerInput(
+            ns("tissue"),
+            "Tissue",
+            choices = NULL,
+            multiple = FALSE
+          )
+        ),
+          shiny::column(
+            width = 2,
+            offset = 2,
+            style = "margin-top: 27.85px",
+            mod_download_plot_ui(ns("download_plot"))
+        )
       ),
       shiny::column(
         width = 12,
@@ -88,4 +103,24 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
     color = "#D3DCEF"
     )
   })
+
+  # Save output ----
+
+  gene_expression_data_download <- shiny::reactive({
+    filtered_gene_expressions()
+  })
+
+  save_name <- shiny::reactive({
+    download_name("gene_expression", input$strain)
+  })
+
+  # Plot
+
+  shiny::callModule(mod_download_plot_server,
+    "download_plot",
+    plot = gene_expression_plot,
+    data = gene_expression_data_download,
+    save_name = save_name,
+    plot_dims = gene_expression_plot_dims
+  )
 }
