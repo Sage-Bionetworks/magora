@@ -121,6 +121,6 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
     plot = gene_expression_plot,
     data = filtered_gene_expressions,
     save_name = save_name,
-    plot_dims = phenotype_plot_dims
+    plot_dims = gene_expression_plot_dims
   )
 }
