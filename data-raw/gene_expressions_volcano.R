@@ -9,9 +9,9 @@ library(synapser)
 
 synLogin()
 
-# Read data ----
+# Manually filtering files in order to keep track of changes - once data is more stable
+# can just look for children of syn24243915
 
-# Get IDs of all data in folder syn24243915
 syn_ids <- synGetChildren("syn24243915") %>%
   as.list() %>%
   transpose() %>%
@@ -19,6 +19,9 @@ syn_ids <- synGetChildren("syn24243915") %>%
   select(id, name) %>%
   unnest(cols = c(id, name)) %>%
   mutate(version = 1) # Using version 1 for all - will update if new versions are used
+
+syn_ids <- syn_ids %>%
+  filter(id %in% c("syn24847795", "syn24847793", "syn24847794", "syn24847798", "syn24847796", "syn24847797"))
 
 # Download all
 
