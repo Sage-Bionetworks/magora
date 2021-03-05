@@ -10,5 +10,7 @@ app_server <- function(input, output, session) {
 
   shiny::callModule(mod_gene_expression_volcano_server, "gene_expression_volcano")
 
+  shiny::callModule(mod_gene_expression_volcano_plotly_server, "gene_expression_volcano_plotly")
+
   shiny::callModule(mod_nanostring_server, "nanostring")
 }

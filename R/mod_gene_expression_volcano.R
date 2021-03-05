@@ -7,7 +7,7 @@
 #' @noRd
 mod_gene_expression_volcano_ui <- function(id) {
   ns <- shiny::NS(id)
-  title <- "Gene Expression (Volcano)"
+  title <- "Gene Expression (Static)"
 
   shiny::tabPanel(
     title,
@@ -42,7 +42,7 @@ mod_gene_expression_volcano_ui <- function(id) {
             width = 2,
             offset = 2,
             style = "margin-top: 27.85px",
-            mod_download_plot_ui(ns("download_plot"))
+            magora_download_button(ns("download_plot"), "Save plot")
         )
       ),
       shiny::column(
@@ -116,11 +116,15 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Plot
 
-  shiny::callModule(mod_download_plot_server,
-    "download_plot",
-    plot = gene_expression_plot,
-    data = gene_expression_data_download,
-    save_name = save_name,
-    plot_dims = gene_expression_plot_dims
+  output$download_plot <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue("{save_name()}_plot.png")
+    },
+    content = function(file) {
+      png(file)
+      gene_expression_plot()
+      dev.off()
+    }
   )
+
 }
