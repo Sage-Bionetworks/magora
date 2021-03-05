@@ -29,40 +29,7 @@ mod_gene_expression_volcano_ui <- function(id) {
             multiple = FALSE
           )
         ),
-        shiny::column(
-          width = 4,
-          shinyWidgets::pickerInput(
-            ns("sex"),
-            "Sex",
-            choices = unique(magora::gene_expressions_for_volcano[["sex"]]),
-            multiple = FALSE
-          )
-        ),
-        shiny::column(
-          width = 4,
-          shinyWidgets::pickerInput(
-            ns("age"),
-            "Age",
-            choices = unique(magora::gene_expressions_for_volcano[["age"]]),
-            multiple = FALSE
-          )
-        ),
       ),
-      # shiny::fluidRow(
-      #   class = "magora-row",
-      #   shiny::column(
-      #     width = 3,
-      #     offset = 9,
-      #     shiny::column(
-      #       width = 6,
-      #       mod_download_data_ui(ns("download_data"))
-      #     ),
-      #
-      #     shiny::column(
-      #       width = 6,
-      #       mod_download_plot_ui(ns("download_plot"))
-      #     )
-      #   ),
         shiny::column(
           width = 12,
           align = "center",
@@ -84,9 +51,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   filtered_gene_expressions <- shiny::reactive({
     magora::gene_expressions_for_volcano %>%
       dplyr::filter(
-        .data$strain == input$strain,
-        .data$sex == input$sex,
-        .data$age == input$age
+        .data$strain == input$strain
       )
   })
 
@@ -101,18 +66,18 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
       magora_volcano_plot()
   })
 
-  output$gene_expression_plot <- plotly::renderPlotly(gene_expression_plot())#, res = 96)
+  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot(), res = 96)
 
   gene_expression_plot_dims <- shiny::reactive({
     list(
-      nrow = 1.5,
+      nrow = 2,
       ncol = 2
     )
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
 
-    shinycssloaders::withSpinner(plotly::plotlyOutput(ns("gene_expression_plot"),
+    shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
       height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
       width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
     ),
