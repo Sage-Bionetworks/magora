@@ -15,13 +15,13 @@ mod_gene_expression_volcano_plotly_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        shiny::includeMarkdown(app_sys("app", "www", "gene_expression_content.md")),
+        "Please select a strain, tissue, sex, and age from the dropdown lists.",
         shiny::hr()
       ),
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 4,
+          width = 3,
           shinyWidgets::pickerInput(
             ns("strain"),
             "Strain",
@@ -30,7 +30,16 @@ mod_gene_expression_volcano_plotly_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 4,
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("tissue"),
+            "Tissue",
+            choices = NULL,
+            multiple = FALSE
+          )
+        ),
+        shiny::column(
+          width = 3,
           shinyWidgets::pickerInput(
             ns("sex"),
             "Sex",
@@ -39,7 +48,7 @@ mod_gene_expression_volcano_plotly_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 4,
+          width = 3,
           shinyWidgets::pickerInput(
             ns("age"),
             "Age",
@@ -101,7 +110,7 @@ mod_gene_expression_volcano_plotly_server <- function(input, output, session, ge
       magora_volcano_plotly()
   })
 
-  output$gene_expression_plot <- plotly::renderPlotly(gene_expression_plot())#, res = 96)
+  output$gene_expression_plot <- plotly::renderPlotly(gene_expression_plot()) # , res = 96)
 
   gene_expression_plot_dims <- shiny::reactive({
     list(
@@ -111,10 +120,9 @@ mod_gene_expression_volcano_plotly_server <- function(input, output, session, ge
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
-
     shinycssloaders::withSpinner(plotly::plotlyOutput(ns("gene_expression_plot"),
-                                                      height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
-                                                      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
+      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
     ),
     color = "#D3DCEF"
     )

@@ -6,6 +6,7 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(synapser)
+library(forcats)
 
 synLogin()
 
@@ -26,12 +27,12 @@ syn_ids <- syn_ids %>%
 # Download all
 
 pmap(syn_ids, function(id, name, version) {
-  synGet(id, version = version, ifcollision = "overwrite.local", downloadLocation = here::here("data-raw", "gene_expressions", "volcano"))
+  synGet(id, version = version, ifcollision = "overwrite.local", downloadLocation = here::here("data-raw", "gene_expressions"))
 })
 
 # Read in and combine
 
-gene_expressions_for_volcano <- map_dfr(syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", "volcano", .x), col_types = "dccdcddd"))
+gene_expressions_for_volcano <- map_dfr(syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", .x), col_types = "dccdcddd"))
 
 # Clean data ----
 
@@ -56,6 +57,7 @@ genes <- genes %>%
   mutate(gene = coalesce(gene_symbol, gene_id))
 
 gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
-  left_join(genes, by = "gene_id")
+  left_join(genes, by = "gene_id") %>%
+  select(-gene_symbol)
 
 usethis::use_data(gene_expressions_for_volcano, overwrite = TRUE)

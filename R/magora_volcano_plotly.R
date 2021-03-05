@@ -26,7 +26,7 @@ magora_volcano_plotly <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pval
     ggplot2::geom_point(alpha = 0.5) +
     ggplot2::geom_vline(xintercept = c(-log_fc_cutoff, log_fc_cutoff), linetype = "dashed") +
     ggplot2::geom_hline(yintercept = -log10(pvalue_cutoff), linetype = "dashed") +
-    ggplot2::scale_colour_manual(values = c("#164B6E", "darkgrey", "#85070C"), name = NULL) +
+    ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL) +
     ggplot2::labs(x = NULL, y = NULL) +
     sagethemes::theme_sage()
 

@@ -38,11 +38,11 @@ mod_gene_expression_volcano_ui <- function(id) {
             multiple = FALSE
           )
         ),
-          shiny::column(
-            width = 2,
-            offset = 2,
-            style = "margin-top: 27.85px",
-            magora_download_button(ns("download_plot"), "Save plot")
+        shiny::column(
+          width = 2,
+          offset = 2,
+          style = "margin-top: 27.85px",
+          mod_download_plot_ui(ns("download_plot"))
         )
       ),
       shiny::column(
@@ -116,15 +116,11 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Plot
 
-  output$download_plot <- shiny::downloadHandler(
-    filename = function() {
-      glue::glue("{save_name()}_plot.png")
-    },
-    content = function(file) {
-      png(file)
-      gene_expression_plot()
-      dev.off()
-    }
+  shiny::callModule(mod_download_plot_server,
+    "download_plot",
+    plot = gene_expression_plot,
+    data = filtered_gene_expressions,
+    save_name = save_name,
+    plot_dims = phenotype_plot_dims
   )
-
 }
