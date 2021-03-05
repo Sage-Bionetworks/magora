@@ -30,11 +30,11 @@ mod_gene_expression_volcano_ui <- function(id) {
           )
         ),
       ),
-        shiny::column(
-          width = 12,
-          align = "center",
-          shiny::uiOutput(ns("gene_expression_plot_ui"))
-        )
+      shiny::column(
+        width = 12,
+        align = "center",
+        shiny::uiOutput(ns("gene_expression_plot_ui"))
+      )
       # )
     )
   )
@@ -66,7 +66,12 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
       magora_volcano_plot()
   })
 
-  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot(), res = 96)
+  output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
+    cacheKeyExpr = {
+      input$strain
+    },
+    res = 96
+  )
 
   gene_expression_plot_dims <- shiny::reactive({
     list(
@@ -76,7 +81,6 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
-
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
       height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
       width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
