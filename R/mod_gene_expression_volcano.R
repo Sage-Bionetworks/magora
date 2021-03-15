@@ -34,7 +34,7 @@ mod_gene_expression_volcano_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
-            choices = NULL,
+            choices = unique(magora::gene_expressions_for_volcano[["tissue"]]),
             multiple = FALSE
           )
         ),
@@ -66,7 +66,8 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   filtered_gene_expressions <- shiny::reactive({
     magora::gene_expressions_for_volcano %>%
       dplyr::filter(
-        .data$strain == input$strain
+        .data$strain == input$strain,
+        .data$tissue == input$tissue
       )
   })
 

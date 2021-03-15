@@ -4,8 +4,8 @@ magora_volcano_plotly <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pval
 
   data <- data %>%
     dplyr::mutate(diff_expressed = dplyr::case_when(
-      .data$log2fold_change > log_fc_cutoff & .data$pvalue < pvalue_cutoff ~ "Upregulated",
-      .data$log2fold_change < -log_fc_cutoff & .data$pvalue < pvalue_cutoff ~ "Downregulated",
+      .data$log2foldchange > log_fc_cutoff & .data$pvalue < pvalue_cutoff ~ "Upregulated",
+      .data$log2foldchange < -log_fc_cutoff & .data$pvalue < pvalue_cutoff ~ "Downregulated",
       TRUE ~ "Not Significant"
     ))
 
@@ -20,9 +20,9 @@ magora_volcano_plotly <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pval
   # Filter for non-NA data to minimize warnings (though some are expected from NA labels)
 
   data <- data %>%
-    dplyr::filter(!is.na(.data$log2fold_change) & !is.na({{pvalue}}))
+    dplyr::filter(!is.na(.data$log2foldchange) & !is.na({{pvalue}}))
 
-  p <- ggplot2::ggplot(data, ggplot2::aes(x = .data$log2fold_change, y = -log10({{pvalue}}), colour = .data$diff_expressed, text = .data$gene)) +
+  p <- ggplot2::ggplot(data, ggplot2::aes(x = .data$log2foldchange, y = -log10({{pvalue}}), colour = .data$diff_expressed, text = .data$gene)) +
     ggplot2::geom_point(alpha = 0.5) +
     ggplot2::geom_vline(xintercept = c(-log_fc_cutoff, log_fc_cutoff), linetype = "dashed") +
     ggplot2::geom_hline(yintercept = -log10(pvalue_cutoff), linetype = "dashed") +

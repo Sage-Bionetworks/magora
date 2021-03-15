@@ -34,7 +34,7 @@ mod_gene_expression_volcano_plotly_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
-            choices = NULL,
+            choices = unique(magora::gene_expressions_for_volcano[["tissue"]]),
             multiple = FALSE
           )
         ),
@@ -94,6 +94,7 @@ mod_gene_expression_volcano_plotly_server <- function(input, output, session, ge
     magora::gene_expressions_for_volcano %>%
       dplyr::filter(
         .data$strain == input$strain,
+        .data$tissue == input$tissue,
         .data$sex == input$sex,
         .data$age == input$age
       )
