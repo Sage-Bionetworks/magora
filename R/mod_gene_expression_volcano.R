@@ -99,10 +99,31 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   output$gene_expression_plot_ui <- shiny::renderUI({
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
       height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%"),
+      click = ns("plot_click")
     ),
     color = "#D3DCEF"
     )
+  })
+
+  drilldown_gene_expressions <- reactive({
+    req(input$plot_click)
+    panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}" & {input$plot_click$mapping$panelvar2} == "{input$plot_click$panelvar2}"')
+    filtered_gene_expressions() %>%
+      dplyr::filter(eval(rlang::parse_expr(panel_filter)))
+  })
+
+  output$drilldown_gene_expressions <- plotly::renderPlotly({
+    drilldown_gene_expressions() %>%
+      magora_volcano_plotly()
+  })
+
+  shiny::observeEvent(input$plot_click, {
+    shiny::showModal(shiny::modalDialog(
+      size = "l",
+      easyClose = TRUE,
+      plotly::plotlyOutput(ns("drilldown_gene_expressions"))
+    ))
   })
 
   # Save output ----
