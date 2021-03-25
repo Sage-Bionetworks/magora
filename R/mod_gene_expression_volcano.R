@@ -129,6 +129,10 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
       dplyr::filter(eval(rlang::parse_expr(panel_filter)))
   })
 
+  drilldown_gene_expressions_title <- reactive({
+    glue::glue("Strain: {input$strain}, Tissue: {input$tissue}, Sex: {input$plot_click$panelvar2}, Age: {input$plot_click$panelvar1} Months")
+  })
+
   output$drilldown_gene_expressions <- plotly::renderPlotly({
     drilldown_gene_expressions() %>%
       dplyr::sample_n(1000) %>%
@@ -136,9 +140,11 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   })
 
   shiny::observeEvent(input$plot_click, {
-    shiny::showModal(shiny::modalDialog(
+    shiny::showModal(
+      shiny::modalDialog(
       size = "l",
       easyClose = TRUE,
+      title = drilldown_gene_expressions_title(),
       plotly::plotlyOutput(ns("drilldown_gene_expressions"))
     ))
   })
