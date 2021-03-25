@@ -125,3 +125,10 @@ gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
   select(-padj)
 
 usethis::use_data(gene_expressions_for_volcano, overwrite = TRUE)
+
+# Separately save tissue available for each strain, for easily changing inputs available
+
+gene_expressions_tissue <- split(gene_expressions_for_volcano, gene_expressions_for_volcano$strain) %>%
+  map(function(x) distinct(x, tissue) %>% pull(tissue))
+
+usethis::use_data(gene_expressions_tissue, overwrite = TRUE)

@@ -25,7 +25,7 @@ mod_gene_expression_volcano_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("strain"),
             "Strain",
-            choices = unique(magora::gene_expressions_for_volcano[["strain"]]),
+            choices = sort(unique(magora::gene_expressions_for_volcano[["strain"]])),
             multiple = FALSE
           )
         ),
@@ -34,7 +34,7 @@ mod_gene_expression_volcano_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
-            choices = unique(magora::gene_expressions_for_volcano[["tissue"]]),
+            choices = sort(unique(magora::gene_expressions_for_volcano[["tissue"]])),
             multiple = FALSE
           )
         ),
@@ -61,6 +61,22 @@ mod_gene_expression_volcano_ui <- function(id) {
 mod_gene_expression_volcano_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
 
+  # Update tissue options available based on strain selected -----
+
+  shiny::observeEvent(input$strain, {
+    available_tissue <- sort(magora::gene_expressions_tissue[[input$strain]])
+
+    # If the tissue previously selected is still available, keep it selected
+    selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
+
+    shinyWidgets::updatePickerInput(
+      session = session,
+      "tissue",
+      choices = available_tissue,
+      selected = selected_tissue
+    )
+  })
+
   # Filter data based on inputs ----
 
   filtered_gene_expressions <- shiny::reactive({
@@ -74,17 +90,17 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   # Generate plot ----
 
   gene_expression_plot <- shiny::reactive({
-    shiny::validate(
-      shiny::need(nrow(filtered_gene_expressions()) > 0, message = "There is no data for the selected combination.")
-    )
-
     filtered_gene_expressions() %>%
+      dplyr::sample_n(10000) %>%
       magora_volcano_plot()
   })
 
   output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
     cacheKeyExpr = {
-      input$strain
+      list(
+        input$strain,
+        input$tissue
+      )
     },
     res = 96
   )
@@ -115,6 +131,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   output$drilldown_gene_expressions <- plotly::renderPlotly({
     drilldown_gene_expressions() %>%
+      dplyr::sample_n(1000) %>%
       magora_volcano_plotly()
   })
 
