@@ -9,12 +9,16 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
       TRUE ~ "Not Significant"
     ))
 
-  # Only label genes that are upregulated/downregulated
+  # Only label genes that are upregulated/downregulated, and not super long names
 
   data <- data %>%
     dplyr::mutate(label = dplyr::case_when(
-      .data$diff_expressed == "Not Significant" ~ NA_character_,
+      .data$diff_expressed == "Not Significant" ~ "",
       TRUE ~ .data$gene
+    ),
+    label = dplyr::case_when(
+      nchar(.data$label) == 18 ~ "",
+      TRUE ~ .data$label
     ))
 
   # Filter for non-NA data to minimize warnings (though some are expected from NA labels)
@@ -38,7 +42,7 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
 
   if (type == "ggplot2") {
     p +
-      ggrepel::geom_text_repel(ggplot2::aes(label = .data$label), show.legend = FALSE, seed = 1234) +
+      ggrepel::geom_text_repel(ggplot2::aes(label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5) +
       ggplot2::labs(x = bquote(~Log[2]~ "Fold change"), y = bquote(~-Log[10]~"P-Value"))
   } else if (type == "plotly") {
     p <- p +
@@ -47,4 +51,3 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
     plotly::ggplotly(p, tooltip = "text")
   }
 }
-
