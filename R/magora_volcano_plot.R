@@ -33,7 +33,7 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
 
   if (facet) {
     p <- p +
-      ggplot2::facet_wrap(dplyr::vars(.data$sex, .data$age), nrow = 2, scales = "free")
+      ggplot2::facet_wrap(dplyr::vars(.data$sex, .data$age), nrow = 2, scales = "free", labeller = ggplot2::labeller(age = function(x) {glue::glue("{x} Months")}))
   }
 
   if (type == "ggplot2") {
