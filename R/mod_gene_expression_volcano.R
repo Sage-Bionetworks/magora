@@ -7,7 +7,7 @@
 #' @noRd
 mod_gene_expression_volcano_ui <- function(id) {
   ns <- shiny::NS(id)
-  title <- "Gene Expression (Static)"
+  title <- "Gene Expression"
 
   shiny::tabPanel(
     title,
