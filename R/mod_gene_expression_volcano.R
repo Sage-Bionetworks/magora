@@ -15,7 +15,7 @@ mod_gene_expression_volcano_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        "Please select a strain and tissue from the dropdown lists.",
+        "Please select a strain and tissue from the dropdown lists. You can click on a panel to bring up an interactive plot for that sex and age.",
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -91,8 +91,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   gene_expression_plot <- shiny::reactive({
     filtered_gene_expressions() %>%
-      dplyr::sample_n(10000) %>%
-      magora_volcano_plot()
+      magora_volcano_plot(type = "ggplot2", facet = TRUE)
   })
 
   output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
@@ -135,18 +134,20 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   output$drilldown_gene_expressions <- plotly::renderPlotly({
     drilldown_gene_expressions() %>%
-      dplyr::sample_n(1000) %>%
-      magora_volcano_plotly()
+      magora_volcano_plot(type = "plotly", facet = FALSE)
   })
 
   shiny::observeEvent(input$plot_click, {
     shiny::showModal(
       shiny::modalDialog(
-      size = "l",
-      easyClose = TRUE,
-      title = drilldown_gene_expressions_title(),
-      plotly::plotlyOutput(ns("drilldown_gene_expressions"))
-    ))
+        size = "l",
+        easyClose = TRUE,
+        title = drilldown_gene_expressions_title(),
+        shinycssloaders::withSpinner(plotly::plotlyOutput(ns("drilldown_gene_expressions")),
+          color = "#D3DCEF"
+        )
+      )
+    )
   })
 
   # Save output ----
