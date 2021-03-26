@@ -80,18 +80,18 @@ syn_ids <- syn_ids %>%
 
 # Download all
 
-pwalk(syn_ids, function(id, name, version) {
-  synGet(id, version = version, ifcollision = "overwrite.local", downloadLocation = here::here("data-raw", "gene_expressions"))
-})
+# pwalk(syn_ids, function(id, name, version) {
+#   synGet(id, version = version, ifcollision = "overwrite.local", downloadLocation = here::here("data-raw", "gene_expressions", id))
+# })
 
 # Read in and combine
 
-gene_expressions_for_volcano <- map(syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", .x), col_types = "ccdccddd"))
-names(gene_expressions_for_volcano) <- syn_ids[["name"]]
+gene_expressions_for_volcano <- map2(syn_ids[["id"]], syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", .x, .y), col_types = "ccdccddd"))
+names(gene_expressions_for_volcano) <- syn_ids[["id"]]
 
 gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
   map(rename_all, tolower) %>%
-  bind_rows()
+  bind_rows(.id = "syn_id")
 
 # Clean data ----
 
@@ -122,7 +122,7 @@ gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
   select(-gene_symbol, -gene_id)
 
 gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
-  select(-padj)
+  select(-padj, -syn_id)
 
 usethis::use_data(gene_expressions_for_volcano, overwrite = TRUE)
 
