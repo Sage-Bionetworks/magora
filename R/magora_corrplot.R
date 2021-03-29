@@ -6,7 +6,6 @@
 #'
 #' @return A ggplot2 object.
 magora_corrplot <- function(data) {
-
   ggplot2::ggplot() +
     ggplot2::geom_tile(data = data, ggplot2::aes(x = .data$module, y = .data$model_sex), colour = "black", fill = "white") +
     ggplot2::geom_point(data = dplyr::filter(data, .data$significant), ggplot2::aes(x = .data$module, y = .data$model_sex, colour = .data$correlation, size = abs(.data$correlation))) +
