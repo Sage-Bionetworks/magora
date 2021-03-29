@@ -121,14 +121,14 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     )
   })
 
-  drilldown_gene_expressions <- reactive({
-    req(input$plot_click)
+  drilldown_gene_expressions <- shiny::reactive({
+    shiny::req(input$plot_click)
     panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}" & {input$plot_click$mapping$panelvar2} == "{input$plot_click$panelvar2}"')
     filtered_gene_expressions() %>%
       dplyr::filter(eval(rlang::parse_expr(panel_filter)))
   })
 
-  drilldown_gene_expressions_title <- reactive({
+  drilldown_gene_expressions_title <- shiny::reactive({
     glue::glue("Strain: {input$strain}, Tissue: {input$tissue}, Sex: {input$plot_click$panelvar2}, Age: {input$plot_click$panelvar1} Months")
   })
 

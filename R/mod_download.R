@@ -76,7 +76,7 @@ magora_download_button <- function(outputId, label = "Download", class = NULL, .
 
 # Create a button specifically for downloading the plot, which just downloads the already rendered one instead of re-rendering it
 magora_download_plot_button <- function(id, plotId, save_name) {
-  tags$button(
+  shiny::tags$button(
     id = id,
     shiny::icon("download", lib = "glyphicon"),
     "Save plot",
