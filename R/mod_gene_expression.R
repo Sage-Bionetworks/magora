@@ -1,11 +1,11 @@
-#' Gene Expression Volcano page UI Function
+#' Gene Expression page UI Function
 #'
 #' @description A shiny Module.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd
-mod_gene_expression_volcano_ui <- function(id) {
+mod_gene_expression_ui <- function(id) {
   ns <- shiny::NS(id)
   title <- "Gene Expression"
 
@@ -58,7 +58,7 @@ mod_gene_expression_volcano_ui <- function(id) {
 #' Gene Expression page server Function
 #'
 #' @noRd
-mod_gene_expression_volcano_server <- function(input, output, session, gene_expressions) {
+mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
 
   # Update tissue options available based on strain selected -----
