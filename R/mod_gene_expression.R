@@ -40,8 +40,12 @@ mod_gene_expression_ui <- function(id) {
         ),
         shiny::column(
           width = 2,
-          offset = 2,
-          style = "margin-top: 27.85px",
+          style = "margin-top: 27.85px;",
+          mod_download_data_ui(ns("download_data"))
+        ),
+        shiny::column(
+          width = 2,
+          style = "margin-top: 27.85px;",
           mod_download_plot_ui(ns("download_plot"))
         ),
       ),
@@ -91,6 +95,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   gene_expression_plot <- shiny::reactive({
     filtered_gene_expressions() %>%
+      head(10) %>%
       magora_volcano_plot(type = "ggplot2", facet = TRUE)
   })
 
@@ -146,8 +151,9 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
         footer = shiny::modalButton("Close"),
         shinycssloaders::withSpinner(plotly::plotlyOutput(
           height = "600px",
-          ns("drilldown_gene_expressions")),
-          color = "#D3DCEF"
+          ns("drilldown_gene_expressions")
+        ),
+        color = "#D3DCEF"
         )
       )
     )
@@ -162,6 +168,14 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   save_name <- shiny::reactive({
     download_name("gene_expression", input$strain, input$tissue)
   })
+
+  # Data
+
+  shiny::callModule(mod_download_data_server,
+    "download_data",
+    data = filtered_gene_expressions,
+    save_name = save_name
+  )
 
   # Plot
 

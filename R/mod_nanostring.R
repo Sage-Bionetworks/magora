@@ -21,11 +21,15 @@ mod_nanostring_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 2,
-          offset = 10,
+          width = 4,
+          offset = 8,
+          shiny::column(
+            width = 6,
+            mod_download_data_ui(ns("download_data"))
+          ),
 
           shiny::column(
-            width = 12,
+            width = 6,
             mod_download_plot_ui(ns("download_plot"))
           )
         )
@@ -55,7 +59,7 @@ mod_nanostring_server <- function(input, output, session) {
   # The save functions expect a reactive data set, name, and dimensions (for the other pages)
   # Just make into reactives for consistent usage
   nanostring_data <- shiny::reactive(magora::nanostring)
-  nanostring_name <- shiny::reactive(
+  save_name <- shiny::reactive(
     "nanostring"
   )
   # Save size will be height = nrow * 5, width = ncol * 5
@@ -63,13 +67,21 @@ mod_nanostring_server <- function(input, output, session) {
     list(nrow = 2.75, ncol = 2.5)
   })
 
+  # Data
+
+  shiny::callModule(mod_download_data_server,
+    "download_data",
+    data = nanostring_data,
+    save_name = save_name
+  )
+
   # Plot
 
   shiny::callModule(mod_download_plot_server,
     "download_plot",
     plotId = ns("nanostring_plot"),
     data = nanostring_data,
-    save_name = nanostring_name
+    save_name = save_name
   )
 }
 
