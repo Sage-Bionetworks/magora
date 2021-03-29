@@ -134,7 +134,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   output$drilldown_gene_expressions <- plotly::renderPlotly({
     drilldown_gene_expressions() %>%
-      magora_volcano_plot(type = "plotly", facet = FALSE)
+      magora_volcano_plot(type = "plotly", facet = FALSE, save_name = drilldown_gene_expressions_title())
   })
 
   shiny::observeEvent(input$plot_click, {
@@ -143,7 +143,9 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
         size = "l",
         easyClose = TRUE,
         title = drilldown_gene_expressions_title(),
-        shinycssloaders::withSpinner(plotly::plotlyOutput(ns("drilldown_gene_expressions")),
+        shinycssloaders::withSpinner(plotly::plotlyOutput(
+          height = "600px",
+          ns("drilldown_gene_expressions")),
           color = "#D3DCEF"
         )
       )

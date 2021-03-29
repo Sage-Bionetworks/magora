@@ -1,4 +1,4 @@
-magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue_cutoff = 0.05, type = "ggplot2", facet = TRUE) {
+magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue_cutoff = 0.05, type = "ggplot2", facet = TRUE, save_name) {
 
   # Flag downregulated and upregulated genes
 
@@ -42,12 +42,13 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
 
   if (type == "ggplot2") {
     p +
-      ggrepel::geom_text_repel(ggplot2::aes(label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5) +
+      ggrepel::geom_text_repel(ggplot2::aes(label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
       ggplot2::labs(x = bquote(~Log[2]~ "Fold change"), y = bquote(~-Log[10]~"P-Value"))
   } else if (type == "plotly") {
     p <- p +
       ggplot2::labs(x = "Log2 Fold Change", y = "Log 10 P-Value")
 
-    plotly::ggplotly(p, tooltip = "text")
+    plotly::ggplotly(p, tooltip = "text") %>%
+      plotly::config(toImageButtonOptions = list(format = "png", filename = save_name, height = 600, width = 900, scale = 2))
   }
 }
