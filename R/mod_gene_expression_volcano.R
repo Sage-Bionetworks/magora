@@ -43,7 +43,7 @@ mod_gene_expression_volcano_ui <- function(id) {
           offset = 2,
           style = "margin-top: 27.85px",
           mod_download_plot_ui(ns("download_plot"))
-        )
+        ),
       ),
       shiny::column(
         width = 12,
@@ -159,16 +159,15 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   })
 
   save_name <- shiny::reactive({
-    download_name("gene_expression", input$strain)
+    download_name("gene_expression", input$strain, input$tissue)
   })
 
   # Plot
 
   shiny::callModule(mod_download_plot_server,
     "download_plot",
-    plot = gene_expression_plot,
+    plotId = ns("gene_expression_plot"),
     data = filtered_gene_expressions,
-    save_name = save_name,
-    plot_dims = gene_expression_plot_dims
+    save_name = save_name
   )
 }

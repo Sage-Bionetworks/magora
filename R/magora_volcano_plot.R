@@ -49,6 +49,7 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
       ggplot2::labs(x = "Log2 Fold Change", y = "Log 10 P-Value")
 
     plotly::ggplotly(p, tooltip = "text") %>%
-      plotly::config(toImageButtonOptions = list(format = "png", filename = save_name, height = 600, width = 900, scale = 2))
+      plotly::config(toImageButtonOptions = list(format = "png", filename = save_name, height = 600, width = 900, scale = 2),
+                     modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", "sendDataToCloud",  "editInChartStudio", "pan2d", "select2d", "lasso2d", "drawclosedpath", "drawopenpath", "drawline", "hoverClosestCartesian", "hoverCompareCartesian"))
   }
 }

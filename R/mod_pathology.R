@@ -160,9 +160,8 @@ mod_pathology_server <- function(input, output, session) {
 
   shiny::callModule(mod_download_plot_server,
     "download_plot",
-    plot = phenotype_plot,
+    plotId = ns("phenotype_plot"),
     data = phenotype_data_download,
-    save_name = save_name,
-    plot_dims = phenotype_plot_dims
+    save_name = save_name
   )
 }

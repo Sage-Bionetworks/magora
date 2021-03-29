@@ -67,10 +67,9 @@ mod_nanostring_server <- function(input, output, session) {
 
   shiny::callModule(mod_download_plot_server,
     "download_plot",
-    plot = nanostring_plot,
+    plotId = ns("nanostring_plot"),
     data = nanostring_data,
-    save_name = nanostring_name,
-    plot_dims = nanostring_plot_dims
+    save_name = nanostring_name
   )
 }
 

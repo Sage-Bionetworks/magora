@@ -44,13 +44,13 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
 #' @noRd
 mod_download_plot_ui <- function(id) {
   ns <- shiny::NS(id)
-  magora_download_button(ns("download_plot"), "Save plot")
+  shiny::uiOutput(ns("save_plot"))
 }
 
 #' Download Data Server Function
 #'
 #' @noRd
-mod_download_plot_server <- function(input, output, session, plot, data, save_name, plot_dims) {
+mod_download_plot_server <- function(input, output, session, plotId, data, save_name) {
   ns <- session$ns
 
   # Only enable button if there is data available
@@ -58,25 +58,9 @@ mod_download_plot_server <- function(input, output, session, plot, data, save_na
     shinyjs::toggleState(id = "download_plot", condition = nrow(data()) > 0)
   })
 
-  save_dims <- shiny::reactive({
-    list(
-      height = plot_dims()[["nrow"]] * 5,
-      width = ifelse(plot_dims()[["ncol"]] == 1, 6, plot_dims()[["ncol"]] * 5)
-    )
+  output$save_plot <- shiny::renderUI({
+    magora_download_plot_button(id = "download_plot", plotId, save_name)
   })
-
-  output$download_plot <- shiny::downloadHandler(
-    filename = function() {
-      glue::glue("{save_name()}_plot.png")
-    },
-    content = function(file) {
-      ggplot2::ggsave(
-        filename = file, plot = plot(),
-        height = save_dims()[["height"]], width = save_dims()[["width"]],
-        units = "in", dpi = 300
-      )
-    }
-  )
 }
 
 # Utils ----
@@ -88,6 +72,17 @@ magora_download_button <- function(outputId, label = "Download", class = NULL, .
     class = paste("btn btn-default shiny-download-link", class),
     href = "", target = "_blank", download = NA, shiny::icon("download", lib = "glyphicon"), label, ...
   )
+}
+
+# Create a button specifically for downloading the plot, which just downloads the already rendered one instead of re-rendering it
+magora_download_plot_button <- function(id, plotId, save_name) {
+  tags$button(
+    id = id,
+    shiny::icon("download", lib = "glyphicon"),
+    "Save plot",
+    class = paste("btn btn-default shiny-download-link"),
+    onclick = glue::glue('var a = document.createElement("a"); a.href = $("#{plotId}").find("img").attr("src"); a.download = "{save_name()}.png"; a.click(); '
+  ))
 }
 
 download_name <- function(data_type = c("phenotype", "gene_expression"), ...) {
