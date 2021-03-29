@@ -25,7 +25,7 @@ mod_gene_expression_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("strain"),
             "Strain",
-            choices = sort(unique(magora::gene_expressions_for_volcano[["strain"]])),
+            choices = sort(unique(magora::gene_expressions[["strain"]])),
             multiple = FALSE
           )
         ),
@@ -34,7 +34,7 @@ mod_gene_expression_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
-            choices = sort(unique(magora::gene_expressions_for_volcano[["tissue"]])),
+            choices = sort(unique(magora::gene_expressions[["tissue"]])),
             multiple = FALSE
           )
         ),
@@ -84,7 +84,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   # Filter data based on inputs ----
 
   filtered_gene_expressions <- shiny::reactive({
-    magora::gene_expressions_for_volcano %>%
+    magora::gene_expressions %>%
       dplyr::filter(
         .data$strain == input$strain,
         .data$tissue == input$tissue
@@ -95,7 +95,6 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
 
   gene_expression_plot <- shiny::reactive({
     filtered_gene_expressions() %>%
-      head(10) %>%
       magora_volcano_plot(type = "ggplot2", facet = TRUE)
   })
 

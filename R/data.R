@@ -17,3 +17,13 @@
 #'
 #' A version of the data in \code{\link{nanostring}} specifically designed for plotting via \code{\link{magora_corrplot}}
 "nanostring_for_plot"
+
+#' Gene Expression data
+#'
+#' A data set containing the Log 2 Fold Change and P-Value for genes, across different strains, tissues, sexes, and ages.
+"gene_expressions"
+
+#' Gene Expression tissue
+#'
+#' A data set containing the tissues available for each strain in the gene expression data.
+"gene_expressions_tissue"

@@ -41,7 +41,7 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
       readr::write_csv(data(), path = data_file)
 
       # Zip files
-      zip(file, c("README.txt", data_file))
+      utils::zip(file, c("README.txt", data_file))
     }
   )
 }
