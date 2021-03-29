@@ -140,9 +140,10 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   shiny::observeEvent(input$plot_click, {
     shiny::showModal(
       shiny::modalDialog(
+        title = drilldown_gene_expressions_title(),
         size = "l",
         easyClose = TRUE,
-        title = drilldown_gene_expressions_title(),
+        footer = shiny::modalButton("Close"),
         shinycssloaders::withSpinner(plotly::plotlyOutput(
           height = "600px",
           ns("drilldown_gene_expressions")),
