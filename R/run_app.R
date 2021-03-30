@@ -10,8 +10,6 @@ run_app <- function(
       ui = app_ui,
       server = app_server
     ),
-    golem_opts = list(...,
-      gene_expressions = arrow::open_dataset(here::here("inst", "extdata", "gene_expressions"))
-    )
+    golem_opts = list(...)
   )
 }

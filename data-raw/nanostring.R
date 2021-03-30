@@ -157,8 +157,7 @@ nanostring_with_metadata <- nanostring_with_metadata %>%
     age %in% 2:5 ~ "2 - 5 Months",
     age %in% 6:9 ~ "6 - 9 Months",
     age %in% 10:14 ~ "10 - 14 Months"
-  )
-)
+  ))
 
 ## AMP-AD Modules ----
 

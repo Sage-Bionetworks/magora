@@ -50,11 +50,15 @@ mod_pathology_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 2,
-          offset = 10,
+          width = 4,
+          offset = 8,
+          shiny::column(
+            width = 6,
+            mod_download_data_ui(ns("download_data"))
+          ),
 
           shiny::column(
-            width = 12,
+            width = 6,
             mod_download_plot_ui(ns("download_plot"))
           )
         )
@@ -156,13 +160,20 @@ mod_pathology_server <- function(input, output, session) {
     download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
   })
 
+  # Data
+
+  shiny::callModule(mod_download_data_server,
+    "download_data",
+    data = phenotype_data_download,
+    save_name = save_name
+  )
+
   # Plot
 
   shiny::callModule(mod_download_plot_server,
     "download_plot",
-    plot = phenotype_plot,
+    plotId = ns("phenotype_plot"),
     data = phenotype_data_download,
-    save_name = save_name,
-    plot_dims = phenotype_plot_dims
+    save_name = save_name
   )
 }

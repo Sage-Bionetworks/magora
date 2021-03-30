@@ -4,7 +4,6 @@
 # magora
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 The goal of magora is to allow the exploration of Mouse-Agora data (gene
@@ -19,25 +18,21 @@ You can install the development version of magora from GitHub with:
 devtools::install_github("Sage-Bionetworks/magora", ref = "main")
 ```
 
-## Gene Expression Data
-
-In order to run magora locally, the gene expression data in this
-repository needs to be converted from an `.rda` file (which is optimally
-compressed) into a series of Parquet files (which allow the app to take
-advantage of the [`arrow`
-package](https://arrow.apache.org/docs/r/index.html) for efficiently
-working with large data in memory).
-
-To convert the data, please run the code in
-[`data-raw/gene_expressions_parquet.R`](data-raw/gene_expressions_parquet.R):
-
-    Rscript data-raw/gene_expressions_parquet.R
-
 ## Usage
 
-Once the gene expression data has been converted, you can run the app
-locally via:
+You can run the app locally via:
 
 ``` r
 magora::run_app()
 ```
+
+## Data attribution
+
+If you use data from magora, please acknowledge the source of this data
+in any publications by including the following statement in your
+manuscript: “The results published here are in whole or in part based on
+data obtained from the MODEL-AD Mouse Explorer. The MODEL-AD Centers
+were established with funding from The National Institute on Aging (U54
+AG054345-01 and AG054349). Aging studies are also supported by the
+Nathan Shock Center of Excellence in the Basic Biology of Aging (NIH P30
+AG0380770).”

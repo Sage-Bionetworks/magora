@@ -15,7 +15,7 @@ mod_gene_expression_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        shiny::includeMarkdown(app_sys("app", "www", "gene_expression_content.md")),
+        "Please select a strain and tissue from the dropdown lists. You can click on a panel to bring up an interactive plot for that sex and age.",
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -23,22 +23,10 @@ mod_gene_expression_ui <- function(id) {
         shiny::column(
           width = 4,
           shinyWidgets::pickerInput(
-            ns("gene"),
-            "Gene",
-            choices = magora::gene_expression_genes,
-            multiple = FALSE,
-            selected = "0610007P14Rik",
-            options = shinyWidgets::pickerOptions(size = 10, liveSearch = TRUE)
-          )
-        ),
-        shiny::column(
-          width = 4,
-          shinyWidgets::pickerInput(
-            ns("mouse_line"),
-            "Mouse lines",
-            choices = magora::gene_expression_mouse_lines,
-            multiple = TRUE,
-            selected = c("5XFAD", "C57BL6J")
+            ns("strain"),
+            "Strain",
+            choices = sort(unique(magora::gene_expressions[["strain"]])),
+            multiple = FALSE
           )
         ),
         shiny::column(
@@ -46,27 +34,27 @@ mod_gene_expression_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
-            choices = magora::gene_expression_tissues
+            choices = sort(unique(magora::gene_expressions[["tissue"]])),
+            multiple = FALSE
           )
         ),
-      ),
-      shiny::fluidRow(
-        class = "magora-row",
         shiny::column(
           width = 2,
-          offset = 10,
-
-          shiny::column(
-            width = 12,
-            mod_download_plot_ui(ns("download_plot"))
-          )
+          style = "margin-top: 27.85px;",
+          mod_download_data_ui(ns("download_data"))
         ),
         shiny::column(
-          width = 12,
-          align = "center",
-          shiny::uiOutput(ns("gene_expression_plot_ui"))
-        )
+          width = 2,
+          style = "margin-top: 27.85px;",
+          mod_download_plot_ui(ns("download_plot"))
+        ),
+      ),
+      shiny::column(
+        width = 12,
+        align = "center",
+        shiny::uiOutput(ns("gene_expression_plot_ui"))
       )
+      # )
     )
   )
 }
@@ -77,10 +65,10 @@ mod_gene_expression_ui <- function(id) {
 mod_gene_expression_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
 
-  # Update tissue options based on gene expression selected ----
+  # Update tissue options available based on strain selected -----
 
-  shiny::observeEvent(input$mouse_line, {
-    available_tissue <- unique(unlist(magora::gene_expressions_mouse_line_tissues[input$mouse_line]))
+  shiny::observeEvent(input$strain, {
+    available_tissue <- sort(magora::gene_expressions_tissue[[input$strain]])
 
     # If the tissue previously selected is still available, keep it selected
     selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
@@ -96,76 +84,104 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
   # Filter data based on inputs ----
 
   filtered_gene_expressions <- shiny::reactive({
-    shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
-    )
-
-    gene_expressions %>%
+    magora::gene_expressions %>%
       dplyr::filter(
-        .data$partition == tolower(stringr::str_sub(input$gene, 1, 1)),
-        .data$gene == input$gene,
-        .data$tissue == input$tissue,
-        .data$mouse_line %in% input$mouse_line
-      ) %>%
-      dplyr::collect()
+        .data$strain == input$strain,
+        .data$tissue == input$tissue
+      )
   })
 
   # Generate plot ----
 
   gene_expression_plot <- shiny::reactive({
-    shiny::validate(
-      shiny::need(nrow(filtered_gene_expressions()) > 0, message = "There is no data for the selected combination.")
-    )
-
     filtered_gene_expressions() %>%
-      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
-      magora_boxplot(plot_type = "gene expression")
+      magora_volcano_plot(type = "ggplot2", facet = TRUE)
   })
 
-  output$gene_expression_plot <- shiny::renderPlot(gene_expression_plot(), res = 96)
+  output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
+    cacheKeyExpr = {
+      list(
+        input$strain,
+        input$tissue
+      )
+    },
+    res = 96
+  )
 
   gene_expression_plot_dims <- shiny::reactive({
     list(
-      nrow = ceiling(length(input$mouse_line) / 2),
-      ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
+      nrow = length(unique(filtered_gene_expressions()[["sex"]])),
+      ncol = length(unique(filtered_gene_expressions()[["age"]]))
     )
   })
 
   output$gene_expression_plot_ui <- shiny::renderUI({
-
-    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
-    shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
-    )
-
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_plot"),
       height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%"),
+      click = ns("plot_click")
     ),
     color = "#D3DCEF"
+    )
+  })
+
+  drilldown_gene_expressions <- shiny::reactive({
+    shiny::req(input$plot_click)
+    panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}" & {input$plot_click$mapping$panelvar2} == "{input$plot_click$panelvar2}"')
+    filtered_gene_expressions() %>%
+      dplyr::filter(eval(rlang::parse_expr(panel_filter)))
+  })
+
+  drilldown_gene_expressions_title <- shiny::reactive({
+    glue::glue("Strain: {input$strain}, Tissue: {input$tissue}, Sex: {input$plot_click$panelvar2}, Age: {input$plot_click$panelvar1} Months")
+  })
+
+  output$drilldown_gene_expressions <- plotly::renderPlotly({
+    drilldown_gene_expressions() %>%
+      magora_volcano_plot(type = "plotly", facet = FALSE, save_name = drilldown_gene_expressions_title())
+  })
+
+  shiny::observeEvent(input$plot_click, {
+    shiny::showModal(
+      shiny::modalDialog(
+        title = drilldown_gene_expressions_title(),
+        size = "l",
+        easyClose = TRUE,
+        footer = shiny::modalButton("Close"),
+        shinycssloaders::withSpinner(plotly::plotlyOutput(
+          height = "600px",
+          ns("drilldown_gene_expressions")
+        ),
+        color = "#D3DCEF"
+        )
+      )
     )
   })
 
   # Save output ----
 
   gene_expression_data_download <- shiny::reactive({
-    filtered_gene_expressions() %>%
-      dplyr::select(.data$mouse_line, .data$tissue, .data$age, .data$sex, .data$gene, .data$value) %>%
-      dplyr::arrange(.data$mouse_line, .data$tissue, .data$age, .data$sex) %>%
-      dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
+    filtered_gene_expressions()
   })
 
   save_name <- shiny::reactive({
-    download_name("gene_expression", input$gene, input$mouse_line, input$tissue)
+    download_name("gene_expression", input$strain, input$tissue)
   })
+
+  # Data
+
+  shiny::callModule(mod_download_data_server,
+    "download_data",
+    data = filtered_gene_expressions,
+    save_name = save_name
+  )
 
   # Plot
 
   shiny::callModule(mod_download_plot_server,
     "download_plot",
-    plot = gene_expression_plot,
-    data = gene_expression_data_download,
-    save_name = save_name,
-    plot_dims = gene_expression_plot_dims
+    plotId = ns("gene_expression_plot"),
+    data = filtered_gene_expressions,
+    save_name = save_name
   )
 }

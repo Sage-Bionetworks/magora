@@ -25,10 +25,23 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
 
   output$download_data <- shiny::downloadHandler(
     filename = function() {
-      glue::glue("{save_name()}_data.csv")
+      glue::glue("{save_name()}_data.zip")
     },
     content = function(file) {
-      readr::write_csv(data(), path = file)
+
+      # Move to a tempdir to save files
+      original_wd <- setwd(tempdir())
+
+      # Go back to working directory after function
+      on.exit(setwd(original_wd))
+
+      # Write files
+      writeLines('Please acknowledge the source of this data in any publications by including the following statement in your manuscript: "The results published here are in whole or in part based on data obtained from the MODEL-AD Mouse Explorer. The MODEL-AD Centers were established with funding from The National Institute on Aging (U54 AG054345-01 and AG054349). Aging studies are also supported by the Nathan Shock Center of Excellence in the Basic Biology of Aging (NIH P30 AG0380770)."', con = "README.txt")
+      data_file <- glue::glue("{save_name()}.csv")
+      readr::write_csv(data(), path = data_file)
+
+      # Zip files
+      utils::zip(file, c("README.txt", data_file))
     }
   )
 }
@@ -44,13 +57,13 @@ mod_download_data_server <- function(input, output, session, data, save_name) {
 #' @noRd
 mod_download_plot_ui <- function(id) {
   ns <- shiny::NS(id)
-  magora_download_button(ns("download_plot"), "Save plot")
+  shiny::uiOutput(ns("save_plot_button"))
 }
 
 #' Download Data Server Function
 #'
 #' @noRd
-mod_download_plot_server <- function(input, output, session, plot, data, save_name, plot_dims) {
+mod_download_plot_server <- function(input, output, session, plotId, data, save_name) {
   ns <- session$ns
 
   # Only enable button if there is data available
@@ -58,35 +71,32 @@ mod_download_plot_server <- function(input, output, session, plot, data, save_na
     shinyjs::toggleState(id = "download_plot", condition = nrow(data()) > 0)
   })
 
-  save_dims <- shiny::reactive({
-    list(
-      height = plot_dims()[["nrow"]] * 5,
-      width = ifelse(plot_dims()[["ncol"]] == 1, 6, plot_dims()[["ncol"]] * 5)
-    )
+  output$save_plot_button <- shiny::renderUI({
+    magora_download_plot_button(id = "download_plot", plotId, save_name)
   })
-
-  output$download_plot <- shiny::downloadHandler(
-    filename = function() {
-      glue::glue("{save_name()}_plot.png")
-    },
-    content = function(file) {
-      ggplot2::ggsave(
-        filename = file, plot = plot(),
-        height = save_dims()[["height"]], width = save_dims()[["width"]],
-        units = "in", dpi = 300
-      )
-    }
-  )
 }
 
 # Utils ----
 
 # Create a download button with a different icon
-magora_download_button <- function(outputId, label = "Download", class = NULL, ...) {
+magora_download_button <- function(outputId, label = "Download", class = NULL) {
   shiny::tags$a(
     id = outputId,
     class = paste("btn btn-default shiny-download-link", class),
-    href = "", target = "_blank", download = NA, shiny::icon("download", lib = "glyphicon"), label, ...
+    style = "width: 100%",
+    href = "", target = "_blank", download = NA, shiny::icon("download", lib = "glyphicon"), label
+  )
+}
+
+# Create a button specifically for downloading the plot, which just downloads the already rendered one instead of re-rendering it
+magora_download_plot_button <- function(id, plotId, save_name) {
+  shiny::tags$button(
+    id = id,
+    shiny::icon("download", lib = "glyphicon"),
+    "Save plot",
+    class = paste("btn btn-default shiny-download-link"),
+    style = "width: 100%",
+    onclick = glue::glue('var a = document.createElement("a"); a.href = $("#{plotId}").find("img").attr("src"); a.download = "{save_name()}.png"; a.click(); ')
   )
 }
 
