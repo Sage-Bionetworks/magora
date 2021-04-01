@@ -138,7 +138,7 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}" & {input$plot_click$mapping$panelvar2} == "{input$plot_click$panelvar2}"')
     filtered_gene_expressions() %>%
       dplyr::filter(eval(rlang::parse_expr(panel_filter))) %>%
-      dplyr::filter(!is.na(diff_expressed))
+      dplyr::filter(!is.na(.data$diff_expressed))
   })
 
   drilldown_gene_expressions_title <- shiny::reactive({
