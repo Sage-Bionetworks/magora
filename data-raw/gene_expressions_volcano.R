@@ -121,18 +121,15 @@ genes <- genes %>%
 
 gene_expressions <- gene_expressions %>%
   left_join(genes, by = "gene_id") %>%
-  select(-gene_symbol, -gene_id)
-
-gene_expressions <- gene_expressions %>%
-  select(-padj, -syn_id)
+  select(-gene_symbol, -gene_id, -pvalue, -syn_id)
 
 # Flag as significant for plotting ----
 
 gene_expressions <- gene_expressions %>%
   dplyr::mutate(diff_expressed = dplyr::case_when(
-    log2foldchange > 1 & pvalue < 0.05 ~ "Upregulated",
-    log2foldchange < -1 & pvalue < 0.05 ~ "Downregulated",
-    is.na(log2foldchange) | is.na(pvalue) ~ NA_character_,
+    log2foldchange > 1 & padj < 0.05 ~ "Upregulated",
+    log2foldchange < -1 & padj < 0.05 ~ "Downregulated",
+    is.na(log2foldchange) | is.na(padj) ~ NA_character_,
     TRUE ~ "Not Significant"
   ))
 
