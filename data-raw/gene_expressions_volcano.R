@@ -113,6 +113,13 @@ gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_i
   dplyr::rename(gene_id = GENEID, gene_symbol = SYMBOL) %>%
   mutate(gene_symbol = ifelse(gene_symbol %in% c(""), NA_character_, gene_symbol))
 
+# Only use the symbol if it exists for one id only (i.e. mapping is 1-1)
+
+gene_symbols <- gene_symbols %>%
+  add_count(gene_symbol) %>%
+  filter(n == 1) %>%
+  select(-n)
+
 # If the symbol exists, use that - otherwise, use gene id
 
 genes <- genes %>%
@@ -122,6 +129,13 @@ genes <- genes %>%
 gene_expressions <- gene_expressions %>%
   left_join(genes, by = "gene_id") %>%
   select(-gene_symbol, -gene_id, -pvalue, -syn_id)
+
+# Check that values are unique
+
+gene_expressions %>%
+  count(strain, tissue, sex, age, gene) %>%
+  filter(n > 1) %>%
+  nrow() == 0
 
 # Flag as significant for plotting ----
 
