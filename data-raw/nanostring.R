@@ -127,7 +127,8 @@ nanostring_individual_metadata <- nanostring_individual_metadata_raw %>%
   mutate(
     across(c(dateBirth, dateDeath), mdy),
     age_interval = interval(dateBirth, dateDeath),
-    age = round(age_interval / months(1))
+    age = round(age_interval / months(1)),
+    sex = str_to_title(sex)
   ) %>%
   select(individual_id = individualID, genotype, sex, age)
 
@@ -308,7 +309,7 @@ nanostring_for_plot <- nanostring %>%
   arrange(cluster) %>%
   mutate(
     module = fct_inorder(module),
-    model_sex = glue::glue("{model} ({str_to_title(sex)})"),
+    model_sex = glue::glue("{model} ({sex})"),
   ) %>%
   arrange(model_sex) %>%
   mutate(

@@ -22,17 +22,41 @@ mod_nanostring_ui <- function(id) {
         class = "magora-row",
         shiny::column(
           width = 4,
-          offset = 8,
-          shiny::column(
-            width = 6,
-            mod_download_data_ui(ns("download_data"))
-          ),
-
-          shiny::column(
-            width = 6,
-            mod_download_plot_ui(ns("download_plot"))
+          shinyWidgets::pickerInput(
+            ns("strain"),
+            "Strain",
+            choices = sort(unique(magora::nanostring[["model"]])),
+            multiple = FALSE
           )
-        )
+        ),
+        shiny::column(
+          width = 2,
+          shinyWidgets::pickerInput(
+            ns("sex"),
+            "Sex",
+            choices = sort(unique(magora::nanostring[["sex"]])),
+            multiple = FALSE
+          )
+        ),
+        shiny::column(
+          width = 2,
+          shinyWidgets::pickerInput(
+            ns("age"),
+            "Age",
+            choices = sort(unique(magora::nanostring[["age_group"]])),
+            multiple = FALSE
+          )
+        ),
+        shiny::column(
+          width = 2,
+          style = "margin-top: 27.85px;",
+          mod_download_data_ui(ns("download_data"))
+        ),
+        shiny::column(
+          width = 2,
+          style = "margin-top: 27.85px;",
+          mod_download_plot_ui(ns("download_plot"))
+        ),
       ),
       shiny::column(
         width = 12,
