@@ -25,8 +25,10 @@ mod_nanostring_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("strain"),
             "Strain",
-            choices = sort(unique(magora::nanostring[["model"]])),
-            multiple = FALSE
+            choices = sort(unique(magora::nanostring_for_plot[["model"]])),
+            selected = sort(unique(magora::nanostring_for_plot[["model"]])),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
         ),
         shiny::column(
@@ -34,8 +36,10 @@ mod_nanostring_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("sex"),
             "Sex",
-            choices = sort(unique(magora::nanostring[["sex"]])),
-            multiple = FALSE
+            choices = sort(unique(magora::nanostring_for_plot[["sex"]])),
+            selected = sort(unique(magora::nanostring_for_plot[["sex"]])),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
         ),
         shiny::column(
@@ -43,8 +47,10 @@ mod_nanostring_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("age"),
             "Age",
-            choices = sort(unique(magora::nanostring[["age_group"]])),
-            multiple = FALSE
+            choices = levels(magora::nanostring_for_plot[["age_group"]]),
+            selected = levels(magora::nanostring_for_plot[["age_group"]]),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
         ),
         shiny::column(
@@ -60,7 +66,7 @@ mod_nanostring_ui <- function(id) {
       ),
       shiny::column(
         width = 12,
-        shinycssloaders::withSpinner(shiny::plotOutput(ns("nanostring_plot"), width = "1000px", height = "1100px"), color = "#D3DCEF")
+        shiny::uiOutput(ns("nanostring_plot_ui"))
       )
     )
   )
@@ -72,30 +78,83 @@ mod_nanostring_ui <- function(id) {
 mod_nanostring_server <- function(input, output, session) {
   ns <- session$ns
 
+
+  # Filter data based on inputs ----
+
+  filtered_nanostring <- shiny::reactive({
+    shiny::validate(
+      shiny::need(!is.null(input$strain) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+    )
+
+    magora::nanostring %>%
+      dplyr::filter(
+        .data$model %in% input$strain,
+        .data$sex %in% input$sex,
+        .data$age_group %in% input$age
+      )
+  })
+
+  filtered_nanostring_for_plot <- shiny::reactive({
+    shiny::validate(
+      shiny::need(!is.null(input$strain) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+    )
+
+    magora::nanostring_for_plot %>%
+      dplyr::filter(
+        .data$model %in% input$strain,
+        .data$sex %in% input$sex,
+        .data$age_group %in% input$age
+      )
+  })
+
+  # Generate plot ----
+
   nanostring_plot <- shiny::reactive({
-    magora_corrplot(magora::nanostring_for_plot)
+    magora_corrplot(filtered_nanostring_for_plot())
   })
 
   output$nanostring_plot <- shiny::renderPlot(nanostring_plot(), res = 96)
 
-  # Save output ----
-
-  # The save functions expect a reactive data set, name, and dimensions (for the other pages)
-  # Just make into reactives for consistent usage
-  nanostring_data <- shiny::reactive(magora::nanostring)
-  save_name <- shiny::reactive(
-    "nanostring"
-  )
   # Save size will be height = nrow * 5, width = ncol * 5
   nanostring_plot_dims <- shiny::reactive({
-    list(nrow = 2.75, ncol = 2.5)
+    list(
+      nrow = length(input$strain) * length(input$sex) * length(input$age) + length(input$age),
+      ncol = 2.5
+    )
+  })
+
+  output$nanostring_plot_ui <- shiny::renderUI({
+
+    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
+    shiny::validate(
+      shiny::need(!is.null(input$strain) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+    )
+
+    min_height <- 150 + 75 + 100 * length(input$age) # top labels, legend, each side facet label
+    rows_height <- 150 + 75 + nanostring_plot_dims()[["nrow"]] * 25
+    plot_height <- max(min_height, rows_height)
+
+    shinycssloaders::withSpinner(
+      shiny::plotOutput(
+        ns("nanostring_plot"),
+        height = paste0(plot_height, "px"),
+        width = "1000px"
+      ),
+      color = "#D3DCEF"
+    )
+  })
+
+  # Save output ----
+
+  save_name <- shiny::reactive({
+    download_name("nanostring", input$strain, input$sex, input$age)
   })
 
   # Data
 
   shiny::callModule(mod_download_data_server,
     "download_data",
-    data = nanostring_data,
+    data = filtered_nanostring,
     save_name = save_name
   )
 
@@ -104,7 +163,7 @@ mod_nanostring_server <- function(input, output, session) {
   shiny::callModule(mod_download_plot_server,
     "download_plot",
     plotId = ns("nanostring_plot"),
-    data = nanostring_data,
+    data = filtered_nanostring,
     save_name = save_name
   )
 }
