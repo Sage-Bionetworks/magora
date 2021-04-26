@@ -15,7 +15,7 @@ library(forcats)
 
 ## Nanostring ----
 
-# synGet("syn22105392", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
+# synGet("syn22105392", version = 2, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized_Allsamples.csv"))
 
@@ -25,11 +25,11 @@ nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized
 # The age/sex are then in the individual metadata, which only has individual ID
 # So we need the biospecimen metadata to get the ID
 
-# synGet("syn22107820", version = 4, downloadLocation = here::here("data-raw", "nanostring"))
+# synGet("syn22107820", version = 6, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_biospecimen_metadata.csv"))
 
-# synGet("syn22107818", version = 3, downloadLocation = here::here("data-raw", "nanostring"))
+# synGet("syn22107818", version = 5, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_individual_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_individual_metadata.csv")) %>%
   remove_empty(c("rows", "cols"))
@@ -116,6 +116,8 @@ nanostring_with_id <- nanostring %>%
 nrow(nanostring_with_id) == nrow(nanostring)
 
 # Ensure all records have individual_id
+
+# TODO HERE
 
 nanostring_with_id %>%
   filter(is.na(individual_id)) %>%
@@ -302,6 +304,10 @@ nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
   select(cluster, cluster_label, module, model, sex, age_group, correlation = estimate, p_value, significant)
+
+# Remove any groupings that have less than 3 individuals
+
+
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
