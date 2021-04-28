@@ -50,15 +50,19 @@ mod_pathology_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 4,
-          offset = 8,
+          width = 6,
+          offset = 6,
           shiny::column(
-            width = 6,
+            width = 4,
+            bookmarkButton(id = ns("bookmark"))
+          ),
+          shiny::column(
+            width = 4,
             mod_download_data_ui(ns("download_data"))
           ),
 
           shiny::column(
-            width = 6,
+            width = 4,
             mod_download_plot_ui(ns("download_plot"))
           )
         )
@@ -77,6 +81,12 @@ mod_pathology_ui <- function(id) {
 #' @noRd
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
+
+  # Trigger bookmark
+  observeEvent(input$bookmark, {
+    browser()
+    session$doBookmark()
+  })
 
   # Update tissue options available based on phenotype selected -----
 

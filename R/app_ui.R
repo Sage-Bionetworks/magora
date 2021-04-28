@@ -8,6 +8,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     magoraPage(
       header = mod_header_ui(),
+      id = "page",
       mod_start_ui(),
       mod_pathology_ui("pathology"),
       mod_gene_expression_ui("gene_expression"),
