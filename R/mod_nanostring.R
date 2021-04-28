@@ -40,11 +40,12 @@ mod_nanostring_ui <- function(id) {
             choices = sort(unique(magora::nanostring_for_plot[["sex"]])),
             selected = sort(unique(magora::nanostring_for_plot[["sex"]])),
             multiple = TRUE,
-            options = shinyWidgets::pickerOptions(actionsBox = TRUE, container = "body")
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
         ),
         shiny::column(
           width = 2,
+          class = "dropdown-too-small",
           shinyWidgets::pickerInput(
             ns("age"),
             "Age",

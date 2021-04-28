@@ -181,3 +181,10 @@ div.divflex {
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
    background-color: transparent;
 }
+
+/* ------ Inputs ------ */
+
+/* Increase the width of dropdowns that are too small for their content */
+.dropdown-too-small .dropdown-menu.open {
+    min-width: 150%;
+}
