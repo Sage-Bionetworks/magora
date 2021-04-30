@@ -1,4 +1,29 @@
+#' Volcano plot for gene expression data
+#'
+#' @param data Gene expression data from \code{\link{gene_expressions}}, optionally filtered.
+#' @param data_labels Labels for expression data from \code{\link{gene_expressions}}, optionally filtered. Only required if \code{type} is "ggplot2".
+#' @param type Type of plot - one of "ggplot2" or "plotly". Defaults to "ggplot2".
+#' @param facet Whether to facet the data by \code{sex} and \code{age}. Defaults to TRUE.
+#' @param save_name A name that will be used for saving the plot. Only required / used when \code{type} is "plotly".
+#' @param sample_frac The fraction of genes that are "not significant" that will be shown in the plot. Useful when there is a lot of data that slows down rendering. Defaults to 1.
+#'
+#' @export
 magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRUE, save_name, sample_frac = 1) {
+
+  # Check arguments
+  if(!type %in% c("ggplot2", "plotly")) {
+    stop("`type` should be one of 'ggplot2' or 'plotly'", call. = FALSE)
+  }
+
+  if (type == "ggplot2" & missing(data_labels)) {
+    stop("Please supply `data_labels` for labelling plot - required when `type` is 'ggplot2'.", call. = FALSE)
+  }
+
+  if (type == "plotly" & missing(save_name)) {
+    stop("Please supply `save_name` for saving the plot - required when `type` is 'plotly'.", call. = FALSE)
+  }
+
+  # Create plot
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_point(data = data, ggplot2::aes(x = .data$log2foldchange, y = -log10(.data$padj), colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
