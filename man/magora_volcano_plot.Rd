@@ -7,7 +7,7 @@
 magora_volcano_plot(
   data,
   data_labels,
-  type = c("ggplot2", "plotly"),
+  type = "ggplot2",
   facet = TRUE,
   save_name,
   sample_frac = 1
@@ -18,7 +18,7 @@ magora_volcano_plot(
 
 \item{data_labels}{Labels for expression data from \code{\link{gene_expressions}}, optionally filtered. Only required if \code{type} is "ggplot2".}
 
-\item{type}{Type of plot - one of "ggplot2" or "plotly".}
+\item{type}{Type of plot - one of "ggplot2" or "plotly". Defaults to "ggplot2".}
 
 \item{facet}{Whether to facet the data by \code{sex} and \code{age}. Defaults to TRUE.}
 
