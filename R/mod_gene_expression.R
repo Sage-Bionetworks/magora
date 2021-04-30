@@ -54,7 +54,6 @@ mod_gene_expression_ui <- function(id) {
         align = "center",
         shiny::uiOutput(ns("gene_expression_plot_ui"))
       )
-      # )
     )
   )
 }
@@ -91,11 +90,20 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
       )
   })
 
+  filtered_gene_expressions_labels <- shiny::reactive({
+    magora::gene_expressions_labels %>%
+      dplyr::filter(
+        .data$strain == input$strain,
+        .data$tissue == input$tissue
+      )
+  })
+
   # Generate plot ----
 
   gene_expression_plot <- shiny::reactive({
     filtered_gene_expressions() %>%
-      magora_volcano_plot(type = "ggplot2", facet = TRUE)
+      sample_gene_expressions(0.25) %>%
+      magora_volcano_plot(data_labels = filtered_gene_expressions_labels(), type = "ggplot2", facet = TRUE)
   })
 
   output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
@@ -129,7 +137,8 @@ mod_gene_expression_server <- function(input, output, session, gene_expressions)
     shiny::req(input$plot_click)
     panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}" & {input$plot_click$mapping$panelvar2} == "{input$plot_click$panelvar2}"')
     filtered_gene_expressions() %>%
-      dplyr::filter(eval(rlang::parse_expr(panel_filter)))
+      dplyr::filter(eval(rlang::parse_expr(panel_filter))) %>%
+      dplyr::filter(!is.na(.data$diff_expressed))
   })
 
   drilldown_gene_expressions_title <- shiny::reactive({

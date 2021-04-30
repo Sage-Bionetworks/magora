@@ -88,24 +88,24 @@ syn_ids <- syn_ids %>%
 
 # Read in and combine
 
-gene_expressions_for_volcano <- map2(syn_ids[["id"]], syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", .x, .y), col_types = "ccdccddd"))
-names(gene_expressions_for_volcano) <- syn_ids[["id"]]
+gene_expressions <- map2(syn_ids[["id"]], syn_ids[["name"]], ~ read_csv(here::here("data-raw", "gene_expressions", .x, .y), col_types = "ccdccddd"))
+names(gene_expressions) <- syn_ids[["id"]]
 
-gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
+gene_expressions <- gene_expressions %>%
   map(rename_all, tolower) %>%
   bind_rows(.id = "syn_id")
 
 # Clean data ----
 
-gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
+gene_expressions <- gene_expressions %>%
   rename(gene_id = geneid)
 
-gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
+gene_expressions <- gene_expressions %>%
   mutate(tissue = str_to_title(tissue))
 
 # Query gene symbol to use in place of ID ----
 
-genes <- gene_expressions_for_volcano %>%
+genes <- gene_expressions %>%
   distinct(gene_id)
 
 gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_id"]], columns = "SYMBOL", keytype = "GENEID") %>%
@@ -113,21 +113,56 @@ gene_symbols <- AnnotationDbi::select(EnsDb.Mmusculus.v79, keys = genes[["gene_i
   dplyr::rename(gene_id = GENEID, gene_symbol = SYMBOL) %>%
   mutate(gene_symbol = ifelse(gene_symbol %in% c(""), NA_character_, gene_symbol))
 
+# Only use the symbol if it exists for one id only (i.e. mapping is 1-1)
+
+gene_symbols <- gene_symbols %>%
+  add_count(gene_symbol) %>%
+  filter(n == 1) %>%
+  select(-n)
+
 # If the symbol exists, use that - otherwise, use gene id
 
 genes <- genes %>%
   left_join(gene_symbols, by = "gene_id") %>%
   mutate(gene = coalesce(gene_symbol, gene_id))
 
-gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
+gene_expressions <- gene_expressions %>%
   left_join(genes, by = "gene_id") %>%
-  select(-gene_symbol, -gene_id)
+  select(-gene_symbol, -gene_id, -pvalue, -syn_id)
 
-gene_expressions_for_volcano <- gene_expressions_for_volcano %>%
-  select(-padj, -syn_id)
+# Check that values are unique
 
-gene_expressions <- gene_expressions_for_volcano
+gene_expressions %>%
+  count(strain, tissue, sex, age, gene) %>%
+  filter(n > 1) %>%
+  nrow() == 0
 
+# Flag as significant for plotting ----
+
+gene_expressions <- gene_expressions %>%
+  dplyr::mutate(diff_expressed = dplyr::case_when(
+    log2foldchange > 1 & padj < 0.05 ~ "Upregulated",
+    log2foldchange < -1 & padj < 0.05 ~ "Downregulated",
+    is.na(log2foldchange) | is.na(padj) ~ NA_character_,
+    TRUE ~ "Not Significant"
+  ))
+
+# Generate labels - only genes that are upregulated/downregulated, and not super long names
+
+gene_expressions_labels <- gene_expressions %>%
+  dplyr::mutate(
+    label = dplyr::case_when(
+      diff_expressed == "Not Significant" ~ NA_character_,
+      TRUE ~ gene
+    ),
+    label = dplyr::case_when(
+      nchar(label) == 18 ~ NA_character_,
+      TRUE ~ label
+    )
+  ) %>%
+  filter(!is.na(label))
+
+usethis::use_data(gene_expressions_labels, overwrite = TRUE)
 usethis::use_data(gene_expressions, overwrite = TRUE)
 
 # Separately save tissue available for each strain, for easily changing inputs available

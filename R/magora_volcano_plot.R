@@ -1,37 +1,34 @@
-magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue_cutoff = 0.05, type = "ggplot2", facet = TRUE, save_name) {
+#' Volcano plot for gene expression data
+#'
+#' @param data Gene expression data from \code{\link{gene_expressions}}, optionally filtered.
+#' @param data_labels Labels for expression data from \code{\link{gene_expressions}}, optionally filtered. Only required if \code{type} is "ggplot2".
+#' @param type Type of plot - one of "ggplot2" or "plotly". Defaults to "ggplot2".
+#' @param facet Whether to facet the data by \code{sex} and \code{age}. Defaults to TRUE.
+#' @param save_name A name that will be used for saving the plot. Only required / used when \code{type} is "plotly".
+#' @param sample_frac The fraction of genes that are "not significant" that will be shown in the plot. Useful when there is a lot of data that slows down rendering. Defaults to 1.
+#'
+#' @export
+magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRUE, save_name, sample_frac = 1) {
 
-  # Flag downregulated and upregulated genes
+  # Check arguments
+  if(!type %in% c("ggplot2", "plotly")) {
+    stop("`type` should be one of 'ggplot2' or 'plotly'", call. = FALSE)
+  }
 
-  data <- data %>%
-    dplyr::mutate(diff_expressed = dplyr::case_when(
-      .data$log2foldchange > log_fc_cutoff & .data$pvalue < pvalue_cutoff ~ "Upregulated",
-      .data$log2foldchange < -log_fc_cutoff & .data$pvalue < pvalue_cutoff ~ "Downregulated",
-      TRUE ~ "Not Significant"
-    ))
+  if (type == "ggplot2" & missing(data_labels)) {
+    stop("Please supply `data_labels` for labelling plot - required when `type` is 'ggplot2'.", call. = FALSE)
+  }
 
-  # Only label genes that are upregulated/downregulated, and not super long names
+  if (type == "plotly" & missing(save_name)) {
+    stop("Please supply `save_name` for saving the plot - required when `type` is 'plotly'.", call. = FALSE)
+  }
 
-  data <- data %>%
-    dplyr::mutate(
-      label = dplyr::case_when(
-        .data$diff_expressed == "Not Significant" ~ "",
-        TRUE ~ .data$gene
-      ),
-      label = dplyr::case_when(
-        nchar(.data$label) == 18 ~ "",
-        TRUE ~ .data$label
-      )
-    )
+  # Create plot
 
-  # Filter for non-NA data to minimize warnings (though some are expected from NA labels)
-
-  data <- data %>%
-    dplyr::filter(!is.na(.data$log2foldchange) & !is.na({{ pvalue }}))
-
-  p <- ggplot2::ggplot(data, ggplot2::aes(x = .data$log2foldchange, y = -log10({{ pvalue }}), colour = .data$diff_expressed, text = .data$gene)) +
-    ggplot2::geom_point(alpha = 0.5) +
-    ggplot2::geom_vline(xintercept = c(-log_fc_cutoff, log_fc_cutoff), linetype = "dashed") +
-    ggplot2::geom_hline(yintercept = -log10(pvalue_cutoff), linetype = "dashed") +
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_point(data = data, ggplot2::aes(x = .data$log2foldchange, y = -log10(.data$padj), colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
+    ggplot2::geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
     ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3))) +
     sagethemes::theme_sage() +
     ggplot2::coord_cartesian(clip = "off") +
@@ -39,14 +36,12 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
 
   if (facet) {
     p <- p +
-      ggplot2::facet_wrap(dplyr::vars(.data$sex, .data$age), nrow = 2, scales = "free", labeller = ggplot2::labeller(age = function(x) {
-        glue::glue("{x} Months")
-      }))
+      ggplot2::facet_wrap(dplyr::vars(.data$sex, .data$age), nrow = 2, scales = "free", labeller = ggplot2::labeller(age = function(x) {glue::glue("{x} Months")}))
   }
 
   if (type == "ggplot2") {
     p +
-      ggrepel::geom_text_repel(ggplot2::aes(label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
+      ggrepel::geom_text_repel(data = data_labels, ggplot2::aes(x = .data$log2foldchange, y = -log10(.data$padj), colour = .data$diff_expressed, label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
       ggplot2::labs(x = bquote(~ Log[2] ~ "Fold change"), y = bquote(~ -Log[10] ~ "P-Value"))
   } else if (type == "plotly") {
     p <- p +
@@ -59,4 +54,18 @@ magora_volcano_plot <- function(data, pvalue = pvalue, log_fc_cutoff = 1, pvalue
         modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", "zoom2d", "zoom3d", "zoomInGeo", "zoomOutGeo", "zoomInMapbox", "zoomOutMapbox", "autoScale2d", "resetScale2d", "sendDataToCloud", "editInChartStudio", "pan2d", "select2d", "lasso2d", "drawclosedpath", "drawopenpath", "drawline", "hoverClosestCartesian", "hoverCompareCartesian", "toggleSpikelines")
       )
   }
+}
+
+sample_gene_expressions <- function(data, sample_frac) {
+  set.seed(1234)
+
+  not_significant <- data %>%
+    dplyr::filter(.data$diff_expressed == "Not Significant") %>%
+    dplyr::group_by(.data$sex, .data$age) %>%
+    dplyr::sample_frac(size = sample_frac) %>%
+    dplyr::ungroup()
+
+  data %>%
+    dplyr::filter(.data$diff_expressed != "Not Significant") %>%
+    dplyr::bind_rows(not_significant)
 }

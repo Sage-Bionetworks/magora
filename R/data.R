@@ -20,10 +20,15 @@
 
 #' Gene Expression data
 #'
-#' A data set containing the Log 2 Fold Change and P-Value for genes, across different strains, tissues, sexes, and ages.
+#' A data set containing the Log 2 Fold Change, P-Value, and a flag of upregulated/downregulated/not significant for genes, across different strains, tissues, sexes, and ages.
 "gene_expressions"
 
 #' Gene Expression tissue
 #'
 #' A data set containing the tissues available for each strain in the gene expression data.
 "gene_expressions_tissue"
+
+#' Gene Expression labels
+#'
+#' A data set containing the labels for gene expressions. Only genes that are significant (up or downregulated) and with names that are less than 18 characters long are eligible for being labeled.
+"gene_expressions_labels"

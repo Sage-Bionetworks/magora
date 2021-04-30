@@ -5,12 +5,12 @@
 \alias{gene_expressions}
 \title{Gene Expression data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 755320 rows and 7 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 755320 rows and 8 columns.
 }
 \usage{
 gene_expressions
 }
 \description{
-A data set containing the Log 2 Fold Change and P-Value for genes, across different strains, tissues, sexes, and ages.
+A data set containing the Log 2 Fold Change, P-Value, and a flag of upregulated/downregulated/not significant for genes, across different strains, tissues, sexes, and ages.
 }
 \keyword{datasets}
