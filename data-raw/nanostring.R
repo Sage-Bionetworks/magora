@@ -117,11 +117,13 @@ nrow(nanostring_with_id) == nrow(nanostring)
 
 # Ensure all records have individual_id
 
-# TODO HERE
-
 nanostring_with_id %>%
   filter(is.na(individual_id)) %>%
   nrow() == 0
+
+# This is not the case - some individuals are missing from the biospecimen metadata
+# Waiting for a new metadata file - but in the meantime still update with new data
+# Relevant issue: https://github.com/Sage-Bionetworks/magora/issues/62
 
 ## Nanostring individual metadata - calculate age from birth and death ----
 
@@ -304,10 +306,6 @@ nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
   select(cluster, cluster_label, module, model, sex, age_group, correlation = estimate, p_value, significant)
-
-# Remove any groupings that have less than 3 individuals
-
-
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
