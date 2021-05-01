@@ -26,7 +26,6 @@ mod_gene_expression_heatmap_ui <- function(id) {
             ns("gene"),
             "Genes",
             choices = sort(unique(magora::gene_expressions[["gene"]])),
-            selected = sort(unique(magora::gene_expressions[["gene"]]))[[1]],
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(liveSearch = TRUE, liveSearchStyle = "startswith")
           )
@@ -85,14 +84,14 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
   gene_expression_heatmap <- shiny::reactive({
     filtered_gene_expressions() %>%
-      complete_gene_expression_heatmap_data() %>%
+      complete_gene_expression_heatmap_data(input$gene) %>%
       magora_heatmap()
   })
 
   output$gene_expression_heatmap <- shiny::renderCachedPlot(gene_expression_heatmap(),
     cacheKeyExpr = {
       list(
-        input$strain,
+        input$gene,
         input$tissue
       )
     },
@@ -108,8 +107,8 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
   output$gene_expression_heatmap_ui <- shiny::renderUI({
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_heatmap"),
-      height = paste0(gene_expression_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(gene_expression_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      height = paste0(200 + gene_expression_plot_dims()[["nrow"]] * 50, "px"),
+      width = "100%"
     ),
     color = "#D3DCEF"
     )
