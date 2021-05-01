@@ -53,8 +53,7 @@ mod_pathology_ui <- function(id) {
           width = 6,
           offset = 6,
           shiny::column(
-            width = 4,
-            bookmarkButton(id = ns("bookmark"))
+            width = 4
           ),
           shiny::column(
             width = 4,
@@ -81,12 +80,6 @@ mod_pathology_ui <- function(id) {
 #' @noRd
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
-
-  # Trigger bookmark
-  observeEvent(input$bookmark, {
-    browser()
-    session$doBookmark()
-  })
 
   # Update tissue options available based on phenotype selected -----
 
