@@ -41,36 +41,12 @@ syn_ids <- syn_ids_initial %>%
   bind_rows(syn_ids_children) %>%
   select(id, name, latest_version)
 
+# Read in IDs actually used and their versions - for easier keeping track of changes
+
+syn_ids_using <- read_csv(here::here("data-raw", "gene_expressions", "data_sources.csv"), col_types = "cd")
+
 syn_ids <- syn_ids %>%
-  filter(id %in% c(
-    "syn24847795", "syn24847793", "syn24847794", "syn24847798",
-    "syn24847796", "syn24847797", "syn25175556", "syn25175557", "syn25175558",
-    "syn25175559", "syn25175552", "syn25175553", "syn25175554", "syn25175555",
-    "syn25175564", "syn25175565", "syn25175566", "syn25175567",
-    "syn25175560", "syn25175561", "syn25175562", "syn25175563",
-    "syn25312653", "syn25312654", "syn25312655", "syn25312656",
-    "syn25312651", "syn25312652", "syn25312659", "syn25312660", "syn25312661",
-    "syn25312662", "syn25312657", "syn25312658", "syn25312854", "syn25312853",
-    "syn25312856", "syn25312855"
-  )) %>%
-  mutate(version = case_when(
-    id %in% c(
-      "syn25175556", "syn25175557", "syn25175558", "syn25175559",
-      "syn25175552", "syn25175553", "syn25175554", "syn25175555", "syn25175564",
-      "syn25175565", "syn25175566", "syn25175567", "syn25175560",
-      "syn25175561", "syn25175562", "syn25175563"
-    ) ~ 2,
-    id %in% c(
-      "syn24847795", "syn24847793", "syn24847794", "syn24847798",
-      "syn24847796", "syn24847797", "syn25170166"
-    ) ~ 2,
-    id %in% c(
-      "syn25312653", "syn25312654", "syn25312655", "syn25312656",
-      "syn25312651", "syn25312652", "syn25312659", "syn25312660", "syn25312661",
-      "syn25312662", "syn25312657", "syn25312658", "syn25312854", "syn25312853",
-      "syn25312856", "syn25312855"
-    ) ~ 1
-  ))
+  inner_join(syn_ids_using, by = "id")
 
 # Check that version used is latest version
 syn_ids %>%
