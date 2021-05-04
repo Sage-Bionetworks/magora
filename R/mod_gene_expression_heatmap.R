@@ -83,12 +83,19 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   # Generate plot ----
 
   gene_expression_heatmap <- shiny::reactive({
+
+    shiny::validate(
+      shiny::need(nrow(filtered_gene_expressions()) > 0, message = "No data available for the selected combination.")
+    )
+
     filtered_gene_expressions() %>%
       complete_gene_expression_heatmap_data(input$gene) %>%
       magora_heatmap()
   })
 
-  output$gene_expression_heatmap <- shiny::renderCachedPlot(gene_expression_heatmap(),
+  output$gene_expression_heatmap <- shiny::renderCachedPlot({
+    gene_expression_heatmap()
+    },
     cacheKeyExpr = {
       list(
         input$gene,
