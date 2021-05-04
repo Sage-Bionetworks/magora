@@ -89,6 +89,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     )
 
     filtered_gene_expressions() %>%
+      dplyr::filter(!is.na(.data$padj)) %>%
       complete_gene_expression_heatmap_data(input$gene) %>%
       magora_heatmap()
   })
