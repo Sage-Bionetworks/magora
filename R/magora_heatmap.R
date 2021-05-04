@@ -1,4 +1,4 @@
-magora_heatmap <- function(data) {
+magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
 
   # Set up p-value legend transformation
   pvalue_breaks <- c(0.001, 0.005, 0.01, 0.05, 0.1, 0.2)
@@ -6,6 +6,15 @@ magora_heatmap <- function(data) {
 
   # Manually split p-values into categories to handle smaller than smallest and larger than largest
   data <- categorize_pvalues(data, padj, pvalue_breaks, log10_pvalue_breaks)
+
+  # Re-categorize anything absolutely larger than log_foldchange_cutoff so that legend can be set, but it will still have a colour
+  data <- data %>%
+    dplyr::mutate(log2foldchange = dplyr::case_when(
+      log2foldchange < 0 & abs(log2foldchange) > log_foldchange_cutoff ~ -log_foldchange_cutoff,
+      log2foldchange > 0 & abs(log2foldchange) > log_foldchange_cutoff ~ log_foldchange_cutoff,
+      TRUE ~ log2foldchange
+    ))
+
 
   data %>%
     ggplot2::ggplot(ggplot2::aes(x = sex_age, y = gene)) +
@@ -17,7 +26,7 @@ magora_heatmap <- function(data) {
       limits = range(log10_pvalue_breaks),
       breaks = log10_pvalue_breaks, labels = pvalue_breaks, range = c(1, 6), guide = ggplot2::guide_legend()
     ) +
-    ggplot2::scale_fill_gradient2(low = "#85070C", high = "#164B6E", name = "Log 2 Fold change", limits = c(-1, 1), breaks = c(-1, 0, 1)) +
+    ggplot2::scale_fill_gradient2(low = "#85070C", high = "#164B6E", name = "Log 2 Fold change", limits = c(-log_foldchange_cutoff, log_foldchange_cutoff), breaks = c(-log_foldchange_cutoff, 0, log_foldchange_cutoff)) +
     ggplot2::guides(
       fill = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5, ticks = FALSE),
       size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5)
