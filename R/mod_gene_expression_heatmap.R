@@ -101,14 +101,14 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   gene_expression_plot_dims <- shiny::reactive({
     list(
       nrow = length(unique(filtered_gene_expressions()[["gene"]])),
-      ncol = length(unique(filtered_gene_expressions()[["age"]]))
+      ncol = length(unique(filtered_gene_expressions()[["age"]])) * length(unique(filtered_gene_expressions()[["sex"]])) * length(unique(filtered_gene_expressions()[["strain"]]))
     )
   })
 
   output$gene_expression_heatmap_ui <- shiny::renderUI({
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_heatmap"),
       height = paste0(200 + gene_expression_plot_dims()[["nrow"]] * 50, "px"),
-      width = "100%"
+      width = min(1000, paste0(150 + gene_expression_plot_dims()[["ncol"]] * 50, "px"))
     ),
     color = "#D3DCEF"
     )

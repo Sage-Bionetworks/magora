@@ -17,6 +17,7 @@ magora_heatmap <- function(data) {
     ) +
     ggplot2::labs(x = NULL, y = NULL) +
     sagethemes::theme_sage() +
+    ggplot2::coord_fixed() +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
       legend.position = "bottom",
