@@ -15,7 +15,7 @@ library(forcats)
 
 ## Nanostring ----
 
-# synGet("syn22105392", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
+# synGet("syn22105392", version = 2, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized_Allsamples.csv"))
 
@@ -25,11 +25,11 @@ nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized
 # The age/sex are then in the individual metadata, which only has individual ID
 # So we need the biospecimen metadata to get the ID
 
-# synGet("syn22107820", version = 4, downloadLocation = here::here("data-raw", "nanostring"))
+# synGet("syn22107820", version = 6, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_biospecimen_metadata.csv"))
 
-# synGet("syn22107818", version = 3, downloadLocation = here::here("data-raw", "nanostring"))
+# synGet("syn22107818", version = 5, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_individual_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_individual_metadata.csv")) %>%
   remove_empty(c("rows", "cols"))
@@ -121,13 +121,18 @@ nanostring_with_id %>%
   filter(is.na(individual_id)) %>%
   nrow() == 0
 
+# This is not the case - some individuals are missing from the biospecimen metadata
+# Waiting for a new metadata file - but in the meantime still update with new data
+# Relevant issue: https://github.com/Sage-Bionetworks/magora/issues/62
+
 ## Nanostring individual metadata - calculate age from birth and death ----
 
 nanostring_individual_metadata <- nanostring_individual_metadata_raw %>%
   mutate(
     across(c(dateBirth, dateDeath), mdy),
     age_interval = interval(dateBirth, dateDeath),
-    age = round(age_interval / months(1))
+    age = round(age_interval / months(1)),
+    sex = str_to_title(sex)
   ) %>%
   select(individual_id = individualID, genotype, sex, age)
 
@@ -308,7 +313,7 @@ nanostring_for_plot <- nanostring %>%
   arrange(cluster) %>%
   mutate(
     module = fct_inorder(module),
-    model_sex = glue::glue("{model} ({str_to_title(sex)})"),
+    model_sex = glue::glue("{model} ({sex})"),
   ) %>%
   arrange(model_sex) %>%
   mutate(

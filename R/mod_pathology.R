@@ -50,15 +50,18 @@ mod_pathology_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 4,
-          offset = 8,
+          width = 6,
+          offset = 6,
           shiny::column(
-            width = 6,
+            width = 4
+          ),
+          shiny::column(
+            width = 4,
             mod_download_data_ui(ns("download_data"))
           ),
 
           shiny::column(
-            width = 6,
+            width = 4,
             mod_download_plot_ui(ns("download_plot"))
           )
         )
