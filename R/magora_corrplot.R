@@ -21,11 +21,17 @@ magora_corrplot <- function(data) {
     ggplot2::scale_size(
       name = "P-Value",
       limits = range(log10_pvalue_breaks),
-      breaks = log10_pvalue_breaks, labels = pvalue_breaks, range = c(1, 6), guide = ggplot2::guide_legend()
+      breaks = log10_pvalue_breaks,
+      labels = pvalue_breaks,
+      range = c(1, 6)
     ) +
-    ggplot2::scale_color_gradient2(limits = c(-0.5, 0.5), breaks = c(-0.5, 0, 0.5), low = "#85070C", high = "#164B6E", name = "Correlation", guide = ggplot2::guide_colorbar(ticks = FALSE)) +
+    ggplot2::scale_fill_gradient2(limits = c(-0.5, 0.5), breaks = c(-0.5, 0, 0.5), low = "#85070C", high = "#164B6E", name = "Correlation") +
     ggplot2::labs(x = NULL, y = NULL) +
     ggplot2::facet_grid(rows = dplyr::vars(.data$age_group), cols = dplyr::vars(.data$cluster_label), scales = "free", space = "free") +
+    ggplot2::guides(
+      fill = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5, ticks = FALSE),
+      size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, byrow = TRUE)
+    ) +
     sagethemes::theme_sage(base_size = 10) +
     ggplot2::theme(
       strip.text.x = ggplot2::element_text(size = 7),
