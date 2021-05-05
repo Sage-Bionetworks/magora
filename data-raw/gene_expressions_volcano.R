@@ -45,6 +45,13 @@ syn_ids <- syn_ids_initial %>%
 
 syn_ids_using <- read_csv(here::here("data-raw", "gene_expressions", "data_sources.csv"), col_types = "cd")
 
+# Check that no files are being missed, except for "test.csv"
+
+syn_ids %>%
+  anti_join(syn_ids_using, by = "id") %>%
+  filter(name != "test.csv") %>%
+  nrow() == 0
+
 syn_ids <- syn_ids %>%
   inner_join(syn_ids_using, by = "id")
 
