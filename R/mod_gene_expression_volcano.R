@@ -11,6 +11,7 @@ mod_gene_expression_volcano_ui <- function(id) {
 
   shiny::tabPanel(
     title,
+    value = "GeneExpression",
     shiny::div(
       class = "magora-page",
       shiny::div(

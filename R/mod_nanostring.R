@@ -11,6 +11,7 @@ mod_nanostring_ui <- function(id) {
 
   shiny::tabPanel(
     title,
+    value = "Nanostring",
     shiny::div(
       class = "magora-page",
       shiny::div(
