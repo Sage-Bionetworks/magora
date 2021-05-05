@@ -31,7 +31,7 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     ggplot2::scale_fill_gradient2(low = "#85070C", high = "#164B6E", name = "Log 2 Fold change", limits = c(-log_foldchange_cutoff, log_foldchange_cutoff), breaks = c(-log_foldchange_cutoff, 0, log_foldchange_cutoff)) +
     ggplot2::guides(
       fill = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5, ticks = FALSE),
-      size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, byrow = TRUE)
+      size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, nrow = 1)
     ) +
     ggplot2::labs(x = NULL, y = NULL) +
     sagethemes::theme_sage() +

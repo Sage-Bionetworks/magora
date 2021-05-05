@@ -30,7 +30,7 @@ magora_corrplot <- function(data) {
     ggplot2::facet_grid(rows = dplyr::vars(.data$age_group), cols = dplyr::vars(.data$cluster_label), scales = "free", space = "free") +
     ggplot2::guides(
       fill = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5, ticks = FALSE),
-      size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, byrow = TRUE)
+      size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, nrow = 1)
     ) +
     sagethemes::theme_sage(base_size = 10) +
     ggplot2::theme(

@@ -46,7 +46,7 @@ h6 {
    font-weight: 300;
 }
 
-body {
+body, .dropdown-menu {
    font-family: "Lato", Sans-Serif;
    font-size: 16px;
    font-weight: 300;
@@ -180,6 +180,19 @@ div.divflex {
 }
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
    background-color: transparent;
+}
+
+/* ------ Dropdown menu ------ */
+
+.dropdown-menu {
+   box-shadow: none;
+   -webkit-box-shadow: none;
+}
+
+/* Hover color */
+.dropdown-menu > .active > a, .dropdown-menu > li > a:focus, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover, .dropdown-menu > li > a:hover {
+   background-color: #F2F8FA;
+   color: black;
 }
 
 /* ------ Inputs ------ */
