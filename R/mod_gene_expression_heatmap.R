@@ -27,7 +27,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
             "Genes",
             choices = sort(unique(magora::gene_expressions[["gene"]])),
             multiple = TRUE,
-            options = shinyWidgets::pickerOptions(liveSearch = TRUE, liveSearchStyle = "startswith")
+            options = shinyWidgets::pickerOptions(liveSearch = TRUE, size = 10)
           )
         ),
         shiny::column(
