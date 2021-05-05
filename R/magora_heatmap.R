@@ -5,7 +5,11 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
   log10_pvalue_breaks <- -log10(pvalue_breaks)
 
   # Manually split p-values into categories to handle smaller than smallest and larger than largest
-  data <- categorize_pvalues(data, padj, pvalue_breaks, log10_pvalue_breaks)
+  data <- data %>%
+    dplyr::mutate(
+      padj_category = purrr::map_dbl(.data$padj, categorize_pvalue, pvalue_breaks),
+      padj_category_log10 = -log10(.data$padj_category)
+    )
 
   # Re-categorize anything absolutely larger than log_foldchange_cutoff so that legend can be set, but it will still have a colour
   data <- data %>%
@@ -15,12 +19,11 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
       TRUE ~ log2foldchange
     ))
 
-
   data %>%
-    ggplot2::ggplot(ggplot2::aes(x = sex_age, y = gene)) +
+    ggplot2::ggplot(ggplot2::aes(x = .data$sex_age, y = .data$gene)) +
     ggplot2::geom_tile(colour = "black", fill = "white") +
-    ggplot2::geom_point(ggplot2::aes(size = padj_category_log10, fill = log2foldchange), shape = 21) +
-    ggplot2::facet_grid(cols = dplyr::vars(strain)) +
+    ggplot2::geom_point(ggplot2::aes(size = .data$padj_category_log10, fill = .data$log2foldchange), shape = 21) +
+    ggplot2::facet_grid(cols = dplyr::vars(.data$strain)) +
     ggplot2::scale_size(
       name = "Adjusted P-Value",
       limits = range(log10_pvalue_breaks),
@@ -44,16 +47,17 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     )
 }
 
-categorize_pvalues <- function(data, pvalue, pvalue_breaks, log10_pvalue_breaks) {
-  data %>%
-    dplyr::mutate(
-      padj_category = cut({{ pvalue }}, pvalue_breaks, labels = FALSE),
-      padj_category = dplyr::case_when(
-        !is.na(.data$padj_category) ~ .data$padj_category,
-        {{ pvalue }} < min(pvalue_breaks) ~ 1L,
-        {{ pvalue }} > max(pvalue_breaks) ~ length(pvalue_breaks)
-      ),
-      padj_category = purrr::map_dbl(.data$padj_category, ~ ifelse(is.na(.x), NA_real_, pvalue_breaks[[.x]])),
-      padj_category_log10 = -log10(.data$padj_category)
-    )
+categorize_pvalue <- function(pvalue, pvalue_breaks) {
+  # Separate into category numbers
+  pvalue_category <- cut(pvalue, pvalue_breaks, labels = FALSE)
+
+  # If outside of the bounds of the breaks, categorize as either 1 or the largest # category
+  pvalue_category <- dplyr::case_when(
+    !is.na(pvalue_category) ~ pvalue_category,
+    pvalue < min(pvalue_breaks) ~ 1L,
+    pvalue > max(pvalue_breaks) ~ length(pvalue_breaks)
+  )
+
+  # Get the value of the category number
+  ifelse(is.na(pvalue_category), NA_real_, pvalue_breaks[[pvalue_category]])
 }

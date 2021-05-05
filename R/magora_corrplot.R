@@ -12,11 +12,15 @@ magora_corrplot <- function(data) {
   log10_pvalue_breaks <- -log10(pvalue_breaks)
 
   # Manually split p-values into categories to handle smaller than smallest and larger than largest
-  data <- categorize_pvalues(data, p_value, pvalue_breaks, log10_pvalue_breaks)
+  data <- data %>%
+    dplyr::mutate(
+      pvalue_category = purrr::map_dbl(.data$p_value, categorize_pvalue, pvalue_breaks),
+      pvalue_category_log10 = -log10(.data$pvalue_category)
+    )
 
   ggplot2::ggplot(data, ggplot2::aes(x = .data$module, y = .data$model_sex)) +
     ggplot2::geom_tile(colour = "black", fill = "white") +
-    ggplot2::geom_point(ggplot2::aes(fill = .data$correlation, size = padj_category_log10), shape = 21) +
+    ggplot2::geom_point(ggplot2::aes(fill = .data$correlation, size = .data$pvalue_category_log10), shape = 21) +
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::scale_size(
       name = "P-Value",
