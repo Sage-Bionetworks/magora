@@ -1,3 +1,12 @@
+#' Heatmap for gene expression data
+#'
+#' Creates a heatmap showing the log fold change and p-value of genes across sex, age, and models.
+#'
+#' @param data Input data (\code{\link{gene_expressions}}, filtered by a tissue and one or more genes.
+#' @param log_foldchange_cutoff Cutoff for log fold change, used in plot legend
+#'
+#' @return A ggplot2 object.
+#' @export
 magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
 
   # Set up p-value legend transformation
