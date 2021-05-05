@@ -113,6 +113,11 @@ gene_expressions %>%
   filter(n > 1) %>%
   nrow() == 0
 
+# Round p-values to a reasonable amount ----
+
+gene_expressions <- gene_expressions %>%
+  mutate(padj = round(padj, 5))
+
 # Flag as significant for plotting ----
 
 gene_expressions <- gene_expressions %>%
@@ -126,17 +131,9 @@ gene_expressions <- gene_expressions %>%
 # Generate labels - only genes that are upregulated/downregulated, and not super long names
 
 gene_expressions_labels <- gene_expressions %>%
-  dplyr::mutate(
-    label = dplyr::case_when(
-      diff_expressed == "Not Significant" ~ NA_character_,
-      TRUE ~ gene
-    ),
-    label = dplyr::case_when(
-      nchar(label) == 18 ~ NA_character_,
-      TRUE ~ label
-    )
-  ) %>%
-  filter(!is.na(label))
+  dplyr::filter(diff_expressed != "Not Significant",
+                nchar(gene) < 18) %>%
+  dplyr::mutate(label = gene)
 
 usethis::use_data(gene_expressions_labels, overwrite = TRUE)
 usethis::use_data(gene_expressions, overwrite = TRUE)
