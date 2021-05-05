@@ -104,7 +104,7 @@ genes <- genes %>%
 
 gene_expressions <- gene_expressions %>%
   left_join(genes, by = "gene_id") %>%
-  select(-gene_symbol, -gene_id, -pvalue, -syn_id)
+  select(-gene_symbol, -gene_id, -syn_id)
 
 # Check that values are unique
 
@@ -116,7 +116,7 @@ gene_expressions %>%
 # Round p-values to a reasonable amount ----
 
 gene_expressions <- gene_expressions %>%
-  mutate(padj = round(padj, 5))
+  mutate(across(c(pvalue, padj), ~ round(.x, 5)))
 
 # Flag as significant for plotting ----
 
