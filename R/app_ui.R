@@ -7,6 +7,7 @@ app_ui <- function(request) {
     shinyjs::useShinyjs(),
     golem_add_external_resources(),
     magoraPage(
+      id = "page",
       header = mod_header_ui(),
       mod_start_ui(),
       mod_pathology_ui("pathology"),

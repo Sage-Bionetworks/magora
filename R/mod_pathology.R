@@ -11,6 +11,7 @@ mod_pathology_ui <- function(id) {
 
   shiny::tabPanel(
     title,
+    value = title,
     shiny::div(
       class = "magora-page",
       shiny::div(
@@ -53,7 +54,8 @@ mod_pathology_ui <- function(id) {
           width = 6,
           offset = 6,
           shiny::column(
-            width = 4
+            width = 4,
+            shiny::bookmarkButton(id = ns("bookmark"))
           ),
           shiny::column(
             width = 4,
@@ -80,6 +82,12 @@ mod_pathology_ui <- function(id) {
 #' @noRd
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
+
+  # Set up bookmarking ----
+  shiny::observeEvent(input$bookmark, {
+    bookmark_query <- construct_bookmark("Pathology", input, session)
+    shiny:::showBookmarkUrlModal(bookmark_query)
+  })
 
   # Update tissue options available based on phenotype selected -----
 
