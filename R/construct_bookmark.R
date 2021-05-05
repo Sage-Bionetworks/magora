@@ -23,3 +23,7 @@ construct_bookmark <- function(page, input, session) {
     "?", url_query
   )
 }
+
+split_query <- function(query, sep = ",") {
+  purrr::map(query, ~ strsplit(.x, sep)[[1]])
+}

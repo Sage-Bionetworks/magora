@@ -83,6 +83,25 @@ mod_pathology_ui <- function(id) {
 mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
+  # Observe any bookmarking to update inputs with ----
+  # TODO: figure out how to get this to update the tissue too, because it has its own observeEvent
+  observe(priority = 1, {
+    query <- parseQueryString(session$clientData$url_search)
+    # Additional parsing of query to split by ,
+    query <- split_query(query)
+    if (!is.null(query$page)) {
+      if (query$page == "Pathology") {
+        # Only update inputs that are also in the query string
+        query_inputs <- intersect(names(input), names(query))
+
+        # Iterate over them and update
+        purrr::walk(query_inputs, function(x) {
+          shinyWidgets::updatePickerInput(session, inputId = x, selected = query[[x]])
+        })
+      }
+    }
+  })
+
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
     bookmark_query <- construct_bookmark("Pathology", input, session)
@@ -90,7 +109,7 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   # Update tissue options available based on phenotype selected -----
-
+  # TODO: want the query option to be used, not this
   shiny::observeEvent(input$phenotype, {
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
 

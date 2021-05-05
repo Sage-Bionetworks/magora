@@ -7,7 +7,7 @@ app_server <- function(input, output, session) {
   # Check for page to go to from URL
   observe({
     query <- parseQueryString(session$clientData$url_search)
-    if(!is.null(query$page)) {
+    if (!is.null(query$page)) {
       shiny::updateTabsetPanel(session, inputId = "page", selected = query$page)
     }
   })
