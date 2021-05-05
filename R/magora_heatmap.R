@@ -49,11 +49,11 @@ categorize_pvalues <- function(data, pvalue, pvalue_breaks, log10_pvalue_breaks)
     dplyr::mutate(
       padj_category = cut({{ pvalue }}, pvalue_breaks, labels = FALSE),
       padj_category = dplyr::case_when(
-        !is.na(padj_category) ~ padj_category,
+        !is.na(.data$padj_category) ~ .data$padj_category,
         {{ pvalue }} < min(pvalue_breaks) ~ 1L,
         {{ pvalue }} > max(pvalue_breaks) ~ length(pvalue_breaks)
       ),
-      padj_category = purrr::map_dbl(padj_category, ~ ifelse(is.na(.x), NA_real_, pvalue_breaks[[.x]])),
-      padj_category_log10 = -log10(padj_category)
+      padj_category = purrr::map_dbl(.data$padj_category, ~ ifelse(is.na(.x), NA_real_, pvalue_breaks[[.x]])),
+      padj_category_log10 = -log10(.data$padj_category)
     )
 }
