@@ -83,10 +83,14 @@ mod_pathology_server <- function(input, output, session) {
   ns <- session$ns
 
   # Observe any bookmarking to update inputs with ----
-  # TODO: figure out how to get this to update the tissue too, because it has its own observeEvent
-  observe(priority = 1, {
-    query <- parseQueryString(session$clientData$url_search)
+
+  # Initialize reactive value with 1 to flag whether tissue should be updated when phenotype changes
+  # Want it to NOT change the first time the bookmark is loaded, but any time after
+  pathology_r <- shiny::reactiveVal(1)
+
+  observe({
     # Additional parsing of query to split by ,
+    query <- parseQueryString(session$clientData$url_search)
     query <- split_query(query)
     if (!is.null(query$page)) {
       if (query$page == "Pathology") {
@@ -97,9 +101,19 @@ mod_pathology_server <- function(input, output, session) {
         purrr::walk(query_inputs, function(x) {
           shinyWidgets::updatePickerInput(session, inputId = x, selected = query[[x]])
         })
+
+        # Change reactive to 0 so that tissue doesn't update - but any time after this it will change back to 1
+        pathology_r(0)
       }
     }
   })
+
+  # Change it to 1 any time the phenotype is updated
+  # Priority = 1 ensures this is run BEFORE the bookmarking, so if there's a bookmark it changes it back to 0
+  observeEvent(input$phenotype,
+    priority = 1,
+    pathology_r(1)
+  )
 
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
@@ -110,6 +124,7 @@ mod_pathology_server <- function(input, output, session) {
   # Update tissue options available based on phenotype selected -----
   # TODO: want the query option to be used, not this
   shiny::observeEvent(input$phenotype, {
+    req(pathology_r() == 1) # Only updating the tissue when the reactive flag says to
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
 
     # If the tissue previously selected is still available, keep it selected
