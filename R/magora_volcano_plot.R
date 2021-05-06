@@ -11,7 +11,7 @@
 magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRUE, save_name, sample_frac = 1) {
 
   # Check arguments
-  if(!type %in% c("ggplot2", "plotly")) {
+  if (!type %in% c("ggplot2", "plotly")) {
     stop("`type` should be one of 'ggplot2' or 'plotly'", call. = FALSE)
   }
 
@@ -36,7 +36,9 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
 
   if (facet) {
     p <- p +
-      ggplot2::facet_wrap(dplyr::vars(.data$sex, .data$age), nrow = 2, scales = "free", labeller = ggplot2::labeller(age = function(x) {glue::glue("{x} Months")}))
+      ggplot2::facet_wrap(dplyr::vars(.data$sex, .data$age), nrow = 2, scales = "free", labeller = ggplot2::labeller(age = function(x) {
+        glue::glue("{x} Months")
+      }))
   }
 
   if (type == "ggplot2") {

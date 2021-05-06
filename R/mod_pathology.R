@@ -88,9 +88,9 @@ mod_pathology_server <- function(input, output, session) {
   # Want it to NOT change the first time the bookmark is loaded, but any time after
   pathology_r <- shiny::reactiveVal(1)
 
-  observe({
+  shiny::observe({
     # Additional parsing of query to split by ,
-    query <- parseQueryString(session$clientData$url_search)
+    query <- shiny::parseQueryString(session$clientData$url_search)
     query <- split_query(query)
     if (!is.null(query$page)) {
       if (query$page == "Pathology") {
@@ -110,7 +110,7 @@ mod_pathology_server <- function(input, output, session) {
 
   # Change it to 1 any time the phenotype is updated
   # Priority = 1 ensures this is run BEFORE the bookmarking, so if there's a bookmark it changes it back to 0
-  observeEvent(input$phenotype,
+  shiny::observeEvent(input$phenotype,
     priority = 1,
     pathology_r(1)
   )
@@ -124,7 +124,7 @@ mod_pathology_server <- function(input, output, session) {
   # Update tissue options available based on phenotype selected -----
   # TODO: want the query option to be used, not this
   shiny::observeEvent(input$phenotype, {
-    req(pathology_r() == 1) # Only updating the tissue when the reactive flag says to
+    shiny::req(pathology_r() == 1) # Only updating the tissue when the reactive flag says to
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
 
     # If the tissue previously selected is still available, keep it selected

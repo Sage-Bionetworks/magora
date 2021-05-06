@@ -90,8 +90,8 @@ mod_nanostring_server <- function(input, output, session) {
   ns <- session$ns
 
   # Observe any bookmarking to update inputs with ----
-  observe(priority = 1, {
-    query <- parseQueryString(session$clientData$url_search)
+  shiny::observe(priority = 1, {
+    query <- shiny::parseQueryString(session$clientData$url_search)
     # Additional parsing of query to split by ,
     query <- split_query(query)
     if (!is.null(query$page)) {

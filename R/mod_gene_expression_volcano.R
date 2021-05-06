@@ -76,8 +76,8 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   # Want it to NOT change the first time the bookmark is loaded, but any time after
   gene_expression_volcano_r <- shiny::reactiveVal(1)
 
-  observe({
-    query <- parseQueryString(session$clientData$url_search)
+  shiny::observe({
+    query <- shiny::parseQueryString(session$clientData$url_search)
     # Additional parsing of query to split by ,
     query <- split_query(query)
     if (!is.null(query$page)) {
@@ -98,7 +98,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Change it to 1 any time the strain is updated
   # Priority = 1 ensures this is run BEFORE the bookmarking, so if there's a bookmark it changes it back to 0
-  observeEvent(input$strain,
+  shiny::observeEvent(input$strain,
     priority = 1,
     gene_expression_volcano_r(1)
   )
@@ -112,7 +112,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   # Update tissue options available based on strain selected -----
 
   shiny::observeEvent(input$strain, {
-    req(gene_expression_volcano_r() == 1) # Only updating the tissue when the reactive flag says to
+    shiny::req(gene_expression_volcano_r() == 1) # Only updating the tissue when the reactive flag says to
     available_tissue <- sort(magora::gene_expressions_tissue[[input$strain]])
 
     # If the tissue previously selected is still available, keep it selected
