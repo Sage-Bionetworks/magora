@@ -33,7 +33,7 @@ mod_nanostring_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 2,
+          width = 4,
           class = "dropdown-too-small",
           shinyWidgets::pickerInput(
             ns("sex"),
@@ -45,8 +45,7 @@ mod_nanostring_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 2,
-          class = "dropdown-too-small",
+          width = 4,
           shinyWidgets::pickerInput(
             ns("age"),
             "Age",
@@ -55,17 +54,26 @@ mod_nanostring_ui <- function(id) {
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
-        ),
+        )
+      ),
+      shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_data_ui(ns("download_data"))
-        ),
-        shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_plot_ui(ns("download_plot"))
-        ),
+          width = 6,
+          offset = 6,
+          shiny::column(
+            width = 4,
+            shiny::bookmarkButton(id = ns("bookmark"), style = "width: 100%")
+          ),
+          shiny::column(
+            width = 4,
+            mod_download_data_ui(ns("download_data"))
+          ),
+          shiny::column(
+            width = 4,
+            mod_download_plot_ui(ns("download_plot"))
+          )
+        )
       ),
       shiny::column(
         width = 12,
@@ -81,6 +89,29 @@ mod_nanostring_ui <- function(id) {
 mod_nanostring_server <- function(input, output, session) {
   ns <- session$ns
 
+  # Observe any bookmarking to update inputs with ----
+  observe(priority = 1, {
+    query <- parseQueryString(session$clientData$url_search)
+    # Additional parsing of query to split by ,
+    query <- split_query(query)
+    if (!is.null(query$page)) {
+      if (query$page == "Nanostring") {
+        # Only update inputs that are also in the query string
+        query_inputs <- intersect(names(input), names(query))
+
+        # Iterate over them and update
+        purrr::walk(query_inputs, function(x) {
+          shinyWidgets::updatePickerInput(session, inputId = x, selected = query[[x]])
+        })
+      }
+    }
+  })
+
+  # Set up bookmarking ----
+  shiny::observeEvent(input$bookmark, {
+    bookmark_query <- construct_bookmark("Nanostring", input, session)
+    shiny:::showBookmarkUrlModal(bookmark_query)
+  })
 
   # Filter data based on inputs ----
 

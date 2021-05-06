@@ -1,12 +1,15 @@
-construct_bookmark <- function(page, input, session) {
-  bookmark_page <- list(page = "Pathology")
+construct_bookmark <- function(page, input, session, exclude = NULL) {
+  bookmark_page <- list(page = page)
 
-  bookmark_inputs <- purrr::map(names(input), function(x) {
+  inputs <- names(input)
+  inputs <- setdiff(inputs, exclude)
+
+  bookmark_inputs <- purrr::map(inputs, function(x) {
     input[[x]] %>%
       curl::curl_escape() %>%
       paste0(collapse = ",")
   })
-  names(bookmark_inputs) <- names(input)
+  names(bookmark_inputs) <- inputs
   bookmark_inputs <- bookmark_inputs[!names(bookmark_inputs) == "bookmark"]
 
   bookmark <- append(bookmark_page, bookmark_inputs)

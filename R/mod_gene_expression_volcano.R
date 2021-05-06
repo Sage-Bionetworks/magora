@@ -22,7 +22,7 @@ mod_gene_expression_volcano_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 4,
+          width = 3,
           shinyWidgets::pickerInput(
             ns("strain"),
             "Strain",
@@ -31,13 +31,18 @@ mod_gene_expression_volcano_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 4,
+          width = 3,
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
             choices = sort(unique(magora::gene_expressions[["tissue"]])),
             multiple = FALSE
           )
+        ),
+        shiny::column(
+          width = 2,
+          style = "margin-top: 27.85px;",
+          shiny::bookmarkButton(id = ns("bookmark"), style = "width: 100%")
         ),
         shiny::column(
           width = 2,
@@ -64,6 +69,31 @@ mod_gene_expression_volcano_ui <- function(id) {
 #' @noRd
 mod_gene_expression_volcano_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
+
+  # Observe any bookmarking to update inputs with ----
+  # TODO: figure out how to get this to update the tissue too, because it has its own observeEvent
+  observe(priority = 1, {
+    query <- parseQueryString(session$clientData$url_search)
+    # Additional parsing of query to split by ,
+    query <- split_query(query)
+    if (!is.null(query$page)) {
+      if (query$page == "GeneExpression") {
+        # Only update inputs that are also in the query string
+        query_inputs <- intersect(names(input), names(query))
+
+        # Iterate over them and update
+        purrr::walk(query_inputs, function(x) {
+          shinyWidgets::updatePickerInput(session, inputId = x, selected = query[[x]])
+        })
+      }
+    }
+  })
+
+  # Set up bookmarking ----
+  shiny::observeEvent(input$bookmark, {
+    bookmark_query <- construct_bookmark("GeneExpression", input, session, exclude = "plot_click")
+    shiny:::showBookmarkUrlModal(bookmark_query)
+  })
 
   # Update tissue options available based on strain selected -----
 
