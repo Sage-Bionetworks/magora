@@ -11,7 +11,7 @@ mod_gene_expression_volcano_ui <- function(id) {
 
   shiny::tabPanel(
     title,
-    value = "GeneExpression",
+    value = "GeneExpressionVolcano",
     shiny::div(
       class = "magora-page",
       shiny::div(
@@ -81,7 +81,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
     # Additional parsing of query to split by ,
     query <- split_query(query)
     if (!is.null(query$page)) {
-      if (query$page == "GeneExpression") {
+      if (query$page == "GeneExpressionVolcano") {
         # Only update inputs that are also in the query string
         query_inputs <- intersect(names(input), names(query))
 
@@ -105,7 +105,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
-    bookmark_query <- construct_bookmark("GeneExpression", input, session, exclude = "plot_click")
+    bookmark_query <- construct_bookmark("GeneExpressionVolcano", input, session, exclude = "plot_click")
     shiny:::showBookmarkUrlModal(bookmark_query)
   })
 
