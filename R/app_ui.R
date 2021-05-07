@@ -10,7 +10,11 @@ app_ui <- function(request) {
       header = mod_header_ui(),
       mod_start_ui(),
       mod_pathology_ui("pathology"),
-      mod_gene_expression_ui("gene_expression"),
+      shiny::navbarMenu(
+        title = "Gene Expression",
+        mod_gene_expression_volcano_ui("gene_expression_volcano"),
+        mod_gene_expression_heatmap_ui("gene_expression_heatmap")
+      ),
       mod_nanostring_ui("nanostring")
     )
   )

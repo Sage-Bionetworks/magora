@@ -5,7 +5,7 @@
 \alias{gene_expressions}
 \title{Gene Expression data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 755320 rows and 8 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1543272 rows and 9 columns.
 }
 \usage{
 gene_expressions

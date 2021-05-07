@@ -100,12 +100,13 @@ magora_download_plot_button <- function(id, plotId, save_name) {
   )
 }
 
-download_name <- function(data_type = c("phenotype", "gene_expression", "nanostring"), ...) {
+download_name <- function(data_type = c("phenotype", "gene_expression_volcano", "gene_expression_heatmap", "nanostring"), ...) {
   data_type <- match.arg(data_type)
 
   data_type_name <- switch(data_type,
     phenotype = "Pathology",
-    gene_expression = "Gene_Expression",
+    gene_expression_volcano = "Gene_Expression_Volcano",
+    gene_expression_heatmap = "Gene_Expression_Heatmap",
     nanostring = "Nanostring"
   )
 
