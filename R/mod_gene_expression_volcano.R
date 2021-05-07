@@ -11,6 +11,7 @@ mod_gene_expression_volcano_ui <- function(id) {
 
   shiny::tabPanel(
     title,
+    value = "GeneExpressionVolcano",
     shiny::div(
       class = "magora-page",
       shiny::div(
@@ -21,7 +22,7 @@ mod_gene_expression_volcano_ui <- function(id) {
       shiny::fluidRow(
         class = "magora-row",
         shiny::column(
-          width = 4,
+          width = 3,
           shinyWidgets::pickerInput(
             ns("strain"),
             "Strain",
@@ -30,13 +31,18 @@ mod_gene_expression_volcano_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 4,
+          width = 3,
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
             choices = sort(unique(magora::gene_expressions[["tissue"]])),
             multiple = FALSE
           )
+        ),
+        shiny::column(
+          width = 2,
+          style = "margin-top: 27.85px;",
+          shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
         ),
         shiny::column(
           width = 2,
@@ -64,9 +70,49 @@ mod_gene_expression_volcano_ui <- function(id) {
 mod_gene_expression_volcano_server <- function(input, output, session, gene_expressions) {
   ns <- session$ns
 
+  # Observe any bookmarking to update inputs with ----
+
+  # Initialize reactive value with 1 to flag whether tissue should be updated when strain changes
+  # Want it to NOT change the first time the bookmark is loaded, but any time after
+  gene_expression_volcano_r <- shiny::reactiveVal(1)
+
+  shiny::observe({
+    query <- shiny::parseQueryString(session$clientData$url_search)
+    # Additional parsing of query to split by ,
+    query <- split_query(query)
+    if (!is.null(query$page)) {
+      if (query$page == "GeneExpressionVolcano") {
+        # Only update inputs that are also in the query string
+        query_inputs <- intersect(names(input), names(query))
+
+        # Iterate over them and update
+        purrr::walk(query_inputs, function(x) {
+          shinyWidgets::updatePickerInput(session, inputId = x, selected = query[[x]])
+        })
+
+        # Change reactive to 0 so that tissue doesn't update - but any time after this it will change back to 1
+        gene_expression_volcano_r(0)
+      }
+    }
+  })
+
+  # Change it to 1 any time the strain is updated
+  # Priority = 1 ensures this is run BEFORE the bookmarking, so if there's a bookmark it changes it back to 0
+  shiny::observeEvent(input$strain,
+    priority = 1,
+    gene_expression_volcano_r(1)
+  )
+
+  # Set up bookmarking ----
+  shiny::observeEvent(input$bookmark, {
+    bookmark_query <- construct_bookmark("GeneExpressionVolcano", input, session, exclude = "plot_click")
+    shiny:::showBookmarkUrlModal(bookmark_query)
+  })
+
   # Update tissue options available based on strain selected -----
 
   shiny::observeEvent(input$strain, {
+    shiny::req(gene_expression_volcano_r() == 1) # Only updating the tissue when the reactive flag says to
     available_tissue <- sort(magora::gene_expressions_tissue[[input$strain]])
 
     # If the tissue previously selected is still available, keep it selected

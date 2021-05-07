@@ -6,10 +6,10 @@
 #' @param ... Tab elements to include in the page.
 #'
 #' @noRd
-magoraPage <- function(header, ...) {
+magoraPage <- function(header, id, ...) {
 
   # Construct tabs (navbar and actual content) based on inputs
-  tabs <- shiny:::buildTabset(tabs = list(...), ulClass = "nav navbar-nav")
+  tabs <- shiny:::buildTabset(tabs = list(...), ulClass = "nav navbar-nav", id = id)
 
   # Create div for navbar
   div_navbar_container <- shiny::div(class = "navbar-container", tabs$navList)

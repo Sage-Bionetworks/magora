@@ -37,6 +37,7 @@ Imports:
     ggrepel,
     plotly,
     purrr,
+    curl,
     tidyr
 Encoding: UTF-8
 LazyData: true
