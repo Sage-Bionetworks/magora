@@ -34,7 +34,6 @@ mod_nanostring_ui <- function(id) {
         ),
         shiny::column(
           width = 4,
-          class = "dropdown-too-small",
           shinyWidgets::pickerInput(
             ns("sex"),
             "Sex",
