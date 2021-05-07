@@ -55,7 +55,7 @@ mod_pathology_ui <- function(id) {
           offset = 6,
           shiny::column(
             width = 4,
-            shiny::bookmarkButton(id = ns("bookmark"), style = "width: 100%")
+            shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
           ),
           shiny::column(
             width = 4,

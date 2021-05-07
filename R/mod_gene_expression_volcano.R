@@ -42,7 +42,7 @@ mod_gene_expression_volcano_ui <- function(id) {
         shiny::column(
           width = 2,
           style = "margin-top: 27.85px;",
-          shiny::bookmarkButton(id = ns("bookmark"), style = "width: 100%")
+          shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
         ),
         shiny::column(
           width = 2,
