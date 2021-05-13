@@ -70,7 +70,8 @@ mod_pathology_ui <- function(id) {
       shiny::column(
         width = 12,
         align = "center",
-        shiny::uiOutput(ns("phenotype_plot_ui"))
+        shiny::uiOutput(ns("phenotype_plot_ui")),
+        shiny::uiOutput(ns("phenotype_plotly_ui"))
       )
     )
   )
@@ -164,7 +165,7 @@ mod_pathology_server <- function(input, output, session) {
 
     filtered_phenotypes() %>%
       expand_mouse_line_factor_from_selection(input$mouse_line) %>%
-      magora_boxplot(plot_type = "phenotype")
+      magora_boxplot()
   })
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)
@@ -185,9 +186,69 @@ mod_pathology_server <- function(input, output, session) {
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%"),
+      click = ns("plot_click")
     ),
     color = "#D3DCEF"
+    )
+  })
+
+  # Plotly ----
+
+  output$phenotype_plotly <- plotly::renderPlotly({
+    filtered_phenotypes() %>%
+      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
+      magora_boxplot(type = "plotly")
+  })
+
+  output$phenotype_plotly_ui <- shiny::renderUI({
+
+    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
+    shiny::validate(
+      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+    )
+
+    shinycssloaders::withSpinner(plotly::plotlyOutput(ns("phenotype_plotly"),
+                                                   height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
+                                                   width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+    ),
+    color = "#D3DCEF"
+    )
+  })
+
+  # Modal ----
+
+  drilldown_phenotypes <- shiny::reactive({
+    shiny::req(input$plot_click)
+    panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}"')
+    filtered_phenotypes() %>%
+      dplyr::filter(eval(rlang::parse_expr(panel_filter)))
+  })
+
+  drilldown_title <- shiny::reactive({
+    glue::glue("Phenotype: {input$phenotype}, Mouse line: {input$plot_click$panelvar1}, Tissue: {input$tissue}")
+  })
+
+  output$drilldown_phenotypes <- plotly::renderPlotly({
+    drilldown_phenotypes() %>%
+      expand_mouse_line_factor_from_selection(input$plot_click$panelvar1) %>%
+      magora_boxplot(type = "plotly", facet = FALSE)
+  })
+
+  shiny::observeEvent(input$plot_click, {
+    shiny::showModal(
+      shiny::modalDialog(
+        title = drilldown_title(),
+        size = "l",
+        easyClose = TRUE,
+        footer = shiny::modalButton("Close"),
+        shinycssloaders::withSpinner(plotly::plotlyOutput(
+          height = "600px",
+          ns("drilldown_phenotypes")
+        ),
+        color = "#D3DCEF"
+        )
+      )
     )
   })
 
