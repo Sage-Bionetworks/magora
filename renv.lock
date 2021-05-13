@@ -16,6 +16,13 @@
       "Repository": "CRAN",
       "Hash": "8f9ce74c6417d61f0782cbae5fd2b7b0"
     },
+    "DBI": {
+      "Package": "DBI",
+      "Version": "1.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4744be45519d675af66c28478720fce5"
+    },
     "DT": {
       "Package": "DT",
       "Version": "0.14",
@@ -50,6 +57,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "e031418365a7f7a766181ab5a41a5716"
+    },
+    "RSQLite": {
+      "Package": "RSQLite",
+      "Version": "2.2.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "71f19d00a7736b24492fb26b483bc450"
     },
     "Rcpp": {
       "Package": "Rcpp",
@@ -120,6 +134,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "9fe98599ca456d6552421db0d6772d8f"
+    },
+    "blob": {
+      "Package": "blob",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9addc7e2c5954eca5719928131fed98c"
     },
     "brew": {
       "Package": "brew",
@@ -617,6 +638,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "b6b150cd4709e0c0c9b5d51ac4376282"
+    },
+    "plogr": {
+      "Package": "plogr",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "09eb987710984fc2905c7129c7d85e65"
     },
     "plotly": {
       "Package": "plotly",
