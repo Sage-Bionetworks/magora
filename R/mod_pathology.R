@@ -70,8 +70,7 @@ mod_pathology_ui <- function(id) {
       shiny::column(
         width = 12,
         align = "center",
-        shiny::uiOutput(ns("phenotype_plot_ui")),
-        shiny::uiOutput(ns("phenotype_plotly_ui"))
+        shiny::uiOutput(ns("phenotype_plot_ui"))
       )
     )
   )
@@ -123,7 +122,6 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   # Update tissue options available based on phenotype selected -----
-  # TODO: want the query option to be used, not this
   shiny::observeEvent(input$phenotype, {
     shiny::req(pathology_r() == 1) # Only updating the tissue when the reactive flag says to
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
@@ -193,29 +191,6 @@ mod_pathology_server <- function(input, output, session) {
     )
   })
 
-  # Plotly ----
-
-  output$phenotype_plotly <- plotly::renderPlotly({
-    filtered_phenotypes() %>%
-      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
-      magora_boxplot(type = "plotly")
-  })
-
-  output$phenotype_plotly_ui <- shiny::renderUI({
-
-    # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
-    shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
-    )
-
-    shinycssloaders::withSpinner(plotly::plotlyOutput(ns("phenotype_plotly"),
-                                                   height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-                                                   width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
-    ),
-    color = "#D3DCEF"
-    )
-  })
-
   # Modal ----
 
   drilldown_phenotypes <- shiny::reactive({
@@ -232,7 +207,7 @@ mod_pathology_server <- function(input, output, session) {
   output$drilldown_phenotypes <- plotly::renderPlotly({
     drilldown_phenotypes() %>%
       expand_mouse_line_factor_from_selection(input$plot_click$panelvar1) %>%
-      magora_boxplot(type = "plotly", facet = FALSE)
+      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title())
   })
 
   shiny::observeEvent(input$plot_click, {
