@@ -16,7 +16,7 @@ mod_gene_expression_volcano_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        "Please select a strain and tissue from the dropdown lists. You can click on a panel to bring up an interactive plot for that sex and age.",
+        shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_all", "content.md")),
         shiny::hr()
       ),
       shiny::fluidRow(

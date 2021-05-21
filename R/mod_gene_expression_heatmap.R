@@ -16,7 +16,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        "Please select genes and a tissue from the dropdown.",
+        shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_selected", "content.md")),
         shiny::hr()
       ),
       shiny::fluidRow(
