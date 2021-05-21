@@ -7,7 +7,7 @@
 #' @noRd
 mod_gene_expression_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
-  title <- "Heatmap"
+  title <- "Selected genes"
 
   shiny::tabPanel(
     title,
@@ -15,8 +15,8 @@ mod_gene_expression_heatmap_ui <- function(id) {
     shiny::div(
       class = "magora-page",
       shiny::div(
-        shiny::h3(class = "tab-title", title),
-        "Please select genes and a tissue from the dropdown.",
+        shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
+        shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_selected", "content.md")),
         shiny::hr()
       ),
       shiny::fluidRow(

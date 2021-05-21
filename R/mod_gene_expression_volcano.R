@@ -7,7 +7,7 @@
 #' @noRd
 mod_gene_expression_volcano_ui <- function(id) {
   ns <- shiny::NS(id)
-  title <- "Volcano"
+  title <- "All genes"
 
   shiny::tabPanel(
     title,
@@ -15,8 +15,8 @@ mod_gene_expression_volcano_ui <- function(id) {
     shiny::div(
       class = "magora-page",
       shiny::div(
-        shiny::h3(class = "tab-title", title),
-        "Please select a strain and tissue from the dropdown lists. You can click on a panel to bring up an interactive plot for that sex and age.",
+        shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
+        shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_all", "content.md")),
         shiny::hr()
       ),
       shiny::fluidRow(

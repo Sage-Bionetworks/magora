@@ -16,7 +16,7 @@ mod_nanostring_ui <- function(id) {
       class = "magora-page",
       shiny::div(
         shiny::h3(class = "tab-title", title),
-        shiny::includeMarkdown(app_sys("app", "www", "nanostring_content.md")),
+        shiny::includeMarkdown(app_sys("app", "www", "content", "nanostring", "content.md")),
         shiny::hr()
       ),
       shiny::fluidRow(
