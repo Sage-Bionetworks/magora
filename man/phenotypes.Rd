@@ -5,7 +5,11 @@
 \alias{phenotypes}
 \title{Phenotypes data}
 \format{
+<<<<<<< HEAD
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 2090 rows and 8 columns.
+=======
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 2096 rows and 10 columns.
+>>>>>>> Clean up pathology names, add units
 }
 \usage{
 phenotypes
