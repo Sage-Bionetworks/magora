@@ -1,4 +1,4 @@
-This explorer shows the extent to which gene expression changes in MODEL-AD mouse models mimic expression changes in humans with AD. 
+This explorer shows the extent to which gene expression changes in mouse models mimic expression changes in humans with AD. 
 
 In this analysis, gene expression changes in each mouse model are calculated compared to controls. The resulting fold-change for each gene is then correlated with the fold-change in human AD vs control. See this <a href = "https://molecularneurodegeneration.biomedcentral.com/articles/10.1186/s13024-020-00412-5", target = "_blank">publication by Preuss et al</a> for more detail. 
 
