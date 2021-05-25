@@ -28,7 +28,10 @@ mod_gene_expression_heatmap_ui <- function(id) {
             "Genes",
             choices = sort(unique(magora::gene_expressions[["gene"]])),
             multiple = TRUE,
-            options = shinyWidgets::pickerOptions(liveSearch = TRUE, size = 10)
+            options = shinyWidgets::pickerOptions(
+              liveSearch = TRUE, size = 10,
+              noneSelectedText = "Enter gene(s) or select from list"
+            )
           )
         ),
         shiny::column(
@@ -98,7 +101,6 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   # Filter data based on inputs ----
 
   filtered_gene_expressions <- shiny::reactive({
-
     shiny::validate(
       shiny::need(!is.null(input$gene), message = "Please select one or more genes.")
     )
@@ -113,7 +115,6 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   # Generate plot ----
 
   gene_expression_heatmap <- shiny::reactive({
-
     shiny::validate(
       shiny::need(nrow(filtered_gene_expressions()) > 0, message = "No data available for the selected combination.")
     )
@@ -124,8 +125,9 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
       magora_heatmap()
   })
 
-  output$gene_expression_heatmap <- shiny::renderCachedPlot({
-    gene_expression_heatmap()
+  output$gene_expression_heatmap <- shiny::renderCachedPlot(
+    {
+      gene_expression_heatmap()
     },
     cacheKeyExpr = {
       list(
