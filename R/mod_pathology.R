@@ -17,6 +17,7 @@ mod_pathology_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", title),
         shiny::includeMarkdown(app_sys("app", "www", "content", "pathology", "content.md")),
+        shiny::actionLink(ns("details"), "More details"),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -256,4 +257,18 @@ mod_pathology_server <- function(input, output, session) {
     data = phenotype_data_download,
     save_name = save_name
   )
+
+  # Details modal ----
+
+  shiny::observeEvent(input$details, {
+    shiny::showModal(
+      shiny::modalDialog(
+        size = "m",
+        easyClose = TRUE,
+        footer = shiny::modalButton("Close"),
+        shiny::includeMarkdown(app_sys("app", "www", "content", "pathology", "details.md")),
+      )
+    )
+  })
+
 }
