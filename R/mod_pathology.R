@@ -33,8 +33,8 @@ mod_pathology_ui <- function(id) {
           width = 4,
           shinyWidgets::pickerInput(
             ns("mouse_model"),
-            "Mouse lines",
-            choices = as.character(levels(magora::phenotypes[["mouse_model"]])),
+            "Mouse model",
+            choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
             multiple = TRUE,
             selected = c("C57BL6J", "5XFAD")
           )

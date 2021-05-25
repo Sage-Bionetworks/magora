@@ -24,8 +24,8 @@ mod_gene_expression_volcano_ui <- function(id) {
         shiny::column(
           width = 3,
           shinyWidgets::pickerInput(
-            ns("strain"),
-            "Strain",
+            ns("mouse_model"),
+            "Mouse model",
             choices = sort(unique(magora::gene_expressions[["strain"]])),
             multiple = FALSE
           )
@@ -98,7 +98,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Change it to 1 any time the strain is updated
   # Priority = 1 ensures this is run BEFORE the bookmarking, so if there's a bookmark it changes it back to 0
-  shiny::observeEvent(input$strain,
+  shiny::observeEvent(input$mouse_model,
     priority = 1,
     gene_expression_volcano_r(1)
   )
@@ -111,9 +111,9 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Update tissue options available based on strain selected -----
 
-  shiny::observeEvent(input$strain, {
+  shiny::observeEvent(input$mouse_model, {
     shiny::req(gene_expression_volcano_r() == 1) # Only updating the tissue when the reactive flag says to
-    available_tissue <- sort(magora::gene_expressions_tissue[[input$strain]])
+    available_tissue <- sort(magora::gene_expressions_tissue[[input$mouse_model]])
 
     # If the tissue previously selected is still available, keep it selected
     selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
@@ -131,7 +131,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   filtered_gene_expressions <- shiny::reactive({
     magora::gene_expressions %>%
       dplyr::filter(
-        .data$strain == input$strain,
+        .data$strain == input$mouse_model,
         .data$tissue == input$tissue
       )
   })
@@ -139,7 +139,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   filtered_gene_expressions_labels <- shiny::reactive({
     magora::gene_expressions_labels %>%
       dplyr::filter(
-        .data$strain == input$strain,
+        .data$strain == input$mouse_model,
         .data$tissue == input$tissue
       )
   })
@@ -155,7 +155,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
     cacheKeyExpr = {
       list(
-        input$strain,
+        input$mouse_model,
         input$tissue
       )
     },
@@ -188,7 +188,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   })
 
   drilldown_gene_expressions_title <- shiny::reactive({
-    glue::glue("Strain: {input$strain}, Tissue: {input$tissue}, Sex: {input$plot_click$panelvar2}, Age: {input$plot_click$panelvar1} Months")
+    glue::glue("Mouse model: {input$mouse_model}, Tissue: {input$tissue}, Sex: {input$plot_click$panelvar2}, Age: {input$plot_click$panelvar1} Months")
   })
 
   output$drilldown_gene_expressions <- plotly::renderPlotly({
@@ -220,7 +220,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   })
 
   save_name <- shiny::reactive({
-    download_name("gene_expression_volcano", input$strain, input$tissue)
+    download_name("gene_expression_volcano", input$mouse_model, input$tissue)
   })
 
   # Data
