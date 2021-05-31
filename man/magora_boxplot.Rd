@@ -4,7 +4,13 @@
 \alias{magora_boxplot}
 \title{Boxplot for phenotype data}
 \usage{
-magora_boxplot(data, type = "ggplot2", facet = TRUE, use_theme_sage = TRUE)
+magora_boxplot(
+  data,
+  type = "ggplot2",
+  facet = TRUE,
+  save_name,
+  use_theme_sage = TRUE
+)
 }
 \arguments{
 \item{data}{Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).}
@@ -12,6 +18,8 @@ magora_boxplot(data, type = "ggplot2", facet = TRUE, use_theme_sage = TRUE)
 \item{type}{Type of plot - one of "ggplot2" or "plotly". Defaults to "ggplot2".}
 
 \item{facet}{Whether to facet the data by \code{sex} and \code{age}. Defaults to TRUE.}
+
+\item{save_name}{A name that will be used for saving the plot. Only required / used when \code{type} is "plotly".}
 
 \item{use_theme_sage}{Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.}
 }
