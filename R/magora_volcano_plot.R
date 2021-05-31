@@ -23,13 +23,20 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
     stop("Please supply `save_name` for saving the plot - required when `type` is 'plotly'.", call. = FALSE)
   }
 
-  # Create plot
+  # Create data for threshold lines
+  # Need to get a bit creative with this, because combining vline and hline legends in ggplot creates a "crossed" legend which is unappealing - to have a legend that is just horizontal, add "dummy" fold change data to the p_value data frame, then set the real fold change line to have the same linetype as that
+  fold_change_line <- tibble(x = c(-1, 1))
+  p_value_line <- dplyr::tibble(y = -log10(0.05), label = "P-value = 0.05") %>%
+    dplyr::mutate(label = forcats::fct_expand(label, "Log2 Fold Change = -1, 1")) %>%
+    tidyr::complete(label)
 
+  # Create plot
   p <- ggplot2::ggplot() +
     ggplot2::geom_point(data = data, ggplot2::aes(x = .data$log2foldchange, y = -log10(.data$padj), colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
-    ggplot2::geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
-    ggplot2::geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
-    ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3))) +
+    ggplot2::geom_vline(data = fold_change_line, ggplot2::aes(xintercept = x), linetype = "dashed") +
+    ggplot2::geom_hline(data = p_value_line, ggplot2::aes(yintercept = y, linetype = label)) +
+    ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3), order = 1)) +
+    ggplot2::scale_linetype_discrete(guide = ggplot2::guide_legend(reverse = TRUE, order = 2), name = NULL) +
     sagethemes::theme_sage() +
     ggplot2::coord_cartesian(clip = "off") +
     ggplot2::theme(legend.position = "top")
