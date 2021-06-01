@@ -25,7 +25,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
 
   # Create data for threshold lines
   # Need to get a bit creative with this, because combining vline and hline legends in ggplot creates a "crossed" legend which is unappealing - to have a legend that is just horizontal, add "dummy" fold change data to the p_value data frame, then set the real fold change line to have the same linetype as that
-  fold_change_line <- tibble(x = c(-1, 1))
+  fold_change_line <- dplyr::tibble(x = c(-1, 1))
   p_value_line <- dplyr::tibble(y = -log10(0.05), label = "P-value = 0.05") %>%
     dplyr::mutate(label = forcats::fct_expand(label, "Log2 Fold Change = -1, 1")) %>%
     tidyr::complete(label)
@@ -56,12 +56,21 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
     p <- p +
       ggplot2::labs(x = "Log2 Fold Change", y = "Log 10 P-Value")
 
-    plotly::ggplotly(p, tooltip = "text") %>%
+    p <- plotly::ggplotly(p, tooltip = "text") %>%
       plotly::config(
         toImageButtonOptions = list(format = "png", filename = save_name, height = 600, width = 900, scale = 2),
         displaylogo = FALSE,
         modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", "zoom2d", "zoom3d", "zoomInGeo", "zoomOutGeo", "zoomInMapbox", "zoomOutMapbox", "autoScale2d", "resetScale2d", "sendDataToCloud", "editInChartStudio", "pan2d", "select2d", "lasso2d", "drawclosedpath", "drawopenpath", "drawline", "hoverClosestCartesian", "hoverCompareCartesian", "toggleSpikelines")
       )
+
+    # Remove the "(, 1)" from legends
+    for (i in 1:6) {
+      p$x$data[[i]]$name <- stringr::str_remove(p$x$data[[i]]$name, "\\(")
+      p$x$data[[i]]$name <- stringr::str_remove(p$x$data[[i]]$name, ",1\\)")
+    }
+
+    p
+
   }
 }
 
