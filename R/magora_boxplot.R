@@ -80,6 +80,7 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
     )
 
   if (type == "plotly") {
+
     p <- plotly::ggplotly(p, tooltip = "text", dynamicTicks = FALSE) %>% # dynamicTicks makes it so that if the plot is zoomed, the Y axis ticks update - but doesn't work with boxcode = "group"! TODO
       # expected warnings here - https://github.com/ropensci/plotly/issues/994
       plotly::layout(boxmode = "group") %>%
@@ -92,11 +93,16 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
       )
 
     # Remove the "(black, )" from legends because it puts the black outline in the legend too!
+    # Also remove the outlier markers that appear as part of plotly box plots, since they are already shown in the data points
     # On the first two traces:
     for (i in c(1, 2)) {
       p$x$data[[i]]$name <- stringr::str_remove(p$x$data[[i]]$name, "\\(black,")
       p$x$data[[i]]$name <- stringr::str_remove(p$x$data[[i]]$name, "\\)")
+
+      p$x$data[[i]]$marker$outliercolor <- "rgba(0,0,0,0)"
+      p$x$data[[i]]$marker$opacity <- 0
     }
+
   }
 
   p
