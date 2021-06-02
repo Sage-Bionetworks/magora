@@ -44,20 +44,46 @@ mod_gene_expression_heatmap_ui <- function(id) {
           )
         ),
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("sex"),
+            "Sex",
+            choices = sort(unique(magora::gene_expressions[["sex"]])),
+            selected = sort(unique(magora::gene_expressions[["sex"]])),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
+          )
         ),
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_data_ui(ns("download_data"))
-        ),
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("age"),
+            "Age",
+            choices = sort(unique(magora::gene_expressions[["age"]])),
+            selected = sort(unique(magora::gene_expressions[["age"]])),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
+          )
+        )
+      ),
+      shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_plot_ui(ns("download_plot"))
-        ),
+          width = 6,
+          offset = 6,
+          shiny::column(
+            width = 4,
+            shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
+          ),
+          shiny::column(
+            width = 4,
+            mod_download_data_ui(ns("download_data"))
+          ),
+          shiny::column(
+            width = 4,
+            mod_download_plot_ui(ns("download_plot"))
+          )
+        )
       ),
       shiny::column(
         width = 12,
@@ -102,13 +128,15 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$gene), message = "Please select one or more genes.")
+      shiny::need(!is.null(input$gene) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more genes, sexes, and ages.")
     )
 
     magora::gene_expressions %>%
       dplyr::filter(
         .data$gene %in% input$gene,
-        .data$tissue == input$tissue
+        .data$tissue == input$tissue,
+        .data$sex %in% input$sex,
+        .data$age %in% input$age
       )
   })
 
@@ -132,7 +160,9 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     cacheKeyExpr = {
       list(
         input$gene,
-        input$tissue
+        input$tissue,
+        input$sex,
+        input$age
       )
     },
     res = 96
