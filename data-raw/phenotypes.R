@@ -65,12 +65,12 @@ biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_
 
 ## Individual metadata ----
 
-# synGet("syn18880070", version = 7, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+# synGet("syn18880070", version = 9, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
 individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_individual_metadata.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
-  select(individual_id, sex, genotype, genotype_background, date_birth, date_death)
+  select(individual_id, sex, genotype, genotype_background, age_death, age_death_unit)
 
 ## Check missing IDs ----
 
@@ -85,34 +85,32 @@ phenotype_data %>%
 
 # Clean data ----
 
-## Derive age, mouse line, etc from individual metadata
+## Derive mouse line, etc from individual metadata
+# Age at death is now in the metadata file, so we do not need to derive it from anything
 
-# Some different date formats to contend with: excel (e.g. 43154), mdy (e.g. 10/1/18), and ydm (e.g. 2019-29-01)
+# Check that all age death units are "months"
 
-clean_date <- function(date) {
-  case_when(
-    nchar(date) == 5 ~ excel_numeric_to_date(as.numeric(date)),
-    str_detect(date, "-") ~ ydm(date),
-    TRUE ~ mdy(date)
-  )
-}
+individual_metadata %>%
+  count(age_death_unit) %>%
+  pull(age_death_unit) == "months"
+
+# Fix one age of death that is 181 instead of 18 - update with new metadata when fixed
+individual_metadata <- individual_metadata %>%
+  mutate(age_death = ifelse(age_death == 181, 18, age_death))
 
 individual_metadata <- individual_metadata %>%
   mutate(
     sex = str_to_title(sex),
     sex = as_factor(sex),
-    across(c(date_birth, date_death), clean_date),
-    age_interval = interval(date_birth, date_death),
-    age = round(age_interval / months(1)),
-    age_factor = as_factor(age),
-    age_factor = fct_reorder(age_factor, age),
+    age_factor = as_factor(age_death),
+    age_factor = fct_reorder(age_factor, age_death),
     mouse_line = case_when(
       str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
       str_ends(genotype, "_noncarrier") ~ genotype_background
     ),
     mouse_line = as_factor(mouse_line)
   ) %>%
-  select(-date_birth, -date_death, -age_interval, -genotype, -genotype_background, -age) %>%
+  select(-genotype, -genotype_background) %>%
   rename(age = age_factor)
 
 biospecimen_metadata <- biospecimen_metadata %>%
@@ -132,6 +130,6 @@ usethis::use_data(phenotypes, overwrite = TRUE)
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
 phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
-  map(function(x) distinct(x, tissue) %>% pull(tissue))
+  map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
 
 usethis::use_data(phenotype_tissue, overwrite = TRUE)
