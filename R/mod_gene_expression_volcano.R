@@ -17,6 +17,7 @@ mod_gene_expression_volcano_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
         shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_all", "content.md")),
+        shiny::actionLink(ns("details"), "More details"),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -239,4 +240,17 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
     data = filtered_gene_expressions,
     save_name = save_name
   )
+
+  # Details modal ----
+
+  shiny::observeEvent(input$details, {
+    shiny::showModal(
+      shiny::modalDialog(
+        size = "m",
+        easyClose = TRUE,
+        footer = shiny::modalButton("Close"),
+        shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_all", "details.md")),
+      )
+    )
+  })
 }
