@@ -17,6 +17,7 @@ mod_nanostring_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", title),
         shiny::includeMarkdown(app_sys("app", "www", "content", "nanostring", "content.md")),
+        shiny::actionLink(ns("details"), "More details"),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -205,6 +206,18 @@ mod_nanostring_server <- function(input, output, session) {
     data = filtered_nanostring,
     save_name = save_name
   )
+  # Details modal ----
+
+  shiny::observeEvent(input$details, {
+    shiny::showModal(
+      shiny::modalDialog(
+        size = "m",
+        easyClose = TRUE,
+        footer = shiny::modalButton("Close"),
+        shiny::includeMarkdown(app_sys("app", "www", "content", "nanostring", "details.md")),
+      )
+    )
+  })
 }
 
 ## To be copied in the UI
