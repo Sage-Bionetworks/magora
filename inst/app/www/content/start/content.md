@@ -1,5 +1,3 @@
-Explore gene expression and pathology data from next generation mouse models of Alzheimer's disease developed by the MODEL-AD consortium.
-
 MODEL-AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer's disease in humans.
 
 <a href = "https://www.model-ad.org/", target = "_blank">Learn more about MODEL-AD</a>

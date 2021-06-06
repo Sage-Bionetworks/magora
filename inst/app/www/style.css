@@ -114,10 +114,14 @@ body {
    height: inherit;
 }
 
-.start-banner > .start-title {
+.start-banner > .start-title, .start-banner > .start-header {
    background-color: rgba(255, 255, 255, 0.50);
-   width: 570px;
+   display: inline-block;
    padding: 10px 20px 10px 20px;
+}
+
+.start-banner > .start-header {
+   font-size: 19px;
 }
 
 /* ------ Other page elements ------ */
