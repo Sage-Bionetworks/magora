@@ -116,6 +116,9 @@ individual_metadata <- individual_metadata %>%
 biospecimen_metadata <- biospecimen_metadata %>%
   mutate(tissue = str_to_title(tissue))
 
+individual_metadata %>% count(mouse_line, individual_common_genotype)
+# Should they be the same? There are a few that don't match, e.g. I say C57BL6J but the individual_common_genotype says 5XFAD
+
 ## Combine data ----
 
 phenotypes <- phenotype_data %>%
