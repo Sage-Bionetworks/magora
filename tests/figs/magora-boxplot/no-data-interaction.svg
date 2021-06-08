@@ -35,7 +35,7 @@
 <polyline points='219.19,281.21 219.19,39.41 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzIuNzh8MzMzLjkxfDI4MS4yMXwzOS40MQ==)' />
 <polyline points='290.89,281.21 290.89,39.41 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzIuNzh8MzMzLjkxfDI4MS4yMXwzOS40MQ==)' />
 <g clip-path='url(#cpMzIuNzh8MzMzLjkxfDI4MS4yMXwzOS40MQ==)'><text x='101.53' y='154.96' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='163.62px' lengthAdjust='spacingAndGlyphs'>This phenotype cannot be</text></g>
-<g clip-path='url(#cpMzIuNzh8MzMzLjkxfDI4MS4yMXwzOS40MQ==)'><text x='92.86' y='175.45' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='180.97px' lengthAdjust='spacingAndGlyphs'>measured in this mouse line.</text></g>
+<g clip-path='url(#cpMzIuNzh8MzMzLjkxfDI4MS4yMXwzOS40MQ==)'><text x='84.56' y='175.45' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>measured in this mouse model.</text></g>
 <defs>
   <clipPath id='cpMC4wMHw3MjAuMDB8NTc2LjAwfDAuMDA='>
     <rect x='0.00' y='0.00' width='720.00' height='576.00' />
@@ -200,7 +200,7 @@
 <polyline points='525.80,545.13 525.80,303.33 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzM5LjM5fDY0MC41Mnw1NDUuMTN8MzAzLjMz)' />
 <polyline points='597.50,545.13 597.50,303.33 ' style='stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt;' clip-path='url(#cpMzM5LjM5fDY0MC41Mnw1NDUuMTN8MzAzLjMz)' />
 <g clip-path='url(#cpMzM5LjM5fDY0MC41Mnw1NDUuMTN8MzAzLjMz)'><text x='408.14' y='418.88' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='163.62px' lengthAdjust='spacingAndGlyphs'>This phenotype cannot be</text></g>
-<g clip-path='url(#cpMzM5LjM5fDY0MC41Mnw1NDUuMTN8MzAzLjMz)'><text x='399.47' y='439.37' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='180.97px' lengthAdjust='spacingAndGlyphs'>measured in this mouse line.</text></g>
+<g clip-path='url(#cpMzM5LjM5fDY0MC41Mnw1NDUuMTN8MzAzLjMz)'><text x='391.17' y='439.37' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>measured in this mouse model.</text></g>
 <defs>
   <clipPath id='cpMC4wMHw3MjAuMDB8NTc2LjAwfDAuMDA='>
     <rect x='0.00' y='0.00' width='720.00' height='576.00' />
