@@ -11,6 +11,6 @@ NeuN+ Cell Density,syn22049819,1,"5xFAD 4, 8 12 and 18 months_ ThioS-NeuN.csv",#
 GFAP+ Cell Density,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",#objects/ sqmm,GFAP
 GFAP+ Cell Size,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",mean object area (sqmm),GFAP
 S100b+ Cell Density,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",#objects/ sqmm,S100B
-Plasma Ab 40,syn22101772,1,"5xFAD 4, 8, 12 and 18 months Plasma .csv",Abeta40,NA
-Plasma Ab 42,syn22101772,1,"5xFAD 4, 8, 12 and 18 months Plasma .csv",Abeta42,NA
-LAMP1+ Percent Coverage,syn22049817,1,"5xFAD 4, 8 12 and 18 months_ ThioS-LAMP1.csv",Area %,LAMP1
+Plasma Ab 40,syn22101772,2,"5xFAD 4, 8, 12 and 18 months Plasma .csv",Abeta40,NA
+Plasma Ab 42,syn22101772,2,"5xFAD 4, 8, 12 and 18 months Plasma .csv",Abeta42,NA
+LAMP1+ Percent Coverage,syn22049817,2,"5xFAD 4, 8 12 and 18 months_ ThioS-LAMP1.csv",Area %,LAMP1
