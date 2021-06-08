@@ -27,8 +27,8 @@ mod_nanostring_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("mouse_model"),
             "Mouse model",
-            choices = sort(unique(magora::nanostring_for_plot[["model"]])),
-            selected = sort(unique(magora::nanostring_for_plot[["model"]])),
+            choices = sort(unique(magora::nanostring_for_plot[["mouse_model"]])),
+            selected = sort(unique(magora::nanostring_for_plot[["mouse_model"]])),
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
@@ -122,7 +122,7 @@ mod_nanostring_server <- function(input, output, session) {
 
     magora::nanostring %>%
       dplyr::filter(
-        .data$model %in% input$mouse_model,
+        .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age_group %in% input$age
       )
@@ -135,7 +135,7 @@ mod_nanostring_server <- function(input, output, session) {
 
     magora::nanostring_for_plot %>%
       dplyr::filter(
-        .data$model %in% input$mouse_model,
+        .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age_group %in% input$age
       ) %>%

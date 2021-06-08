@@ -36,7 +36,7 @@ golem_add_external_resources <- function() {
     golem::favicon(ext = "png"),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "MODEL-AD Mouse Explorer"
+      app_title = "AD Model Explorer"
     )
   )
 }
