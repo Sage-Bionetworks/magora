@@ -141,13 +141,13 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_model), message = "Please select one or more mouse lines.")
     )
 
     magora::phenotypes %>%
       dplyr::filter(
         .data$phenotype %in% input$phenotype,
-        .data$mouse_line %in% input$mouse_line,
+        .data$mouse_model %in% input$mouse_model,
         .data$tissue %in% input$tissue
       )
   })
@@ -162,7 +162,7 @@ mod_pathology_server <- function(input, output, session) {
     )
 
     filtered_phenotypes() %>%
-      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
+      expand_mouse_model_factor_from_selection(input$mouse_model) %>%
       magora_boxplot()
   })
 
@@ -170,8 +170,8 @@ mod_pathology_server <- function(input, output, session) {
 
   phenotype_plot_dims <- shiny::reactive({
     list(
-      nrow = ceiling(length(input$mouse_line) / 2),
-      ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
+      nrow = ceiling(length(input$mouse_model) / 2),
+      ncol = ifelse(length(input$mouse_model) == 1, 1, 2)
     )
   })
 
@@ -179,7 +179,7 @@ mod_pathology_server <- function(input, output, session) {
 
     # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_model), message = "Please select one or more mouse lines.")
     )
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
@@ -206,7 +206,7 @@ mod_pathology_server <- function(input, output, session) {
 
   output$drilldown_phenotypes <- plotly::renderPlotly({
     drilldown_phenotypes() %>%
-      expand_mouse_line_factor_from_selection(input$plot_click$panelvar1) %>%
+      expand_mouse_model_factor_from_selection(input$plot_click$panelvar1) %>%
       magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title())
   })
 
@@ -231,13 +231,13 @@ mod_pathology_server <- function(input, output, session) {
 
   phenotype_data_download <- shiny::reactive({
     filtered_phenotypes() %>%
-      dplyr::select(.data$mouse_line, .data$tissue, .data$age, .data$sex, .data$phenotype, .data$value) %>%
-      dplyr::arrange(.data$mouse_line, .data$tissue, .data$age, .data$sex) %>%
+      dplyr::select(.data$mouse_model, .data$tissue, .data$age, .data$sex, .data$phenotype, .data$value) %>%
+      dplyr::arrange(.data$mouse_model, .data$tissue, .data$age, .data$sex) %>%
       dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
   })
 
   save_name <- shiny::reactive({
-    download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
+    download_name("phenotype", input$phenotype, input$mouse_model, input$tissue)
   })
 
   # Data

@@ -1,6 +1,6 @@
 #' Boxplot for phenotype data
 #'
-#' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse line, and tissue, with mouse lines expanded via \code{\link{expand_mouse_line_factor_from_selection}}).
+#' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse model, and tissue, with mouse models expanded via \code{\link{expand_mouse_model_factor_from_selection}}).
 #' @inheritParams magora_volcano_plot
 #' @param use_theme_sage Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.
 #'
@@ -13,11 +13,11 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
     stop("`type` should be one of 'ggplot2' or 'plotly'", call. = FALSE)
   }
 
-  # Generate annotation for mouse lines (facets) that won't have any data
+  # Generate annotation for mouse models (facets) that won't have any data
   measured_annotation <- data %>%
-    dplyr::count(.data$mouse_line, .drop = FALSE) %>%
+    dplyr::count(.data$mouse_model, .drop = FALSE) %>%
     dplyr::filter(.data$n == 0) %>%
-    dplyr::mutate(label = "This phenotype cannot be\nmeasured in this mouse line.")
+    dplyr::mutate(label = "This phenotype cannot be\nmeasured in this mouse model.")
 
   # If data only contains one sex, generate fake data and set alpha and color so that boxplot legend/dodging are correct
   data <- data %>%
@@ -46,7 +46,7 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
 
   if (facet) {
     p <- p +
-      ggplot2::facet_wrap(ggplot2::vars(.data$mouse_line), ncol = 2, drop = FALSE)
+      ggplot2::facet_wrap(ggplot2::vars(.data$mouse_model), ncol = 2, drop = FALSE)
   }
 
   p <- p +
