@@ -64,7 +64,7 @@ biospecimen_version <- 8
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
-synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"))
+synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
 biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_biospecimen_metadata.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
@@ -74,11 +74,11 @@ biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_
 ## Individual metadata ----
 
 individual_id <- "syn18880070"
-individual_version <- 9
+individual_version <- 10
 
 check_latest_version(individual_id, individual_version)
 
-synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology"))
+synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
 individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_individual_metadata.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
@@ -98,8 +98,8 @@ phenotype_data %>%
 
 # Clean data ----
 
-## Derive mouse line, etc from individual metadata
-# Age at death is now in the metadata file, so we do not need to derive it from anything
+biospecimen_metadata <- biospecimen_metadata %>%
+  mutate(tissue = str_to_title(tissue))
 
 # Check that all age death units are "months"
 
@@ -107,9 +107,13 @@ individual_metadata %>%
   count(age_death_unit) %>%
   pull(age_death_unit) == "months"
 
-# Fix one age of death that is 181 instead of 18 - update with new metadata when fixed
-individual_metadata <- individual_metadata %>%
-  mutate(age_death = ifelse(age_death == 181, 18, age_death))
+# Check ages
+
+individual_metadata %>%
+  count(age_death)
+
+## Derive mouse line, etc from individual metadata
+# Age at death is now in the metadata file, so we do not need to derive it from anything
 
 individual_metadata <- individual_metadata %>%
   mutate(
@@ -127,12 +131,8 @@ individual_metadata <- individual_metadata %>%
   select(-genotype, -genotype_background) %>%
   rename(age = age_factor)
 
-biospecimen_metadata <- biospecimen_metadata %>%
-  mutate(tissue = str_to_title(tissue))
-
+# Check that mouse model matches method for deriving mouse line
 individual_metadata %>% count(mouse_line, mouse_model)
-# Should they be the same? There are a few that don't match, e.g. I say C57BL6J but the individual_common_genotype says 5XFAD
-# Anna will update metadata
 
 ## Combine data ----
 
