@@ -42,7 +42,7 @@ synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::h
 nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_biospecimen_metadata.csv"))
 
 individual_id <- "syn22107818"
-individual_version <- 6
+individual_version <- 7
 
 check_latest_version(individual_id, individual_version)
 
@@ -76,7 +76,7 @@ rm(list = modules)
 cluster_a <- tibble(
   module = c("TCXblue", "PHGyellow", "IFGyellow"),
   cluster = "Consensus Cluster A (ECM organization)",
-  cluster_label = "Consensus Cluster A\n(ECM organization)"
+  cluster_label = "Consensus\nCluster\nA (ECM\norganization)"
 )
 
 cluster_b <- tibble(
@@ -100,7 +100,7 @@ cluster_d <- tibble(
 cluster_e <- tibble(
   module = c("FPbrown", "CBEblue", "DLPFCturquoise", "TCXbrown", "STGturquoise", "PHGblue"),
   cluster = "Consensus Cluster E (Organelle Biogensis, Cellular stress response)",
-  cluster_label = "Consensus Cluster E\n(Organelle Biogensis,\nCellular stress response)"
+  cluster_label = "Consensus Cluster\nE(Organelle\nBiogensis,\nCellular stress\nresponse)"
 )
 
 module_clusters <- cluster_a %>%
@@ -157,9 +157,14 @@ nanostring_with_id <- nanostring_with_id %>%
 
 ## Nanostring individual metadata ----
 
-# AgeDeath and individualCommonGenotype contain the age and model, so we don't need to derive those anymore
+# Only include mice with NA treatmentType
 
 nanostring_individual_metadata <- nanostring_individual_metadata_raw %>%
+  filter(is.na(treatmentType))
+
+# AgeDeath and individualCommonGenotype contain the age and model, so we don't need to derive those anymore
+
+nanostring_individual_metadata <- nanostring_individual_metadata %>%
   mutate(
     sex = str_to_title(sex)
   ) %>%
