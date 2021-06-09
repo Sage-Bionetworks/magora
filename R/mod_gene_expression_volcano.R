@@ -27,7 +27,7 @@ mod_gene_expression_volcano_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("mouse_model"),
             "Mouse model",
-            choices = sort(unique(magora::gene_expressions[["strain"]])),
+            choices = sort(unique(magora::gene_expressions[["mouse_model"]])),
             multiple = FALSE
           )
         ),
@@ -132,7 +132,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   filtered_gene_expressions <- shiny::reactive({
     magora::gene_expressions %>%
       dplyr::filter(
-        .data$strain == input$mouse_model,
+        .data$mouse_model == input$mouse_model,
         .data$tissue == input$tissue
       )
   })
@@ -140,7 +140,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   filtered_gene_expressions_labels <- shiny::reactive({
     magora::gene_expressions_labels %>%
       dplyr::filter(
-        .data$strain == input$mouse_model,
+        .data$mouse_model == input$mouse_model,
         .data$tissue == input$tissue
       )
   })
