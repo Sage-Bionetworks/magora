@@ -16,13 +16,14 @@ mod_details_modal_ui <- function(id){
 mod_details_modal_server <- function(input, output, session){
   ns <- session$ns
   shiny::observeEvent(input$details, {
-    browser()
+    page <- stringr::str_replace(ns(""), pattern = ".*-([^-]*)-.*", replacement = "\\1")
+
     shiny::showModal(
       shiny::modalDialog(
         size = "m",
         easyClose = TRUE,
         footer = shiny::modalButton("Close"),
-        shiny::includeMarkdown(app_sys("app", "www", "content", ns, "details.md")),
+        shiny::includeMarkdown(app_sys("app", "www", "content", page, "details.md")),
       )
     )
   })

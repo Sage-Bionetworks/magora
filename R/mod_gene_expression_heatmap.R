@@ -17,6 +17,8 @@ mod_gene_expression_heatmap_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
         shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_selected", "content.md")),
+        # Same modal as "all" page is used - no issue with duplicated inputs since these are namespaced by page
+        mod_details_modal_ui(ns("gene_expression_all")),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -210,4 +212,8 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     data = filtered_gene_expressions,
     save_name = save_name
   )
+
+  # Details modal ----
+
+  callModule(mod_details_modal_server, "gene_expression_all")
 }
