@@ -39,10 +39,11 @@ mod_gene_expression_heatmap_ui <- function(id) {
         shiny::column(
           width = 3,
           shinyWidgets::pickerInput(
-            ns("tissue"),
-            "Tissue",
-            choices = sort(unique(magora::gene_expressions[["tissue"]])),
-            multiple = FALSE
+            ns("mouse_model"),
+            "Mouse model",
+            choices = names(gene_expressions_tissue),
+            multiple = TRUE,
+            selected = names(gene_expressions_tissue)[[1]]
           )
         ),
         shiny::column(
@@ -107,7 +108,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     query <- shiny::parseQueryString(session$clientData$url_search)
     # Additional parsing of query to split by ,
     query <- split_query(query)
-    if (!is.null(query$page)) {
+    if (!is.null(query$page)) {!is.
       if (query$page == "GeneExpressionHeatmap") {
         # Only update inputs that are also in the query string
         query_inputs <- intersect(names(input), names(query))
@@ -130,13 +131,13 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
   filtered_gene_expressions <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$gene) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more genes, sexes, and ages.")
+      shiny::need(!is.null(input$gene) & !is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more genes, models, sexes, and ages.")
     )
 
     magora::gene_expressions %>%
       dplyr::filter(
         .data$gene %in% input$gene,
-        .data$tissue == input$tissue,
+        .data$mouse_model == input$mouse_model,
         .data$sex %in% input$sex,
         .data$age %in% input$age
       )
@@ -162,7 +163,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     cacheKeyExpr = {
       list(
         input$gene,
-        input$tissue,
+        input$mouse_model,
         input$sex,
         input$age
       )
@@ -173,7 +174,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   gene_expression_plot_dims <- shiny::reactive({
     list(
       nrow = length(unique(filtered_gene_expressions()[["gene"]])),
-      ncol = length(unique(filtered_gene_expressions()[["age"]])) * length(unique(filtered_gene_expressions()[["sex"]])) * length(unique(filtered_gene_expressions()[["strain"]]))
+      ncol = length(unique(filtered_gene_expressions()[["age"]])) * length(unique(filtered_gene_expressions()[["sex"]])) * length(unique(filtered_gene_expressions()[["mouse_model"]]))
     )
   })
 
@@ -193,7 +194,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   })
 
   save_name <- shiny::reactive({
-    download_name("gene_expression_heatmap", input$gene, input$tissue)
+    download_name("gene_expression_heatmap", input$gene, input$mouse_model, input$sex, input$age)
   })
 
   # Data
