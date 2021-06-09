@@ -84,7 +84,10 @@ gene_expressions <- gene_expressions %>%
   rename(gene_id = geneid)
 
 gene_expressions <- gene_expressions %>%
-  mutate(tissue = str_to_title(tissue))
+  mutate(
+    tissue = str_to_title(tissue),
+    mouse_model = str_to_upper(strain)
+  )
 
 # Query gene symbol to use in place of ID ----
 
@@ -116,7 +119,7 @@ gene_expressions <- gene_expressions %>%
 # Check that values are unique
 
 gene_expressions %>%
-  count(strain, tissue, sex, age, gene) %>%
+  count(mouse_model, tissue, sex, age, gene) %>%
   filter(n > 1) %>%
   nrow() == 0
 
@@ -146,10 +149,3 @@ gene_expressions_labels <- gene_expressions %>%
 
 usethis::use_data(gene_expressions_labels, overwrite = TRUE)
 usethis::use_data(gene_expressions, overwrite = TRUE)
-
-# Separately save tissue available for each strain, for easily changing inputs available
-
-gene_expressions_tissue <- split(gene_expressions, gene_expressions$strain) %>%
-  map(function(x) distinct(x, tissue) %>% pull(tissue))
-
-usethis::use_data(gene_expressions_tissue, overwrite = TRUE)
