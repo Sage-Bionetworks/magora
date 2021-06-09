@@ -138,13 +138,7 @@ mod_nanostring_server <- function(input, output, session) {
         .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age_group %in% input$age
-      ) %>%
-      # TODO: Move to data prep stage once this is "approved"
-      dplyr::group_by(cluster) %>%
-      dplyr::mutate(n_modules = dplyr::n_distinct(module)) %>%
-      dplyr::ungroup() %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(cluster_label = stringr::str_wrap(cluster, width = 3 * n_modules))
+      )
   })
 
   # Generate plot ----
