@@ -149,3 +149,10 @@ gene_expressions_labels <- gene_expressions %>%
 
 usethis::use_data(gene_expressions_labels, overwrite = TRUE)
 usethis::use_data(gene_expressions, overwrite = TRUE)
+
+# Separately save tissue available for each model, for easily changing inputs available
+
+gene_expressions_tissue <- split(gene_expressions, gene_expressions$mouse_model) %>%
+  map(function(x) distinct(x, tissue) %>% pull(tissue))
+
+usethis::use_data(gene_expressions_tissue, overwrite = TRUE)
