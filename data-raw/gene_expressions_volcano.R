@@ -81,12 +81,13 @@ gene_expressions <- gene_expressions %>%
 # Clean data ----
 
 gene_expressions <- gene_expressions %>%
-  rename(gene_id = geneid)
+  rename(gene_id = geneid,
+         mouse_model = strain)
 
 gene_expressions <- gene_expressions %>%
   mutate(
     tissue = str_to_title(tissue),
-    mouse_model = str_to_upper(strain)
+    mouse_model = str_to_upper(mouse_model)
   )
 
 # Query gene symbol to use in place of ID ----
