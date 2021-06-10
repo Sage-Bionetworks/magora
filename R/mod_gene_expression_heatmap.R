@@ -30,6 +30,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
             "Genes",
             choices = sort(unique(magora::gene_expressions[["gene"]])),
             multiple = TRUE,
+            selected = "App",
             options = shinyWidgets::pickerOptions(
               liveSearch = TRUE, size = 10,
               noneSelectedText = "Enter gene(s) or select from list"
@@ -42,8 +43,9 @@ mod_gene_expression_heatmap_ui <- function(id) {
             ns("mouse_model"),
             "Mouse model",
             choices = names(gene_expressions_tissue),
+            selected = names(gene_expressions_tissue),
             multiple = TRUE,
-            selected = names(gene_expressions_tissue)[[1]]
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
         ),
         shiny::column(
@@ -152,7 +154,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
     filtered_gene_expressions() %>%
       dplyr::filter(!is.na(.data$padj)) %>%
-      complete_gene_expression_heatmap_data(input$gene) %>%
+      complete_gene_expression_heatmap_data(input$gene, input$mouse_model) %>%
       magora_heatmap()
   })
 
@@ -172,16 +174,20 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   )
 
   gene_expression_plot_dims <- shiny::reactive({
+
     list(
-      nrow = length(unique(filtered_gene_expressions()[["gene"]])),
-      ncol = length(unique(filtered_gene_expressions()[["age"]])) * length(unique(filtered_gene_expressions()[["sex"]])) * length(unique(filtered_gene_expressions()[["mouse_model"]]))
+      nrow = length(input$gene) * length(unique(magora::gene_expressions[["tissue"]])),
+      ncol = length(input$age) * length(input$sex) * length(input$mouse_model)
     )
   })
 
   output$gene_expression_heatmap_ui <- shiny::renderUI({
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_heatmap"),
       height = paste0(200 + gene_expression_plot_dims()[["nrow"]] * 50, "px"),
-      width = min(1000, paste0(150 + gene_expression_plot_dims()[["ncol"]] * 50, "px"))
+      width =
+        min(1000,
+                  paste0(150 + gene_expression_plot_dims()[["ncol"]] * 50, "px")
+                  )
     ),
     color = "#D3DCEF"
     )
