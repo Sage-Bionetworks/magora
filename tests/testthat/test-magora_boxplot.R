@@ -8,7 +8,7 @@ set.seed(1234)
 phenotypes_df <- expand.grid(
   tissue = c("Cortex", "Hippocampus"),
   sex = c("Male", "Female"),
-  mouse_line_group = c("BL6", "BL5"),
+  mouse_model_group = c("BL6", "BL5"),
   age = c(4, 6, 12, 18),
   phenotype = c("Plaque #", "Plaque Size"),
   stringsAsFactors = FALSE
@@ -27,87 +27,87 @@ phenotypes_df <- phenotypes_df %>%
   dplyr::mutate(
     age = as.factor(age),
     sex = as.factor(sex),
-    mouse_line = ifelse(dplyr::row_number() %in% sample(1:nrow(phenotypes_df), round(nrow(phenotypes_df) / 2)), paste0("5XfAD;", mouse_line_group), mouse_line_group),
+    mouse_model = ifelse(dplyr::row_number() %in% sample(1:nrow(phenotypes_df), round(nrow(phenotypes_df) / 2)), paste0("5XfAD;", mouse_model_group), mouse_model_group),
     value = ifelse(dplyr::row_number() %in% sample(1:nrow(phenotypes_df), 10), NA_real_, value)
   ) %>%
-  dplyr::mutate(mouse_line = forcats::fct_relevel(mouse_line, c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")))
+  dplyr::mutate(mouse_model = forcats::fct_relevel(mouse_model, c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")))
 
-test_that("magora_boxplot produces box plots comparing the phenotype by mouse line, age, and sex", {
+test_that("magora_boxplot produces box plots comparing the phenotype by mouse model, age, and sex", {
   p <- phenotypes %>%
     dplyr::filter(
       .data$phenotype %in% "GFAP+ Cell Density",
-      .data$mouse_line %in% c("C57BL6J", "5XFAD"),
+      .data$mouse_model %in% c("C57BL6J", "5XFAD"),
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
+    expand_mouse_model_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("faceted-box-plots", p)
 })
 
-test_that("magora_boxplot produces two rows of facets when 3-4 mouse lines are selected", {
+test_that("magora_boxplot produces two rows of facets when 3-4 mouse models are selected", {
   p <- phenotypes_df %>%
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
-      .data$mouse_line %in% c("BL5", "BL6", "5XfAD;BL5"),
+      .data$mouse_model %in% c("BL5", "BL6", "5XfAD;BL5"),
       .data$tissue %in% "Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6")) %>%
+    expand_mouse_model_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("two-row-facets-three", p)
 
   p <- phenotypes_df %>%
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
-      .data$mouse_line %in% c("BL5", "BL6", "5XfAD;BL5", "5XfAD;BL6"),
+      .data$mouse_model %in% c("BL5", "BL6", "5XfAD;BL5", "5XfAD;BL6"),
       .data$tissue %in% "Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
+    expand_mouse_model_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("two-row-facets-four", p)
 })
 
 test_that("magora_boxplot adds text to any facet without data", {
   p <- phenotypes %>%
-    dplyr::filter(mouse_line != "5XFAD") %>%
+    dplyr::filter(mouse_model != "5XFAD") %>%
     dplyr::filter(
       .data$phenotype %in% "Microglia Density",
-      .data$mouse_line %in% c("5XFAD", "C57BL6J"),
+      .data$mouse_model %in% c("5XFAD", "C57BL6J"),
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
+    expand_mouse_model_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("no-data-experiment", p)
 
   p <- phenotypes %>%
-    dplyr::filter(mouse_line != "C57BL6J") %>%
+    dplyr::filter(mouse_model != "C57BL6J") %>%
     dplyr::filter(
       .data$phenotype %in% "Microglia Density",
-      .data$mouse_line %in% c("5XFAD", "C57BL6J"),
+      .data$mouse_model %in% c("5XFAD", "C57BL6J"),
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
+    expand_mouse_model_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("no-data-control", p)
 
   p <- phenotypes_df %>%
-    dplyr::filter(mouse_line %in% c("5XfAD;BL5", "BL6")) %>%
+    dplyr::filter(mouse_model %in% c("5XfAD;BL5", "BL6")) %>%
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
-      .data$mouse_line_group %in% c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6"),
+      .data$mouse_model_group %in% c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6"),
       .data$tissue %in% "Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
+    expand_mouse_model_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("no-data-interaction", p)
 
   p <- phenotypes_df %>%
-    dplyr::filter(mouse_line %in% c("5XfAD;BL6", "BL6")) %>%
+    dplyr::filter(mouse_model %in% c("5XfAD;BL6", "BL6")) %>%
     dplyr::filter(
       .data$phenotype %in% "Plaque #",
-      .data$mouse_line_group %in% c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6"),
+      .data$mouse_model_group %in% c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6"),
       .data$tissue %in% "Cortex"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
+    expand_mouse_model_factor_from_selection(c("BL5", "5XfAD;BL5", "BL6", "5XfAD;BL6")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("no-data-both", p)
 })
@@ -116,10 +116,10 @@ test_that("All levels of age are shown in the plot even if not present in the fi
   p <- phenotypes %>%
     dplyr::filter(
       .data$phenotype %in% "Plasma Ab 40",
-      .data$mouse_line %in% c("C57BL6J", "5XFAD"),
+      .data$mouse_model %in% c("C57BL6J", "5XFAD"),
       .data$tissue %in% "Plasma"
     ) %>%
-    expand_mouse_line_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
+    expand_mouse_model_factor_from_selection(c("C57BL6J", "5XFAD")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("not-all-ages", p)
 })
@@ -128,9 +128,9 @@ test_that("magora_boxplot shows facets in the order selected", {
   p <- phenotypes %>%
     dplyr::filter(
       phenotype %in% "Plasma Ab 40",
-      mouse_line %in% c("5XFAD", "C57BL6J")
+      mouse_model %in% c("5XFAD", "C57BL6J")
     ) %>%
-    expand_mouse_line_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
+    expand_mouse_model_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
     magora_boxplot(use_theme_sage = FALSE)
   expect_doppelganger("pathology-different-order", p)
 })

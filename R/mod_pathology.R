@@ -32,9 +32,9 @@ mod_pathology_ui <- function(id) {
         shiny::column(
           width = 4,
           shinyWidgets::pickerInput(
-            ns("mouse_line"),
+            ns("mouse_model"),
             "Mouse lines",
-            choices = as.character(levels(magora::phenotypes[["mouse_line"]])),
+            choices = as.character(levels(magora::phenotypes[["mouse_model"]])),
             multiple = TRUE,
             selected = c("C57BL6J", "5XFAD")
           )
@@ -122,7 +122,6 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   # Update tissue options available based on phenotype selected -----
-  # TODO: want the query option to be used, not this
   shiny::observeEvent(input$phenotype, {
     shiny::req(pathology_r() == 1) # Only updating the tissue when the reactive flag says to
     available_tissue <- magora::phenotype_tissue[[input$phenotype]]
@@ -142,13 +141,13 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_phenotypes <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_model), message = "Please select one or more mouse lines.")
     )
 
     magora::phenotypes %>%
       dplyr::filter(
         .data$phenotype %in% input$phenotype,
-        .data$mouse_line %in% input$mouse_line,
+        .data$mouse_model %in% input$mouse_model,
         .data$tissue %in% input$tissue
       )
   })
@@ -163,16 +162,16 @@ mod_pathology_server <- function(input, output, session) {
     )
 
     filtered_phenotypes() %>%
-      expand_mouse_line_factor_from_selection(input$mouse_line) %>%
-      magora_boxplot(plot_type = "phenotype")
+      expand_mouse_model_factor_from_selection(input$mouse_model) %>%
+      magora_boxplot()
   })
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)
 
   phenotype_plot_dims <- shiny::reactive({
     list(
-      nrow = ceiling(length(input$mouse_line) / 2),
-      ncol = ifelse(length(input$mouse_line) == 1, 1, 2)
+      nrow = ceiling(length(input$mouse_model) / 2),
+      ncol = ifelse(length(input$mouse_model) == 1, 1, 2)
     )
   })
 
@@ -180,14 +179,51 @@ mod_pathology_server <- function(input, output, session) {
 
     # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
     shiny::validate(
-      shiny::need(!is.null(input$mouse_line), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_model), message = "Please select one or more mouse lines.")
     )
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%"),
+      click = ns("plot_click")
     ),
     color = "#D3DCEF"
+    )
+  })
+
+  # Modal ----
+
+  drilldown_phenotypes <- shiny::reactive({
+    shiny::req(input$plot_click)
+    panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}"')
+    filtered_phenotypes() %>%
+      dplyr::filter(eval(rlang::parse_expr(panel_filter)))
+  })
+
+  drilldown_title <- shiny::reactive({
+    glue::glue("Phenotype: {input$phenotype}, Mouse line: {input$plot_click$panelvar1}, Tissue: {input$tissue}")
+  })
+
+  output$drilldown_phenotypes <- plotly::renderPlotly({
+    drilldown_phenotypes() %>%
+      expand_mouse_model_factor_from_selection(input$plot_click$panelvar1) %>%
+      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title())
+  })
+
+  shiny::observeEvent(input$plot_click, {
+    shiny::showModal(
+      shiny::modalDialog(
+        title = drilldown_title(),
+        size = "l",
+        easyClose = TRUE,
+        footer = shiny::modalButton("Close"),
+        shinycssloaders::withSpinner(plotly::plotlyOutput(
+          height = "600px",
+          ns("drilldown_phenotypes")
+        ),
+        color = "#D3DCEF"
+        )
+      )
     )
   })
 
@@ -195,13 +231,13 @@ mod_pathology_server <- function(input, output, session) {
 
   phenotype_data_download <- shiny::reactive({
     filtered_phenotypes() %>%
-      dplyr::select(.data$mouse_line, .data$tissue, .data$age, .data$sex, .data$phenotype, .data$value) %>%
-      dplyr::arrange(.data$mouse_line, .data$tissue, .data$age, .data$sex) %>%
+      dplyr::select(.data$mouse_model, .data$tissue, .data$age, .data$sex, .data$phenotype, .data$value) %>%
+      dplyr::arrange(.data$mouse_model, .data$tissue, .data$age, .data$sex) %>%
       dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
   })
 
   save_name <- shiny::reactive({
-    download_name("phenotype", input$phenotype, input$mouse_line, input$tissue)
+    download_name("phenotype", input$phenotype, input$mouse_model, input$tissue)
   })
 
   # Data

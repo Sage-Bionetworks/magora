@@ -7,23 +7,26 @@ library(fs)
 library(purrr)
 library(stringr)
 library(lubridate)
+library(synapser)
+
+synLogin()
+
+source(here::here("data-raw", "check_latest_version.R"))
 
 # Download and read phenotype data ----
 
 # Read file that contains the phenotype name, synapse ID, field to use, and values of Stain to filter for
 phenotype_files <- read_csv(here::here("data-raw", "pathology", "5xfad_data_sources.csv"))
 
-# The code below is commented out because it downloads the files - if they have already been downloaded, no need to run this.
+# Check that the latest version of all files is used
+walk2(phenotype_files[["syn_id"]], phenotype_files[["version"]], check_latest_version)
 
-# library(synapser)
-# synLogin()
-#
-# # Download data
-#
-# phenotype_distinct_files <- phenotype_files %>%
-#   distinct(syn_id, version)
-#
-# walk2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local"))
+# Download data - synapser checks the version locally and does not redownload if the version is up to date, so we can safely run all of this without worrying about redownloading.
+
+phenotype_distinct_files <- phenotype_files %>%
+  distinct(syn_id, version)
+
+walk2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local"))
 
 # Function to read in, filter + clean data, and return relevant fields
 read_clean_phenotype <- function(field, stain_filter, file) {
@@ -56,7 +59,12 @@ phenotype_data <- phenotype_files %>%
 
 ## Biospecimen metadata ----
 
-# synGet("syn18876530", version = 6, downloadLocation = here::here("data-raw", "pathology"))
+biospecimen_id <- "syn18876530"
+biospecimen_version <- 8
+
+check_latest_version(biospecimen_id, biospecimen_version)
+
+synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
 biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_biospecimen_metadata.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
@@ -65,12 +73,17 @@ biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_
 
 ## Individual metadata ----
 
-# synGet("syn18880070", version = 7, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+individual_id <- "syn18880070"
+individual_version <- 10
+
+check_latest_version(individual_id, individual_version)
+
+synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
 individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_individual_metadata.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
-  select(individual_id, sex, genotype, genotype_background, date_birth, date_death)
+  select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_unit)
 
 ## Check missing IDs ----
 
@@ -85,45 +98,48 @@ phenotype_data %>%
 
 # Clean data ----
 
-## Derive age, mouse line, etc from individual metadata
+biospecimen_metadata <- biospecimen_metadata %>%
+  mutate(tissue = str_to_title(tissue))
 
-# Some different date formats to contend with: excel (e.g. 43154), mdy (e.g. 10/1/18), and ydm (e.g. 2019-29-01)
+# Check that all age death units are "months"
 
-clean_date <- function(date) {
-  case_when(
-    nchar(date) == 5 ~ excel_numeric_to_date(as.numeric(date)),
-    str_detect(date, "-") ~ ydm(date),
-    TRUE ~ mdy(date)
-  )
-}
+individual_metadata %>%
+  count(age_death_unit) %>%
+  pull(age_death_unit) == "months"
+
+# Check ages
+
+individual_metadata %>%
+  count(age_death)
+
+## Derive mouse line, etc from individual metadata
+# Age at death is now in the metadata file, so we do not need to derive it from anything
 
 individual_metadata <- individual_metadata %>%
   mutate(
     sex = str_to_title(sex),
     sex = as_factor(sex),
-    across(c(date_birth, date_death), clean_date),
-    age_interval = interval(date_birth, date_death),
-    age = round(age_interval / months(1)),
-    age_factor = as_factor(age),
-    age_factor = fct_reorder(age_factor, age),
+    age_factor = as_factor(age_death),
+    age_factor = fct_reorder(age_factor, age_death),
     mouse_line = case_when(
       str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
       str_ends(genotype, "_noncarrier") ~ genotype_background
     ),
-    mouse_line = as_factor(mouse_line)
+    mouse_line = as_factor(mouse_line),
+    mouse_model = as_factor(individual_common_genotype)
   ) %>%
-  select(-date_birth, -date_death, -age_interval, -genotype, -genotype_background, -age) %>%
+  select(-genotype, -genotype_background) %>%
   rename(age = age_factor)
 
-biospecimen_metadata <- biospecimen_metadata %>%
-  mutate(tissue = str_to_title(tissue))
+# Check that mouse model matches method for deriving mouse line
+individual_metadata %>% count(mouse_line, mouse_model)
 
 ## Combine data ----
 
 phenotypes <- phenotype_data %>%
   left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
   left_join(individual_metadata, by = "individual_id") %>%
-  select(individual_id, specimen_id, mouse_line, sex, age, tissue, phenotype, value)
+  select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, value)
 
 # Save data ----
 
@@ -132,6 +148,6 @@ usethis::use_data(phenotypes, overwrite = TRUE)
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
 phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
-  map(function(x) distinct(x, tissue) %>% pull(tissue))
+  map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
 
 usethis::use_data(phenotype_tissue, overwrite = TRUE)
