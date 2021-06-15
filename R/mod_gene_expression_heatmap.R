@@ -142,7 +142,8 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
         .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age %in% input$age
-      )
+      ) %>%
+      regenerate_pvalue()
   })
 
   # Generate plot ----

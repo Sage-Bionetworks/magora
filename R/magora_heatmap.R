@@ -50,7 +50,7 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     ggplot2::coord_fixed() +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
-      legend.position = "bottom",
+      legend.position = "top",
       panel.background = ggplot2::element_blank(),
       panel.grid = ggplot2::element_blank()
     )

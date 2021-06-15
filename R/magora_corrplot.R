@@ -44,6 +44,6 @@ magora_corrplot <- function(data) {
       panel.background = ggplot2::element_blank(),
       plot.title.position = "plot",
       panel.grid = ggplot2::element_blank(),
-      legend.position = "bottom"
+      legend.position = "top"
     )
 }
