@@ -124,10 +124,20 @@ gene_expressions %>%
   filter(n > 1) %>%
   nrow() == 0
 
-# Round fold change and p-values to a reasonable amount ----
+# Precalculate -log10(padj) and -log10(pvalue) ----
+
+# Will use that to reconstruct p-value, since they take up less space for storing than the pvalues do (some with 300+ digits!)
 
 gene_expressions <- gene_expressions %>%
-  mutate(across(c(log2foldchange, pvalue, padj), ~ round(.x, 5)))
+  mutate(
+    neg_log10_pvalue = -log10(pvalue),
+    neg_log10_padj = -log10(padj)
+  )
+
+# Round fold change and log10s to a reasonable amount ----
+
+gene_expressions <- gene_expressions %>%
+  mutate(across(c(log2foldchange, log10_pvalue, log10_padj), ~ round(.x, 5)))
 
 # Flag as significant for plotting ----
 
@@ -138,6 +148,11 @@ gene_expressions <- gene_expressions %>%
     is.na(log2foldchange) | is.na(padj) ~ NA_character_,
     TRUE ~ "Not Significant"
   ))
+
+# Remove p-values - again, they will be reconstructed
+
+gene_expressions <- gene_expressions %>%
+  select(-padj, -pvalue)
 
 # Generate labels - only genes that are upregulated/downregulated, and not super long names
 

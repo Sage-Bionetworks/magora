@@ -32,7 +32,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
 
   # Create plot
   p <- ggplot2::ggplot() +
-    ggplot2::geom_point(data = data, ggplot2::aes(x = .data$log2foldchange, y = -log10(.data$padj), colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
+    ggplot2::geom_point(data = data, ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
     ggplot2::geom_vline(data = fold_change_line, ggplot2::aes(xintercept = x), linetype = "dashed") +
     ggplot2::geom_hline(data = p_value_line, ggplot2::aes(yintercept = y, linetype = label)) +
     ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3), order = 1)) +
@@ -50,7 +50,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
 
   if (type == "ggplot2") {
     p +
-      ggrepel::geom_text_repel(data = data_labels, ggplot2::aes(x = .data$log2foldchange, y = -log10(.data$padj), colour = .data$diff_expressed, label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
+      ggrepel::geom_text_repel(data = data_labels, ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
       ggplot2::labs(x = bquote(~ Log[2] ~ "Fold change"), y = bquote(~ -Log[10] ~ "P-Value"))
   } else if (type == "plotly") {
     p <- p +

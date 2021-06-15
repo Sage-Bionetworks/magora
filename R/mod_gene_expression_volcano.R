@@ -134,7 +134,8 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
       dplyr::filter(
         .data$mouse_model == input$mouse_model,
         .data$tissue == input$tissue
-      )
+      ) %>%
+      regenerate_pvalue()
   })
 
   filtered_gene_expressions_labels <- shiny::reactive({
