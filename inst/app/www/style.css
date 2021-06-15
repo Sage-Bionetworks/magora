@@ -50,6 +50,18 @@ p > a {
    font-weight: var(--regular-weight);
 }
 
+/* Bold and color mentions of RED or BLUE with their actual colours */
+
+.blue {
+   color: #164B6E;
+   font-weight: var(--bold-weight);
+}
+
+.red {
+   color: #85070C;
+   font-weight: var(--bold-weight);
+}
+
 /* ------ General page elements ------ */
 .magora-page {
    max-width: 1000px;
