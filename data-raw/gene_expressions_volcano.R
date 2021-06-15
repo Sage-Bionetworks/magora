@@ -124,20 +124,17 @@ gene_expressions %>%
   filter(n > 1) %>%
   nrow() == 0
 
-# Precalculate -log10(padj) and -log10(pvalue) ----
+# Precalculate -log10(padj) ----
 
 # Will use that to reconstruct p-value, since they take up less space for storing than the pvalues do (some with 300+ digits!)
 
 gene_expressions <- gene_expressions %>%
-  mutate(
-    neg_log10_pvalue = -log10(pvalue),
-    neg_log10_padj = -log10(padj)
-  )
+  mutate(neg_log10_padj = -log10(padj))
 
-# Round fold change and log10s to a reasonable amount ----
+# Round fold change and log10 to a reasonable amount ----
 
 gene_expressions <- gene_expressions %>%
-  mutate(across(c(log2foldchange, log10_pvalue, log10_padj), ~ round(.x, 5)))
+  mutate(across(c(log2foldchange, neg_log10_padj), ~ round(.x, 5)))
 
 # Flag as significant for plotting ----
 
@@ -147,7 +144,8 @@ gene_expressions <- gene_expressions %>%
     log2foldchange < -1 & padj < 0.05 ~ "Downregulated",
     is.na(log2foldchange) | is.na(padj) ~ NA_character_,
     TRUE ~ "Not Significant"
-  ))
+  ),
+  diff_expressed = fct_relevel(diff_expressed, "Downregulated", "Not Significant", "Upregulated"))
 
 # Remove p-values - again, they will be reconstructed
 

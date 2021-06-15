@@ -30,12 +30,26 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
     dplyr::mutate(label = forcats::fct_expand(label, "Log2 Fold Change = -1, 1")) %>%
     tidyr::complete(label)
 
+  # "Complete" data for plotly
+  # plotly struggles drops unused factor levels (i.e. from scale_colour_manual even with drop = FALSE, if not all of downregulated / not significant / upregulated are present in the data, so we need to create some fake data for it to "plot" so the legend still appears in interactive versions
+  if (type == "plotly") {
+    diff_expressed_values <- unique(data[["diff_expressed"]])
+    diff_expressed_levels <- levels(data[["diff_expressed"]])
+
+    diff_expressed_missing <- setdiff(diff_expressed_levels, diff_expressed_values)
+
+    diff_expressed_missing_df <- dplyr::tibble(diff_expressed = diff_expressed_missing)
+
+    data <- data %>%
+      dplyr::bind_rows(diff_expressed_missing_df)
+  }
+
   # Create plot
   p <- ggplot2::ggplot() +
     ggplot2::geom_point(data = data, ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
     ggplot2::geom_vline(data = fold_change_line, ggplot2::aes(xintercept = x), linetype = "dashed") +
     ggplot2::geom_hline(data = p_value_line, ggplot2::aes(yintercept = y, linetype = label)) +
-    ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3), order = 1)) +
+    ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3), order = 1), drop = FALSE) +
     ggplot2::scale_linetype_discrete(guide = ggplot2::guide_legend(reverse = TRUE, order = 2), name = NULL) +
     sagethemes::theme_sage() +
     ggplot2::coord_cartesian(clip = "off") +
