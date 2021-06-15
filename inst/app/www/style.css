@@ -1,62 +1,53 @@
-/* MODEL-AD Mouse Explorer Styles */
+/* AD Model Explorer Styles */
+
+:root {
+  --font: "Lato", Sans-Serif;
+  --base-size: 19px;
+  --light-weight: 100;
+  --regular-weight: 300;
+  --bold-weight: 400;
+}
 
 /* ------  Header and font styles ------ */
-@import url('//fonts.googleapis.com/css2?family=Lato:100,200,300,400');
+@import url('//fonts.googleapis.com/css2?family=Lato:100,300,400');
 
 h1, h2, h3, h4, h5, h6 {
+   font-family: var(--font);
    line-height: 1em;
+   font-weight: var(--bold-weight);
    padding-top: 10px;
    margin-top: 0;
    margin-bottom: 15px;
 }
 
 h1 {
-   font-family: "Lato", Sans-Serif;
+   font-weight: var(--light-weight);
    font-size: 42px;
-   font-weight: 100;
 }
 
 h2 {
-   font-family: "Lato", Sans-Serif;
    font-size: 32px;
-   font-weight: 100;
 }
 
 h3 {
-   font-family: "Lato", Sans-Serif;
    font-size: 25px;
-   font-weight: 300;
-}
-
-h4 {
-   font-family: "Lato", Sans-Serif;
-   font-size: 18px;
-   font-weight: 300;
-}
-
-h5 {
-   font-family: "Lato", Sans-Serif;
-   font-size: 17px;
-   font-weight: 300;
-}
-
-h6 {
-   font-family: "Lato", Sans-Serif;
-   font-size: 16px;
-   font-weight: 300;
 }
 
 body {
-   font-family: "Lato", Sans-Serif;
-   font-size: 16px;
-   font-weight: 300;
+   font-family: var(--font);
+   font-size: var(--base-size);
+   font-weight: var(--regular-weight);
 }
 
-/* Paragraph text that is a direct descendent of a div with class .magora-page */
-/* i.e. the text on the start page */
-.magora-page > p {
-   font-weight: 200;
-   font-size: 19px;
+/* Bold links in paragraphs */
+p > a {
+   font-weight: var(--bold-weight);
+}
+
+/* Increase size of dropdown links */
+.dropdown-menu > li > a {
+   font-size: var(--base-size);
+   font-weight: var(--regular-weight);
 }
 
 /* ------ General page elements ------ */
@@ -159,7 +150,7 @@ div.divflex {
 
 /* Bold active tab name */
 .navbar-default .navbar-nav > li.active > a, .dropdown-menu > li.active > a {
-   font-weight: 400;
+   font-weight: 700;
 }
 
 /* Add gradient on hover of navbar tabs */

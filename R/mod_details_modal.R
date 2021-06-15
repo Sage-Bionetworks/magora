@@ -7,7 +7,9 @@
 #' @noRd
 mod_details_modal_ui <- function(id){
   ns <- NS(id)
-  shiny::actionLink(ns("details"), "More details")
+  shiny::p(
+    shiny::actionLink(ns("details"), "More details")
+  )
 }
 
 #' "More Details" Modal  Server Function
