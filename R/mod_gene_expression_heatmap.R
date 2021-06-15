@@ -43,9 +43,9 @@ mod_gene_expression_heatmap_ui <- function(id) {
             ns("mouse_model"),
             "Mouse model",
             choices = names(gene_expressions_tissue),
-            selected = names(gene_expressions_tissue),
+            selected = names(gene_expressions_tissue)[1:3],
             multiple = TRUE,
-            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE, maxOptions = 3)
           )
         ),
         shiny::column(
@@ -139,7 +139,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     magora::gene_expressions %>%
       dplyr::filter(
         .data$gene %in% input$gene,
-        .data$mouse_model == input$mouse_model,
+        .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age %in% input$age
       )
@@ -184,10 +184,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   output$gene_expression_heatmap_ui <- shiny::renderUI({
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_heatmap"),
       height = paste0(200 + gene_expression_plot_dims()[["nrow"]] * 50, "px"),
-      width =
-        min(1000,
-                  paste0(150 + gene_expression_plot_dims()[["ncol"]] * 50, "px")
-                  )
+      width = min(1000, paste0(150 + gene_expression_plot_dims()[["ncol"]] * 50, "px"))
     ),
     color = "#D3DCEF"
     )
