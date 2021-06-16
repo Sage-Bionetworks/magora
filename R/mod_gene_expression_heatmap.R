@@ -64,7 +64,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("age"),
             "Age",
-            choices = sort(unique(magora::gene_expressions[["age"]])),
+            choices = setNames(sort(unique(magora::gene_expressions[["age"]])), glue::glue('{sort(unique(magora::gene_expressions[["age"]]))} months')),
             selected = sort(unique(magora::gene_expressions[["age"]])),
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(actionsBox = TRUE)
