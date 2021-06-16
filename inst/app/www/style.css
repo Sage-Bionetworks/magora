@@ -81,6 +81,12 @@ p > a {
    font-weight: var(--bold-weight);
 }
 
+/* Change bold weight */
+
+b, strong {
+   font-weight: var(--bold-weight);
+}
+
 /* ------ General page elements ------ */
 
 .magora-page {

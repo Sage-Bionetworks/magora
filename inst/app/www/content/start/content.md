@@ -1,17 +1,17 @@
-MODEL-AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer's disease in humans.
+### About MODEL-AD
 
-<a href = "https://www.model-ad.org/", target = "_blank">Learn more about MODEL-AD</a>
+MODEL-AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer's disease in humans. Mouse models are phenotyped using standardized neuropathology, 'omics, and behavioral measures.
 
 <div class = "start-divider"></div>
 
-### Characterization of MODEL-AD mice
+### How to use this site
 
-New mouse models are phenotyped across multiple neuropathology, genomics, and behavioral levels. New data and analyses are regularly released and will be reflected by updates to the explorers on this site. Currently available models and data are depicted in this table.
+The AD Model Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
+  
+**Pathology data**: View neuron and glial cell counts, plaque density and size, and amyloid levels by sex and age.  
 
-### Additional resources and data
+**Gene expression**: Explore all up- and down-regulated genes in a selected model or use the "Selected Genes" view to see which models show differential expression of a selected gene. 
 
-All MODEL-AD mouse models and data are cataloged in the AD Knowledge Portal.
+**Correlation with Human Disease**: Compare gene expression changes in mouse models with gene expression changes that occur in human disease. 
 
-<a href = "https://adknowledgeportal.synapse.org/Explore/Programs/DetailsPage?Program=MODEL-AD", target = "_blank">View all data</a>
-
-<a href = "https://adknowledgeportal.synapse.org/Explore/Experimental%20Tools?QueryWrapper0=%7B%22sql%22%3A%22select%20*%20from%20syn22219805%22%2C%22limit%22%3A25%2C%22offset%22%3A0%2C%22selectedFacets%22%3A%5B%7B%22concreteType%22%3A%22org.sagebionetworks.repo.model.table.FacetColumnValuesRequest%22%2C%22columnName%22%3A%22program%22%2C%22facetValues%22%3A%5B%22MODEL-AD%22%5D%7D%5D%7D", target = "_blank">View mouse models</a>
+Visit **Available Models and Data** to learn what data is currently available in the Explorer. New data and analyses will be incorporated as they are available. 
