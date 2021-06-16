@@ -87,6 +87,12 @@ b, strong {
    font-weight: var(--bold-weight);
 }
 
+/* Table styles */
+
+.ReactTable {
+   font-size: var(--small-size);
+   font-weight: var(--bold-weight);
+}
 /* ------ General page elements ------ */
 
 .magora-page {

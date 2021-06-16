@@ -16,7 +16,8 @@ app_ui <- function(request) {
         mod_gene_expression_volcano_ui("gene_expression_volcano"),
         mod_gene_expression_heatmap_ui("gene_expression_heatmap")
       ),
-      mod_nanostring_ui("nanostring")
+      mod_nanostring_ui("nanostring"),
+      mod_available_models_ui("available_models")
     )
   )
 }
