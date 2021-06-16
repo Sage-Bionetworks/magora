@@ -244,5 +244,5 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Details modal ----
 
-  callModule(mod_details_modal_server, "gene_expression_all")
+  shiny::callModule(mod_details_modal_server, "gene_expression_all")
 }

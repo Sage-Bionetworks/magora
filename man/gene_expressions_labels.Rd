@@ -5,7 +5,7 @@
 \alias{gene_expressions_labels}
 \title{Gene Expression labels}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 7555 rows and 10 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 7555 rows and 9 columns.
 }
 \usage{
 gene_expressions_labels

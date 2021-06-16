@@ -5,7 +5,7 @@
 \alias{nanostring}
 \title{Nanostring data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1980 rows and 8 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1860 rows and 8 columns.
 }
 \usage{
 nanostring

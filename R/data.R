@@ -32,3 +32,8 @@
 #'
 #' A data set containing the labels for gene expressions. Only genes that are significant (up or downregulated) and with names that are less than 18 characters long are eligible for being labeled.
 "gene_expressions_labels"
+
+#' Available models and data
+#'
+#' Models and data available in the app
+"available_models"

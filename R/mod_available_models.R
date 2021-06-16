@@ -21,18 +21,18 @@ mod_available_models_ui <- function(id) {
         reactable::reactable(magora::available_models,
           columns = list(
             `Source Data` = reactable::colDef(cell = function(value) {
-              htmltools::tags$a(href = value, target = "_blank", "View data")
+              shiny::tags$a(href = value, target = "_blank", "View data")
             }),
             `Model Information` = reactable::colDef(cell = function(value) {
-              htmltools::tags$a(href = value, target = "_blank", "Model details")
+              shiny::tags$a(href = value, target = "_blank", "Model details")
             }),
-            Pathology = colDef(cell = function(value) {
+            Pathology = reactable::colDef(cell = function(value) {
               ifelse(is.na(value), "", "\u2713")
             }),
-            `Gene Expression` = colDef(cell = function(value) {
+            `Gene Expression` = reactable::colDef(cell = function(value) {
               ifelse(is.na(value), "", "\u2713")
             }),
-            `Correlation with Human Disease` = colDef(cell = function(value) {
+            `Correlation with Human Disease` = reactable::colDef(cell = function(value) {
               ifelse(is.na(value), "", "\u2713")
             })
           ),

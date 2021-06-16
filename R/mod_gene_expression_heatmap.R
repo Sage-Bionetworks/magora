@@ -42,8 +42,8 @@ mod_gene_expression_heatmap_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("mouse_model"),
             "Mouse model",
-            choices = names(gene_expressions_tissue),
-            selected = names(gene_expressions_tissue)[1:3],
+            choices = names(magora::gene_expressions_tissue),
+            selected = names(magora::gene_expressions_tissue)[1:3],
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(actionsBox = TRUE, maxOptions = 3)
           )
@@ -64,7 +64,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("age"),
             "Age",
-            choices = setNames(sort(unique(magora::gene_expressions[["age"]])), glue::glue('{sort(unique(magora::gene_expressions[["age"]]))} months')),
+            choices = stats::setNames(sort(unique(magora::gene_expressions[["age"]])), glue::glue('{sort(unique(magora::gene_expressions[["age"]]))} months')),
             selected = sort(unique(magora::gene_expressions[["age"]])),
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(actionsBox = TRUE)
@@ -110,7 +110,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     query <- shiny::parseQueryString(session$clientData$url_search)
     # Additional parsing of query to split by ,
     query <- split_query(query)
-    if (!is.null(query$page)) {!is.
+    if (!is.null(query$page)) {
       if (query$page == "GeneExpressionHeatmap") {
         # Only update inputs that are also in the query string
         query_inputs <- intersect(names(input), names(query))
@@ -220,5 +220,5 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
   # Details modal ----
 
-  callModule(mod_details_modal_server, "gene_expression_all")
+  shiny::callModule(mod_details_modal_server, "gene_expression_all")
 }

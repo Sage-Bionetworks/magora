@@ -203,7 +203,7 @@ mod_nanostring_server <- function(input, output, session) {
 
   # Details modal ----
 
-  callModule(mod_details_modal_server, "nanostring")
+  shiny::callModule(mod_details_modal_server, "nanostring")
 }
 
 ## To be copied in the UI

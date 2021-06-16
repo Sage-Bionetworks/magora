@@ -260,6 +260,6 @@ mod_pathology_server <- function(input, output, session) {
 
   # Details modal ----
 
-  callModule(mod_details_modal_server, "pathology")
+  shiny::callModule(mod_details_modal_server, "pathology")
 
 }

@@ -119,7 +119,6 @@ individual_metadata <- individual_metadata %>%
   mutate(
     sex = str_to_title(sex),
     sex = as_factor(sex),
-<<<<<<< HEAD
     age_factor = as_factor(age_death),
     age_factor = fct_reorder(age_factor, age_death),
     mouse_line = case_when(
@@ -128,18 +127,6 @@ individual_metadata <- individual_metadata %>%
     ),
     mouse_line = as_factor(mouse_line),
     mouse_model = as_factor(individual_common_genotype)
-=======
-    across(c(date_birth, date_death), clean_date),
-    age_interval = interval(date_birth, date_death),
-    age = round(age_interval / months(1)),
-    age_factor = as_factor(age),
-    age_factor = fct_reorder(age_factor, age),
-    mouse_model = case_when(
-      str_ends(genotype, "_hemizygous") ~ str_remove(genotype, "_hemizygous"),
-      str_ends(genotype, "_noncarrier") ~ genotype_background
-    ),
-    mouse_model = as_factor(mouse_model)
->>>>>>> Clean up pathology names, add units
   ) %>%
   select(-genotype, -genotype_background) %>%
   rename(age = age_factor)
@@ -152,12 +139,7 @@ individual_metadata %>% count(mouse_line, mouse_model)
 phenotypes <- phenotype_data %>%
   left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
   left_join(individual_metadata, by = "individual_id") %>%
-<<<<<<< HEAD
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, value)
-=======
-  select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value) %>%
-  mutate(phenotype_units = glue::glue("{phenotype}\n({units})"))
->>>>>>> Clean up pathology names, add units
 
 # Save data ----
 
