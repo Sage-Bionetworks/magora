@@ -139,7 +139,8 @@ individual_metadata %>% count(mouse_line, mouse_model)
 phenotypes <- phenotype_data %>%
   left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
   left_join(individual_metadata, by = "individual_id") %>%
-  select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, value)
+  select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value) %>%
+  mutate(phenotype_units = glue::glue("{phenotype}\n({units})"))
 
 # Save data ----
 
