@@ -4,8 +4,7 @@ complete_gene_expression_heatmap_data <- function(data, input_gene, input_mouse_
     dplyr::mutate(
       gene = forcats::fct_drop(.data$gene),
       gene = forcats::fct_expand(.data$gene, input_gene),
-      gene = forcats::fct_relevel(.data$gene, input_gene),
-      gene = forcats::fct_rev(.data$gene)
+      gene = forcats::fct_relevel(.data$gene, input_gene)
     ) %>%
     # Same with mouse_model
     dplyr::mutate(
