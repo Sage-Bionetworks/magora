@@ -1,6 +1,6 @@
 #' Heatmap for gene expression data
 #'
-#' Creates a heatmap showing the log fold change and p-value of genes across sex, age, and models.
+#' Creates a heatmap showing the log fold change and p-value of genes across sex, age, tissues and models.
 #'
 #' @param data Input data (\code{\link{gene_expressions}}, filtered by a tissue and one or more genes.
 #' @param log_foldchange_cutoff Cutoff for log fold change, used in plot legend
@@ -29,10 +29,11 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     ))
 
   data %>%
-    ggplot2::ggplot(ggplot2::aes(x = .data$sex_age, y = .data$gene)) +
+    ggplot2::ggplot(ggplot2::aes(x = .data$gene, y = .data$sex_age)) +
     ggplot2::geom_tile(colour = "black", fill = "white") +
     ggplot2::geom_point(ggplot2::aes(size = .data$padj_category_log10, fill = .data$log2foldchange), shape = 21) +
-    ggplot2::facet_grid(cols = dplyr::vars(.data$mouse_model), rows = dplyr::vars(.data$tissue)) +
+    ggplot2::facet_grid(rows = dplyr::vars(.data$tissue), cols = dplyr::vars(.data$mouse_model)) +
+    ggplot2::scale_x_discrete(position = "top") +
     ggplot2::scale_size(
       name = "Adjusted P-Value",
       limits = range(log10_pvalue_breaks),
@@ -49,10 +50,11 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     sagethemes::theme_sage() +
     ggplot2::coord_fixed() +
     ggplot2::theme(
-      axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
+      axis.text.x = ggplot2::element_text(angle = 90, hjust = 0),
       legend.position = "top",
       panel.background = ggplot2::element_blank(),
-      panel.grid = ggplot2::element_blank()
+      panel.grid = ggplot2::element_blank(),
+      strip.text = ggplot2::element_text(face = "bold"),
     )
 }
 
