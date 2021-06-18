@@ -16,7 +16,7 @@ complete_gene_expression_heatmap_data <- function(data, input_gene, input_mouse_
     # "Complete" the data set so there is a white square for every combination
     tidyr::complete(.data$mouse_model, .data$tissue, .data$gene, .data$sex, .data$age) %>%
     # Derive a combined sex and age field
-    dplyr::mutate(sex_age = paste(.data$sex, .data$age)) %>%
+    dplyr::mutate(sex_age = glue::glue("{.data$sex} ({.data$age} Months)")) %>%
     dplyr::arrange(.data$sex, .data$age) %>%
     dplyr::mutate(sex_age = forcats::fct_inorder(.data$sex_age))
 }
