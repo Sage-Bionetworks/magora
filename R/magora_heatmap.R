@@ -29,6 +29,7 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     ))
 
   data %>%
+    dplyr::mutate(sex_age = forcats::fct_rev(.data$sex_age)) %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$gene, y = .data$sex_age)) +
     ggplot2::geom_tile(colour = "black", fill = "white") +
     ggplot2::geom_point(ggplot2::aes(size = .data$padj_category_log10, fill = .data$log2foldchange), shape = 21) +

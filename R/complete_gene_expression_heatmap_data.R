@@ -1,5 +1,5 @@
 complete_gene_expression_heatmap_data <- function(data, input_gene, input_mouse_model) {
-  data %>%
+  data <- data %>%
     # Ensure genes selected show in plot, even if there is no data
     dplyr::mutate(
       gene = forcats::fct_drop(.data$gene),
@@ -19,4 +19,13 @@ complete_gene_expression_heatmap_data <- function(data, input_gene, input_mouse_
     dplyr::mutate(sex_age = glue::glue("{.data$sex} ({.data$age} Months)")) %>%
     dplyr::arrange(.data$sex, .data$age) %>%
     dplyr::mutate(sex_age = forcats::fct_inorder(.data$sex_age))
+
+  # Split a long mouse model onto two lines if it's present
+
+  if ("APOE4TREM2" %in% input_mouse_model) {
+    data <- data %>%
+      dplyr::mutate(mouse_model = forcats::fct_recode(.data$mouse_model, `APOE4\nTREM2` = "APOE4TREM2"))
+  }
+
+  data
 }

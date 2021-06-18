@@ -183,9 +183,25 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   })
 
   output$gene_expression_heatmap_ui <- shiny::renderUI({
+
+    # If there's only one gene selected, the model labels will get cut off if the squares are too small
+    # So make the squares just... bigger in those cases :)
+    single_gene <- length(input$gene) == 1
+    square_size <- ifelse(single_gene, 45, 25)
+
+    min_height <- 200
+    plot_height <- 200 + gene_expression_plot_dims()[["nrow"]] * square_size
+    height <- max(min_height, plot_height)
+
+    min_width <- 700 # For the legend and labels
+    plot_width <- 200 + gene_expression_plot_dims()[["ncol"]] * square_size
+    width <- max(min_width, plot_width)
+    max_width <- 1000
+    width <- min(width, max_width)
+
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_heatmap"),
-      height = paste0(200 + gene_expression_plot_dims()[["nrow"]] * 25, "px"),
-      width = min(1000, paste0(150 + gene_expression_plot_dims()[["ncol"]] * 25, "px"))
+      height = paste0(height, "px"),
+      width = paste0(width, "px")
     ),
     color = "#D3DCEF"
     )
