@@ -118,7 +118,7 @@ mod_pathology_server <- function(input, output, session) {
 
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
-    bookmark_query <- construct_bookmark("Pathology", input, session)
+    bookmark_query <- construct_bookmark("Pathology", input, session, exclude = c("pathology-details", "plot_click"))
     shiny:::showBookmarkUrlModal(bookmark_query)
   })
 

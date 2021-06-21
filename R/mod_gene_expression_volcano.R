@@ -106,7 +106,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
-    bookmark_query <- construct_bookmark("GeneExpressionVolcano", input, session, exclude = "plot_click")
+    bookmark_query <- construct_bookmark("GeneExpressionVolcano", input, session, exclude = c("gene_expression_all-details", "plot_click"))
     shiny:::showBookmarkUrlModal(bookmark_query)
   })
 

@@ -125,7 +125,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
-    bookmark_query <- construct_bookmark("GeneExpressionHeatmap", input, session)
+    bookmark_query <- construct_bookmark("GeneExpressionHeatmap", input, session, exclude = "gene_expression_all-details")
     shiny:::showBookmarkUrlModal(bookmark_query)
   })
 
