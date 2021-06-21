@@ -15,5 +15,5 @@ magora_heatmap(data, log_foldchange_cutoff = 2.5)
 A ggplot2 object.
 }
 \description{
-Creates a heatmap showing the log fold change and p-value of genes across sex, age, and models.
+Creates a heatmap showing the log fold change and p-value of genes across sex, age, tissues and models.
 }

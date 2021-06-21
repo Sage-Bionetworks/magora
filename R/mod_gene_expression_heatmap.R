@@ -155,7 +155,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
     filtered_gene_expressions() %>%
       dplyr::filter(!is.na(.data$padj)) %>%
-      complete_gene_expression_heatmap_data(input$gene, input$mouse_model) %>%
+      complete_gene_expression_heatmap_data(input) %>%
       magora_heatmap()
   })
 
@@ -189,7 +189,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     single_gene <- length(input$gene) == 1
     square_size <- ifelse(single_gene, 45, 25)
 
-    min_height <- 200
+    min_height <- 500
     plot_height <- 200 + gene_expression_plot_dims()[["nrow"]] * square_size
     height <- max(min_height, plot_height)
 
