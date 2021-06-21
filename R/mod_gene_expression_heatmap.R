@@ -17,6 +17,8 @@ mod_gene_expression_heatmap_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
         shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_selected", "content.md")),
+        # Same modal as "all" page is used - no issue with duplicated inputs since these are namespaced by page
+        mod_details_modal_ui(ns("gene_expression_all")),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -28,33 +30,65 @@ mod_gene_expression_heatmap_ui <- function(id) {
             "Genes",
             choices = sort(unique(magora::gene_expressions[["gene"]])),
             multiple = TRUE,
-            options = shinyWidgets::pickerOptions(liveSearch = TRUE, size = 10)
+            selected = "App",
+            options = shinyWidgets::pickerOptions(
+              liveSearch = TRUE, size = 10,
+              noneSelectedText = "Enter gene(s) or select from list"
+            )
           )
         ),
         shiny::column(
           width = 3,
           shinyWidgets::pickerInput(
-            ns("tissue"),
-            "Tissue",
-            choices = sort(unique(magora::gene_expressions[["tissue"]])),
-            multiple = FALSE
+            ns("mouse_model"),
+            "Mouse model",
+            choices = names(magora::gene_expressions_tissue),
+            selected = names(magora::gene_expressions_tissue)[1:3],
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE, maxOptions = 3)
           )
         ),
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("sex"),
+            "Sex",
+            choices = sort(unique(magora::gene_expressions[["sex"]])),
+            selected = sort(unique(magora::gene_expressions[["sex"]])),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
+          )
         ),
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_data_ui(ns("download_data"))
-        ),
+          width = 3,
+          shinyWidgets::pickerInput(
+            ns("age"),
+            "Age",
+            choices = stats::setNames(sort(unique(magora::gene_expressions[["age"]])), glue::glue('{sort(unique(magora::gene_expressions[["age"]]))} months')),
+            selected = sort(unique(magora::gene_expressions[["age"]])),
+            multiple = TRUE,
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
+          )
+        )
+      ),
+      shiny::fluidRow(
+        class = "magora-row",
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_plot_ui(ns("download_plot"))
-        ),
+          width = 6,
+          offset = 6,
+          shiny::column(
+            width = 4,
+            shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
+          ),
+          shiny::column(
+            width = 4,
+            mod_download_data_ui(ns("download_data"))
+          ),
+          shiny::column(
+            width = 4,
+            mod_download_plot_ui(ns("download_plot"))
+          )
+        )
       ),
       shiny::column(
         width = 12,
@@ -98,48 +132,53 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   # Filter data based on inputs ----
 
   filtered_gene_expressions <- shiny::reactive({
-
     shiny::validate(
-      shiny::need(!is.null(input$gene), message = "Please select one or more genes.")
+      shiny::need(!is.null(input$gene) & !is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more genes, models, sexes, and ages.")
     )
 
     magora::gene_expressions %>%
       dplyr::filter(
         .data$gene %in% input$gene,
-        .data$tissue == input$tissue
-      )
+        .data$mouse_model %in% input$mouse_model,
+        .data$sex %in% input$sex,
+        .data$age %in% input$age
+      ) %>%
+      regenerate_pvalue()
   })
 
   # Generate plot ----
 
   gene_expression_heatmap <- shiny::reactive({
-
     shiny::validate(
       shiny::need(nrow(filtered_gene_expressions()) > 0, message = "No data available for the selected combination.")
     )
 
     filtered_gene_expressions() %>%
       dplyr::filter(!is.na(.data$padj)) %>%
-      complete_gene_expression_heatmap_data(input$gene) %>%
+      complete_gene_expression_heatmap_data(input$gene, input$mouse_model) %>%
       magora_heatmap()
   })
 
-  output$gene_expression_heatmap <- shiny::renderCachedPlot({
-    gene_expression_heatmap()
+  output$gene_expression_heatmap <- shiny::renderCachedPlot(
+    {
+      gene_expression_heatmap()
     },
     cacheKeyExpr = {
       list(
         input$gene,
-        input$tissue
+        input$mouse_model,
+        input$sex,
+        input$age
       )
     },
     res = 96
   )
 
   gene_expression_plot_dims <- shiny::reactive({
+
     list(
-      nrow = length(unique(filtered_gene_expressions()[["gene"]])),
-      ncol = length(unique(filtered_gene_expressions()[["age"]])) * length(unique(filtered_gene_expressions()[["sex"]])) * length(unique(filtered_gene_expressions()[["strain"]]))
+      nrow = length(input$gene) * length(unique(magora::gene_expressions[["tissue"]])),
+      ncol = length(input$age) * length(input$sex) * length(input$mouse_model)
     )
   })
 
@@ -159,7 +198,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   })
 
   save_name <- shiny::reactive({
-    download_name("gene_expression_heatmap", input$gene, input$tissue)
+    download_name("gene_expression_heatmap", input$gene, input$mouse_model, input$sex, input$age)
   })
 
   # Data
@@ -178,4 +217,8 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     data = filtered_gene_expressions,
     save_name = save_name
   )
+
+  # Details modal ----
+
+  shiny::callModule(mod_details_modal_server, "gene_expression_all")
 }

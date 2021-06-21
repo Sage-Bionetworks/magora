@@ -17,6 +17,7 @@ mod_pathology_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", title),
         shiny::includeMarkdown(app_sys("app", "www", "content", "pathology", "content.md")),
+        mod_details_modal_ui(ns("pathology")),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -33,7 +34,7 @@ mod_pathology_ui <- function(id) {
           width = 4,
           shinyWidgets::pickerInput(
             ns("mouse_model"),
-            "Mouse lines",
+            "Mouse model",
             choices = as.character(levels(magora::phenotypes[["mouse_model"]])),
             multiple = TRUE,
             selected = c("C57BL6J", "5XFAD")
@@ -256,4 +257,9 @@ mod_pathology_server <- function(input, output, session) {
     data = phenotype_data_download,
     save_name = save_name
   )
+
+  # Details modal ----
+
+  shiny::callModule(mod_details_modal_server, "pathology")
+
 }

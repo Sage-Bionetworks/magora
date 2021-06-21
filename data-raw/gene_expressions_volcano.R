@@ -81,10 +81,14 @@ gene_expressions <- gene_expressions %>%
 # Clean data ----
 
 gene_expressions <- gene_expressions %>%
-  rename(gene_id = geneid)
+  rename(gene_id = geneid,
+         mouse_model = strain)
 
 gene_expressions <- gene_expressions %>%
-  mutate(tissue = str_to_title(tissue))
+  mutate(
+    tissue = str_to_title(tissue),
+    mouse_model = str_to_upper(mouse_model)
+  )
 
 # Query gene symbol to use in place of ID ----
 
@@ -116,14 +120,21 @@ gene_expressions <- gene_expressions %>%
 # Check that values are unique
 
 gene_expressions %>%
-  count(strain, tissue, sex, age, gene) %>%
+  count(mouse_model, tissue, sex, age, gene) %>%
   filter(n > 1) %>%
   nrow() == 0
 
-# Round fold change and p-values to a reasonable amount ----
+# Precalculate -log10(padj) ----
+
+# Will use that to reconstruct p-value, since they take up less space for storing than the pvalues do (some with 300+ digits!)
 
 gene_expressions <- gene_expressions %>%
-  mutate(across(c(log2foldchange, pvalue, padj), ~ round(.x, 5)))
+  mutate(neg_log10_padj = -log10(padj))
+
+# Round fold change and log10 to a reasonable amount ----
+
+gene_expressions <- gene_expressions %>%
+  mutate(across(c(log2foldchange, neg_log10_padj), ~ round(.x, 5)))
 
 # Flag as significant for plotting ----
 
@@ -133,7 +144,13 @@ gene_expressions <- gene_expressions %>%
     log2foldchange < -1 & padj < 0.05 ~ "Downregulated",
     is.na(log2foldchange) | is.na(padj) ~ NA_character_,
     TRUE ~ "Not Significant"
-  ))
+  ),
+  diff_expressed = fct_relevel(diff_expressed, "Downregulated", "Not Significant", "Upregulated"))
+
+# Remove p-values - again, they will be reconstructed
+
+gene_expressions <- gene_expressions %>%
+  select(-padj, -pvalue)
 
 # Generate labels - only genes that are upregulated/downregulated, and not super long names
 
@@ -147,9 +164,9 @@ gene_expressions_labels <- gene_expressions %>%
 usethis::use_data(gene_expressions_labels, overwrite = TRUE)
 usethis::use_data(gene_expressions, overwrite = TRUE)
 
-# Separately save tissue available for each strain, for easily changing inputs available
+# Separately save tissue available for each model, for easily changing inputs available
 
-gene_expressions_tissue <- split(gene_expressions, gene_expressions$strain) %>%
+gene_expressions_tissue <- split(gene_expressions, gene_expressions$mouse_model) %>%
   map(function(x) distinct(x, tissue) %>% pull(tissue))
 
 usethis::use_data(gene_expressions_tissue, overwrite = TRUE)

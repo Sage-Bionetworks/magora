@@ -1,69 +1,105 @@
-/* MODEL-AD Mouse Explorer Styles */
+/* AD Model Explorer Styles */
+
+:root {
+  --font: "Lato", Sans-Serif;
+  --base-size: 19px;
+  --small-size: 16px;
+  --light-weight: 100;
+  --regular-weight: 300;
+  --bold-weight: 400;
+}
 
 /* ------  Header and font styles ------ */
-@import url('//fonts.googleapis.com/css2?family=Lato:100,200,300,400');
+@import url('//fonts.googleapis.com/css2?family=Lato:100,300,400');
 
 h1, h2, h3, h4, h5, h6 {
+   font-family: var(--font);
    line-height: 1em;
+   font-weight: var(--bold-weight);
    padding-top: 10px;
    margin-top: 0;
    margin-bottom: 15px;
 }
 
 h1 {
-   font-family: "Lato", Sans-Serif;
+   font-weight: var(--light-weight);
    font-size: 42px;
-   font-weight: 100;
 }
 
 h2 {
-   font-family: "Lato", Sans-Serif;
    font-size: 32px;
-   font-weight: 100;
 }
 
 h3 {
-   font-family: "Lato", Sans-Serif;
    font-size: 25px;
-   font-weight: 300;
-}
-
-h4 {
-   font-family: "Lato", Sans-Serif;
-   font-size: 18px;
-   font-weight: 300;
-}
-
-h5 {
-   font-family: "Lato", Sans-Serif;
-   font-size: 17px;
-   font-weight: 300;
-}
-
-h6 {
-   font-family: "Lato", Sans-Serif;
-   font-size: 16px;
-   font-weight: 300;
 }
 
 body {
-   font-family: "Lato", Sans-Serif;
-   font-size: 16px;
-   font-weight: 300;
+   font-family: var(--font);
+   font-size: var(--base-size);
+   font-weight: var(--regular-weight);
 }
 
-/* Paragraph text that is a direct descendent of a div with class .magora-page */
-/* i.e. the text on the start page */
-.magora-page > p {
-   font-weight: 200;
-   font-size: 19px;
+/* Bold links in paragraphs */
+p > a {
+   font-weight: var(--bold-weight);
 }
 
+/* Size of input labels */
+.control-label {
+   font-size: var(--base-size);
+   font-weight: var(--bold-weight);
+}
+
+/* Size of inputs content and dropdowns */
+.bootstrap-select > .dropdown-toggle, .dropdown-menu > li > a {
+   font-size: var(--small-size);
+   font-weight: var(--regular-weight);
+}
+
+/* Buttons, Select all / deselect all buttons */
+.btn, .bs-actionsbox .btn-group button {
+   font-size: var(--small-size);
+   font-weight: var(--bold-weight);
+}
+
+/* Increase size of navbar dropdown links */
+.navbar-nav .dropdown-menu > li > a {
+   font-size: var(--base-size);
+   font-weight: var(--regular-weight);
+}
+
+/* Bold and color mentions of RED or BLUE with their actual colours */
+
+.blue {
+   color: #164B6E;
+   font-weight: var(--bold-weight);
+}
+
+.red {
+   color: #85070C;
+   font-weight: var(--bold-weight);
+}
+
+/* Change bold weight */
+
+b, strong {
+   font-weight: var(--bold-weight);
+}
+
+/* Table styles */
+
+.ReactTable {
+   font-size: var(--small-size);
+   font-weight: var(--bold-weight);
+}
 /* ------ General page elements ------ */
+
 .magora-page {
    max-width: 1000px;
    margin-left: auto;
    margin-right: auto;
+   margin-bottom: 100px;
 }
 
 body {
@@ -114,10 +150,14 @@ body {
    height: inherit;
 }
 
-.start-banner > .start-title {
+.start-banner > .start-title, .start-banner > .start-header {
    background-color: rgba(255, 255, 255, 0.50);
-   width: 570px;
+   display: inline-block;
    padding: 10px 20px 10px 20px;
+}
+
+.start-banner > .start-header {
+   font-size: 19px;
 }
 
 /* ------ Other page elements ------ */
@@ -155,7 +195,7 @@ div.divflex {
 
 /* Bold active tab name */
 .navbar-default .navbar-nav > li.active > a, .dropdown-menu > li.active > a {
-   font-weight: 400;
+   font-weight: var(--bold-weight);
 }
 
 /* Add gradient on hover of navbar tabs */

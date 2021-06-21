@@ -18,4 +18,6 @@ app_server <- function(input, output, session) {
   shiny::callModule(mod_gene_expression_heatmap_server, "gene_expression_heatmap")
 
   shiny::callModule(mod_nanostring_server, "nanostring")
+
+  shiny::callModule(mod_available_models_server, "available_models")
 }

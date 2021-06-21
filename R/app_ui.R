@@ -16,7 +16,8 @@ app_ui <- function(request) {
         mod_gene_expression_volcano_ui("gene_expression_volcano"),
         mod_gene_expression_heatmap_ui("gene_expression_heatmap")
       ),
-      mod_nanostring_ui("nanostring")
+      mod_nanostring_ui("nanostring"),
+      mod_available_models_ui("available_models")
     )
   )
 }
@@ -36,7 +37,7 @@ golem_add_external_resources <- function() {
     golem::favicon(ext = "png"),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "MODEL-AD Mouse Explorer"
+      app_title = "AD Model Explorer"
     )
   )
 }

@@ -66,7 +66,7 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
 
   p <- p +
     ggplot2::scale_x_discrete(drop = FALSE) +
-    ggplot2::labs(x = "Age", y = unique(data[["phenotype"]])) +
+    ggplot2::labs(x = "Age (Months)", y = unique(data[["phenotype_units"]]), fill = "Sex", color = "Sex") +
     sagethemes::scale_fill_sage_d()
 
   if (use_theme_sage) {

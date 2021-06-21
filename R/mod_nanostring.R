@@ -17,6 +17,7 @@ mod_nanostring_ui <- function(id) {
       shiny::div(
         shiny::h3(class = "tab-title", title),
         shiny::includeMarkdown(app_sys("app", "www", "content", "nanostring", "content.md")),
+        mod_details_modal_ui(ns("nanostring")),
         shiny::hr()
       ),
       shiny::fluidRow(
@@ -24,10 +25,10 @@ mod_nanostring_ui <- function(id) {
         shiny::column(
           width = 4,
           shinyWidgets::pickerInput(
-            ns("strain"),
-            "Strain",
-            choices = sort(unique(magora::nanostring_for_plot[["model"]])),
-            selected = sort(unique(magora::nanostring_for_plot[["model"]])),
+            ns("mouse_model"),
+            "Mouse model",
+            choices = sort(unique(magora::nanostring_for_plot[["mouse_model"]])),
+            selected = sort(unique(magora::nanostring_for_plot[["mouse_model"]])),
             multiple = TRUE,
             options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
@@ -116,12 +117,12 @@ mod_nanostring_server <- function(input, output, session) {
 
   filtered_nanostring <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$strain) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
     )
 
     magora::nanostring %>%
       dplyr::filter(
-        .data$model %in% input$strain,
+        .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age_group %in% input$age
       )
@@ -129,12 +130,12 @@ mod_nanostring_server <- function(input, output, session) {
 
   filtered_nanostring_for_plot <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$strain) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
     )
 
     magora::nanostring_for_plot %>%
       dplyr::filter(
-        .data$model %in% input$strain,
+        .data$mouse_model %in% input$mouse_model,
         .data$sex %in% input$sex,
         .data$age_group %in% input$age
       )
@@ -151,7 +152,7 @@ mod_nanostring_server <- function(input, output, session) {
   # Save size will be height = nrow * 5, width = ncol * 5
   nanostring_plot_dims <- shiny::reactive({
     list(
-      nrow = length(input$strain) * length(input$sex) * length(input$age) + length(input$age),
+      nrow = length(input$mouse_model) * length(input$sex) * length(input$age) + length(input$age),
       ncol = 2.5
     )
   })
@@ -160,7 +161,7 @@ mod_nanostring_server <- function(input, output, session) {
 
     # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
     shiny::validate(
-      shiny::need(!is.null(input$strain) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
     )
 
     min_height <- 150 + 75 + 100 * length(input$age) # top labels, legend, each side facet label
@@ -180,7 +181,7 @@ mod_nanostring_server <- function(input, output, session) {
   # Save output ----
 
   save_name <- shiny::reactive({
-    download_name("nanostring", input$strain, input$sex, input$age)
+    download_name("nanostring", input$mouse_model, input$sex, input$age)
   })
 
   # Data
@@ -199,6 +200,10 @@ mod_nanostring_server <- function(input, output, session) {
     data = filtered_nanostring,
     save_name = save_name
   )
+
+  # Details modal ----
+
+  shiny::callModule(mod_details_modal_server, "nanostring")
 }
 
 ## To be copied in the UI

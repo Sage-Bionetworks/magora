@@ -36,14 +36,14 @@ magora_corrplot <- function(data) {
       fill = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5, ticks = FALSE),
       size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, nrow = 1)
     ) +
-    sagethemes::theme_sage(base_size = 10) +
+    sagethemes::theme_sage(base_size = 12) +
     ggplot2::theme(
-      strip.text.x = ggplot2::element_text(size = 7),
+      strip.text = ggplot2::element_text(face = "bold"),
       axis.ticks = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 0),
       panel.background = ggplot2::element_blank(),
       plot.title.position = "plot",
       panel.grid = ggplot2::element_blank(),
-      legend.position = "bottom"
+      legend.position = "top"
     )
 }

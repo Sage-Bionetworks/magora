@@ -7,15 +7,22 @@ library(stringr)
 library(lubridate)
 library(purrr)
 library(forcats)
-# library(synapser)
+library(synapser)
+
+synLogin()
+
+source(here::here("data-raw", "check_latest_version.R"))
 
 # Get data -----
 
-# synLogin()
-
 ## Nanostring ----
 
-# synGet("syn22105392", version = 2, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_id <- "syn22105392"
+nanostring_version <- 2
+
+check_latest_version(nanostring_id, nanostring_version)
+
+synGet(nanostring_id, version = nanostring_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized_Allsamples.csv"))
 
@@ -25,18 +32,33 @@ nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized
 # The age/sex are then in the individual metadata, which only has individual ID
 # So we need the biospecimen metadata to get the ID
 
-# synGet("syn22107820", version = 6, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+biospecimen_id <- "syn22107820"
+biospecimen_version <- 6
+
+check_latest_version(biospecimen_id, biospecimen_version)
+
+synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_biospecimen_metadata.csv"))
 
-# synGet("syn22107818", version = 5, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+individual_id <- "syn22107818"
+individual_version <- 7
+
+check_latest_version(individual_id, individual_version)
+
+synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
 nanostring_individual_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_individual_metadata.csv")) %>%
   remove_empty(c("rows", "cols"))
 
 ## AMP-AD Modules -----
 
-# synGet("syn21483261", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
+ampad_modules_id <- "syn21483261"
+ampad_modules_version <- 1
+
+check_latest_version(ampad_modules_id, ampad_modules_version)
+
+synGet(ampad_modules_id, version = ampad_modules_version, downloadLocation = here::here("data-raw", "nanostring"))
 
 load(here::here("data-raw", "nanostring", "aggregateModules.rda"))
 
@@ -54,7 +76,7 @@ rm(list = modules)
 cluster_a <- tibble(
   module = c("TCXblue", "PHGyellow", "IFGyellow"),
   cluster = "Consensus Cluster A (ECM organization)",
-  cluster_label = "Consensus Cluster A\n(ECM organization)"
+  cluster_label = "Consensus\nCluster\nA (ECM\norganization)"
 )
 
 cluster_b <- tibble(
@@ -78,7 +100,7 @@ cluster_d <- tibble(
 cluster_e <- tibble(
   module = c("FPbrown", "CBEblue", "DLPFCturquoise", "TCXbrown", "STGturquoise", "PHGblue"),
   cluster = "Consensus Cluster E (Organelle Biogensis, Cellular stress response)",
-  cluster_label = "Consensus Cluster E\n(Organelle Biogensis,\nCellular stress response)"
+  cluster_label = "Consensus Cluster\nE(Organelle\nBiogensis,\nCellular stress\nresponse)"
 )
 
 module_clusters <- cluster_a %>%
@@ -90,7 +112,12 @@ module_clusters <- cluster_a %>%
 
 ## AMP-AD Modules logFC (human data) ----
 
-# synGet("syn14237651", version = 1, downloadLocation = here::here("data-raw", "nanostring"))
+ampad_logfc_id <- "syn14237651"
+ampad_logfc_version <- 1
+
+check_latest_version(ampad_logfc_id, ampad_logfc_version)
+
+synGet(ampad_logfc_id, version = ampad_logfc_version, downloadLocation = here::here("data-raw", "nanostring"))
 
 ampad_fc_raw <- read.table(file = here::here("data-raw", "nanostring", "differentialExpressionSummary.tsv"), sep = "\t", header = TRUE)
 
@@ -122,37 +149,32 @@ nanostring_with_id %>%
   nrow() == 0
 
 # This is not the case - some individuals are missing from the biospecimen metadata
-# Waiting for a new metadata file - but in the meantime still update with new data
+# This is fine - some are missing but we won't use them
 # Relevant issue: https://github.com/Sage-Bionetworks/magora/issues/62
 
-## Nanostring individual metadata - calculate age from birth and death ----
+nanostring_with_id <- nanostring_with_id %>%
+  filter(!is.na(individual_id))
+
+## Nanostring individual metadata ----
+
+# Only include mice with NA treatmentType
 
 nanostring_individual_metadata <- nanostring_individual_metadata_raw %>%
+  filter(is.na(treatmentType))
+
+# AgeDeath and individualCommonGenotype contain the age and model, so we don't need to derive those anymore
+
+nanostring_individual_metadata <- nanostring_individual_metadata %>%
   mutate(
-    across(c(dateBirth, dateDeath), mdy),
-    age_interval = interval(dateBirth, dateDeath),
-    age = round(age_interval / months(1)),
     sex = str_to_title(sex)
   ) %>%
-  select(individual_id = individualID, genotype, sex, age)
+  select(individual_id = individualID, sex, age = ageDeath, mouse_model = individualCommonGenotype)
 
 ## Combine nanostring data with individual metadata ----
 
 nanostring_with_metadata <- nanostring_with_id %>%
-  left_join(nanostring_individual_metadata,
+  inner_join(nanostring_individual_metadata,
     by = "individual_id"
-  )
-
-# Split nanostring data by model and variant/control
-
-nanostring_with_metadata <- nanostring_with_metadata %>%
-  separate(genotype, into = c("model", "type")) %>%
-  mutate(
-    model = toupper(model),
-    type = case_when(
-      type == "NONCARRIER" ~ "control",
-      type == "HOMOZYGOUS" ~ "variant"
-    )
   )
 
 # Create age groups
@@ -197,21 +219,22 @@ ampad_modules_fc %>%
 # DEA compares each mouse model to ALL controls (with the same sex and age)
 
 # Separate out variants and controls, rename and keep relevant columns only
+# Control is C57BL6J
 
 ns_control <- nanostring_with_metadata %>%
-  filter(type == "control") %>%
-  select(gene, specimen_id, value, sex, age_group, type) %>%
+  filter(mouse_model == "C57BL6J") %>%
+  select(gene, specimen_id, value, sex, age_group, mouse_model) %>%
   pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
-  group_by(sex, age_group, type) %>%
+  group_by(sex, age_group, mouse_model) %>%
   nest() %>%
   ungroup() %>%
   mutate(data = map(data, ~ remove_empty(.x, "cols")))
 
 ns_variant <- nanostring_with_metadata %>%
-  filter(type == "variant") %>%
-  select(gene, specimen_id, value, sex, age_group, model, type) %>%
+  filter(mouse_model != "C57BL6J") %>%
+  select(gene, specimen_id, value, sex, age_group, mouse_model) %>%
   pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
-  group_by(sex, age_group, model, type) %>%
+  group_by(sex, age_group, mouse_model) %>%
   nest() %>%
   ungroup() %>%
   mutate(data = map(data, ~ remove_empty(.x, "cols")))
@@ -221,14 +244,14 @@ ns_variant <- nanostring_with_metadata %>%
 # Summarise what combinations are available
 
 ns_variant %>%
-  distinct(sex, age_group, variant = type) %>%
+  distinct(sex, age_group, variant = mouse_model) %>%
   full_join(ns_control %>%
-    select(sex, age_group, control = type), by = c("sex", "age_group")) %>%
+    select(sex, age_group, control = mouse_model), by = c("sex", "age_group")) %>%
   arrange(sex, age_group)
 
 ns_variant_control <- ns_variant %>%
   inner_join(ns_control, by = c("sex", "age_group"), suffix = c("_variant", "_control")) %>%
-  select(model, sex, age_group, data_variant, data_control)
+  select(mouse_model = mouse_model_variant, sex, age_group, data_variant, data_control)
 
 # For each group (model, sex, age), do the differential expression analysis with comparisons to the appropriate control
 
@@ -272,10 +295,10 @@ ns_fc <- ns_variant_control %>%
 # What combinations were lost?
 
 ns_fc_models <- ns_fc %>%
-  distinct(model, sex, age_group)
+  distinct(mouse_model, sex, age_group)
 
 ns_variant_control %>%
-  anti_join(ns_fc_models, by = c("model", "sex", "age_group"))
+  anti_join(ns_fc_models, by = c("mouse_model", "sex", "age_group"))
 
 # None!
 
@@ -287,8 +310,8 @@ ns_variant_control %>%
 ns_vs_ampad_fc <- ns_fc %>%
   mutate(gene = toupper(gene)) %>%
   inner_join(ampad_modules_fc, by = "gene") %>%
-  select(module, model, sex, age_group, gene, ns_fc, ampad_fc) %>%
-  group_by(module, model, sex, age_group) %>%
+  select(module, mouse_model, sex, age_group, gene, ns_fc, ampad_fc) %>%
+  group_by(module, mouse_model, sex, age_group) %>%
   nest(data = c(gene, ns_fc, ampad_fc)) %>%
   mutate(
     cor_test = map(data, ~ cor.test(.x[["ns_fc"]], .x[["ampad_fc"]], method = "pearson")),
@@ -305,7 +328,7 @@ ns_vs_ampad_fc <- ns_fc %>%
 nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
-  select(cluster, cluster_label, module, model, sex, age_group, correlation = estimate, p_value, significant)
+  select(cluster, cluster_label, module, mouse_model, sex, age_group, correlation = estimate, p_value, significant)
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
@@ -313,7 +336,7 @@ nanostring_for_plot <- nanostring %>%
   arrange(cluster) %>%
   mutate(
     module = fct_inorder(module),
-    model_sex = glue::glue("{model} ({sex})"),
+    model_sex = glue::glue("{mouse_model} ({sex})"),
   ) %>%
   arrange(model_sex) %>%
   mutate(

@@ -32,7 +32,7 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     ggplot2::ggplot(ggplot2::aes(x = .data$sex_age, y = .data$gene)) +
     ggplot2::geom_tile(colour = "black", fill = "white") +
     ggplot2::geom_point(ggplot2::aes(size = .data$padj_category_log10, fill = .data$log2foldchange), shape = 21) +
-    ggplot2::facet_grid(cols = dplyr::vars(.data$strain)) +
+    ggplot2::facet_grid(cols = dplyr::vars(.data$mouse_model), rows = dplyr::vars(.data$tissue)) +
     ggplot2::scale_size(
       name = "Adjusted P-Value",
       limits = range(log10_pvalue_breaks),
@@ -50,7 +50,7 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
     ggplot2::coord_fixed() +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
-      legend.position = "bottom",
+      legend.position = "top",
       panel.background = ggplot2::element_blank(),
       panel.grid = ggplot2::element_blank()
     )
