@@ -33,6 +33,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
             selected = "App",
             options = shinyWidgets::pickerOptions(
               liveSearch = TRUE, size = 10,
+              maxOptions = 5,
               noneSelectedText = "Enter gene(s) or select from list"
             )
           )
