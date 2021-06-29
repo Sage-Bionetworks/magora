@@ -115,7 +115,7 @@ test_that("magora_boxplot adds text to any facet without data", {
 test_that("All levels of age are shown in the plot even if not present in the filtered data", {
   p <- phenotypes %>%
     dplyr::filter(
-      .data$phenotype %in% "Plasma Ab 40",
+      .data$phenotype %in% "Plasma Ab40",
       .data$mouse_model %in% c("C57BL6J", "5XFAD"),
       .data$tissue %in% "Plasma"
     ) %>%
@@ -127,7 +127,7 @@ test_that("All levels of age are shown in the plot even if not present in the fi
 test_that("magora_boxplot shows facets in the order selected", {
   p <- phenotypes %>%
     dplyr::filter(
-      phenotype %in% "Plasma Ab 40",
+      phenotype %in% "Plasma Ab40",
       mouse_model %in% c("5XFAD", "C57BL6J")
     ) %>%
     expand_mouse_model_factor_from_selection(c("5XFAD", "C57BL6J")) %>%
