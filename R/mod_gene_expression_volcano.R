@@ -218,7 +218,22 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   # Save output ----
 
   gene_expression_data_download <- shiny::reactive({
-    filtered_gene_expressions()
+    # Select and rename columns
+    data_cols <- filtered_gene_expressions() %>%
+      dplyr::select(
+        `Mouse Model` = .data$mouse_model,
+        Tissue = .data$tissue,
+        Sex = .data$sex,
+        Age = .data$age,
+        Gene = .data$gene,
+        `Differentially Expressed` = .data$diff_expressed,
+        `Log2 Fold Change` = .data$log2foldchange,
+        `Adjusted P-Value` = .data$padj
+      )
+
+    # Arrange by column values (from left to right)
+    data_cols %>%
+      dplyr::arrange(!!!rlang::syms(colnames(data_cols)))
   })
 
   save_name <- shiny::reactive({
@@ -229,7 +244,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   shiny::callModule(mod_download_data_server,
     "download_data",
-    data = filtered_gene_expressions,
+    data = gene_expression_data_download,
     save_name = save_name
   )
 
@@ -238,7 +253,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   shiny::callModule(mod_download_plot_server,
     "download_plot",
     plotId = ns("gene_expression_plot"),
-    data = filtered_gene_expressions,
+    data = gene_expression_data_download,
     save_name = save_name
   )
 

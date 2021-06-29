@@ -231,10 +231,21 @@ mod_pathology_server <- function(input, output, session) {
   # Save output ----
 
   phenotype_data_download <- shiny::reactive({
-    filtered_phenotypes() %>%
-      dplyr::select(.data$mouse_model, .data$tissue, .data$age, .data$sex, .data$phenotype, .data$value) %>%
-      dplyr::arrange(.data$mouse_model, .data$tissue, .data$age, .data$sex) %>%
-      dplyr::rename_all(function(x) stringr::str_to_title(stringr::str_replace_all(x, "_", " ")))
+    # Select and rename columns
+    data_cols <- filtered_phenotypes() %>%
+      dplyr::select(
+        `Mouse Model` = .data$mouse_model,
+        Tissue = .data$tissue,
+        Sex = .data$sex,
+        Age = .data$age,
+        Phenotype = .data$phenotype,
+        Units = .data$units,
+        Value = .data$value
+      )
+
+    # Arrange by column values (from left to right)
+    data_cols %>%
+      dplyr::arrange(!!!rlang::syms(colnames(data_cols)))
   })
 
   save_name <- shiny::reactive({
@@ -261,5 +272,4 @@ mod_pathology_server <- function(input, output, session) {
   # Details modal ----
 
   shiny::callModule(mod_details_modal_server, "pathology")
-
 }

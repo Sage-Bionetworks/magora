@@ -180,6 +180,28 @@ mod_nanostring_server <- function(input, output, session) {
 
   # Save output ----
 
+  nanostring_data_download <- shiny::reactive({
+    # Select and rename columns
+    data_cols <- filtered_nanostring() %>%
+      dplyr::select(
+        Cluster = .data$cluster,
+        Module = .data$module,
+        `Mouse Model` = .data$mouse_model,
+        Sex = .data$sex,
+        `Age Group` = .data$age_group,
+        Correlation = .data$correlation,
+        `Adjusted P-Value` = .data$p_value
+      )
+
+    # Arrange by column values (from left to right)
+    data_cols %>%
+      dplyr::arrange(!!!rlang::syms(colnames(data_cols)))
+  })
+
+  save_name <- shiny::reactive({
+    download_name("gene_expression_heatmap", input$gene, input$mouse_model, input$sex, input$age)
+  })
+
   save_name <- shiny::reactive({
     download_name("nanostring", input$mouse_model, input$sex, input$age)
   })
@@ -188,7 +210,7 @@ mod_nanostring_server <- function(input, output, session) {
 
   shiny::callModule(mod_download_data_server,
     "download_data",
-    data = filtered_nanostring,
+    data = nanostring_data_download,
     save_name = save_name
   )
 
@@ -197,7 +219,7 @@ mod_nanostring_server <- function(input, output, session) {
   shiny::callModule(mod_download_plot_server,
     "download_plot",
     plotId = ns("nanostring_plot"),
-    data = filtered_nanostring,
+    data = nanostring_data_download,
     save_name = save_name
   )
 
