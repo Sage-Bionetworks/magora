@@ -109,7 +109,7 @@ mod_nanostring_server <- function(input, output, session) {
 
   # Set up bookmarking ----
   shiny::observeEvent(input$bookmark, {
-    bookmark_query <- construct_bookmark("Nanostring", input, session)
+    bookmark_query <- construct_bookmark("Nanostring", input, session, exclude = "nanostring-details")
     shiny:::showBookmarkUrlModal(bookmark_query)
   })
 
