@@ -33,6 +33,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
             selected = "App",
             options = shinyWidgets::pickerOptions(
               liveSearch = TRUE, size = 10,
+              maxOptions = 5,
               noneSelectedText = "Enter gene(s) or select from list"
             )
           )
@@ -43,9 +44,9 @@ mod_gene_expression_heatmap_ui <- function(id) {
             ns("mouse_model"),
             "Mouse model",
             choices = names(magora::gene_expressions_tissue),
-            selected = names(magora::gene_expressions_tissue)[1:3],
+            selected = names(magora::gene_expressions_tissue),
             multiple = TRUE,
-            options = shinyWidgets::pickerOptions(actionsBox = TRUE, maxOptions = 3)
+            options = shinyWidgets::pickerOptions(actionsBox = TRUE)
           )
         ),
         shiny::column(
@@ -155,7 +156,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
 
     filtered_gene_expressions() %>%
       dplyr::filter(!is.na(.data$padj)) %>%
-      complete_gene_expression_heatmap_data(input$gene, input$mouse_model) %>%
+      complete_gene_expression_heatmap_data(input) %>%
       magora_heatmap()
   })
 
@@ -177,15 +178,31 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   gene_expression_plot_dims <- shiny::reactive({
 
     list(
-      nrow = length(input$gene) * length(unique(magora::gene_expressions[["tissue"]])),
-      ncol = length(input$age) * length(input$sex) * length(input$mouse_model)
+      ncol = length(input$gene) * length(input$mouse_model),
+      nrow = length(input$age) * length(input$sex) * length(unique(magora::gene_expressions[["tissue"]]))
     )
   })
 
   output$gene_expression_heatmap_ui <- shiny::renderUI({
+
+    # If there's only one gene selected, the model labels will get cut off if the squares are too small
+    # So make the squares just... bigger in those cases :)
+    single_gene <- length(input$gene) == 1
+    square_size <- ifelse(single_gene, 45, 25)
+
+    min_height <- 500
+    plot_height <- 200 + gene_expression_plot_dims()[["nrow"]] * square_size
+    height <- max(min_height, plot_height)
+
+    min_width <- 700 # For the legend and labels
+    plot_width <- 200 + gene_expression_plot_dims()[["ncol"]] * square_size
+    width <- max(min_width, plot_width)
+    max_width <- 1000
+    width <- min(width, max_width)
+
     shinycssloaders::withSpinner(shiny::plotOutput(ns("gene_expression_heatmap"),
-      height = paste0(200 + gene_expression_plot_dims()[["nrow"]] * 50, "px"),
-      width = min(1000, paste0(150 + gene_expression_plot_dims()[["ncol"]] * 50, "px"))
+      height = paste0(height, "px"),
+      width = paste0(width, "px")
     ),
     color = "#D3DCEF"
     )
