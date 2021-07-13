@@ -10,7 +10,8 @@ magora_volcano_plot(
   type = "ggplot2",
   facet = TRUE,
   save_name,
-  sample_frac = 1
+  sample_frac = 1,
+  use_theme_sage = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ magora_volcano_plot(
 \item{save_name}{A name that will be used for saving the plot. Only required / used when \code{type} is "plotly".}
 
 \item{sample_frac}{The fraction of genes that are "not significant" that will be shown in the plot. Useful when there is a lot of data that slows down rendering. Defaults to 1.}
+
+\item{use_theme_sage}{Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.}
 }
 \description{
 Volcano plot for gene expression data

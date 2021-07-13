@@ -151,7 +151,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   gene_expression_plot <- shiny::reactive({
     filtered_gene_expressions() %>%
       sample_gene_expressions(0.25) %>%
-      magora_volcano_plot(data_labels = filtered_gene_expressions_labels(), type = "ggplot2", facet = TRUE)
+      magora_volcano_plot(data_labels = filtered_gene_expressions_labels(), type = "ggplot2", facet = TRUE, use_theme_sage = FALSE)
   })
 
   output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),

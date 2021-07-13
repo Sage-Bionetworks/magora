@@ -72,6 +72,9 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
   if (use_theme_sage) {
     p <- p +
       sagethemes::theme_sage(base_size = 16)
+  } else {
+    p <- p +
+      ggplot2::theme_minimal(base_size = 16)
   }
 
   p <- p +

@@ -6,9 +6,10 @@
 #' @param facet Whether to facet the data by \code{sex} and \code{age}. Defaults to TRUE.
 #' @param save_name A name that will be used for saving the plot. Only required / used when \code{type} is "plotly".
 #' @param sample_frac The fraction of genes that are "not significant" that will be shown in the plot. Useful when there is a lot of data that slows down rendering. Defaults to 1.
+#' @param use_theme_sage Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.
 #'
 #' @export
-magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRUE, save_name, sample_frac = 1) {
+magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRUE, save_name, sample_frac = 1, use_theme_sage = TRUE) {
 
   # Check arguments
   if (!type %in% c("ggplot2", "plotly")) {
@@ -50,8 +51,17 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
     ggplot2::geom_vline(data = fold_change_line, ggplot2::aes(xintercept = .data$x), linetype = "dashed") +
     ggplot2::geom_hline(data = p_value_line, ggplot2::aes(yintercept = .data$y, linetype = .data$label)) +
     ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3), order = 1), drop = FALSE) +
-    ggplot2::scale_linetype_discrete(guide = ggplot2::guide_legend(reverse = TRUE, order = 2), name = NULL) +
-    sagethemes::theme_sage() +
+    ggplot2::scale_linetype_discrete(guide = ggplot2::guide_legend(reverse = TRUE, order = 2), name = NULL)
+
+  if (use_theme_sage) {
+    p <- p +
+      sagethemes::theme_sage()
+  } else {
+   p <- p +
+     ggplot2::theme_minimal()
+  }
+
+  p <- p +
     ggplot2::coord_cartesian(clip = "off") +
     ggplot2::theme(
       legend.position = "top",

@@ -4,10 +4,12 @@
 \alias{magora_corrplot}
 \title{Correlation plot for nanostring versus AMPAD data}
 \usage{
-magora_corrplot(data)
+magora_corrplot(data, use_theme_sage = TRUE)
 }
 \arguments{
 \item{data}{Input data (\code{\link{nanostring_for_plot}}}
+
+\item{use_theme_sage}{Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.}
 }
 \value{
 A ggplot2 object.

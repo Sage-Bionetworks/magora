@@ -164,7 +164,7 @@ mod_pathology_server <- function(input, output, session) {
 
     filtered_phenotypes() %>%
       expand_mouse_model_factor_from_selection(input$mouse_model) %>%
-      magora_boxplot()
+      magora_boxplot(use_theme_sage = FALSE)
   })
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)

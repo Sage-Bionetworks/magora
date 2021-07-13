@@ -4,10 +4,11 @@
 #'
 #' @param data Input data (\code{\link{gene_expressions}}, filtered by a tissue and one or more genes.
 #' @param log_foldchange_cutoff Cutoff for log fold change, used in plot legend
+#' @param use_theme_sage Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.
 #'
 #' @return A ggplot2 object.
 #' @export
-magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
+magora_heatmap <- function(data, log_foldchange_cutoff = 2.5, use_theme_sage = TRUE) {
 
   # Set up p-value legend transformation
   pvalue_breaks <- c(0.001, 0.005, 0.01, 0.05, 0.1, 0.2)
@@ -28,7 +29,7 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
       TRUE ~ log2foldchange
     ))
 
-  data %>%
+  p <- data %>%
     dplyr::mutate(sex_age = forcats::fct_rev(.data$sex_age)) %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$gene, y = .data$sex_age)) +
     ggplot2::geom_tile(colour = "black", fill = "white") +
@@ -47,8 +48,17 @@ magora_heatmap <- function(data, log_foldchange_cutoff = 2.5) {
       fill = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5, ticks = FALSE),
       size = ggplot2::guide_legend(title.position = "top", title.hjust = 0.5, nrow = 1)
     ) +
-    ggplot2::labs(x = NULL, y = NULL) +
-    sagethemes::theme_sage() +
+    ggplot2::labs(x = NULL, y = NULL)
+
+  if (use_theme_sage) {
+    p <- p +
+      sagethemes::theme_sage()
+  } else {
+    p <- p +
+      ggplot2::theme_minimal()
+  }
+
+  p +
     ggplot2::coord_fixed() +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 0),
