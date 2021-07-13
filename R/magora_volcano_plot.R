@@ -32,7 +32,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
     tidyr::complete(.data$label)
 
   # "Complete" data for plotly
-  # plotly struggles drops unused factor levels (i.e. from scale_colour_manual even with drop = FALSE, if not all of downregulated / not significant / upregulated are present in the data, so we need to create some fake data for it to "plot" so the legend still appears in interactive versions
+  # plotly struggles drops unused factor levels (i.e. from scale_colour_manual even with drop = FALSE), if not all of downregulated / not significant / upregulated are present in the data, so we need to create some fake data for it to "plot" so the legend still appears in interactive versions
   if (type == "plotly") {
     diff_expressed_values <- unique(data[["diff_expressed"]])
     diff_expressed_levels <- levels(data[["diff_expressed"]])
@@ -47,7 +47,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
 
   # Create plot
   p <- ggplot2::ggplot() +
-    ggplot2::geom_point(data = dplyr::filter(data, !is.na(.data$neg_log10_padj)), ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
+    ggplot2::geom_point(data = dplyr::filter(data, !is.na(.data$diff_expressed)), ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, text = .data$gene), alpha = 0.25) +
     ggplot2::geom_vline(data = fold_change_line, ggplot2::aes(xintercept = .data$x), linetype = "dashed") +
     ggplot2::geom_hline(data = p_value_line, ggplot2::aes(yintercept = .data$y, linetype = .data$label)) +
     ggplot2::scale_colour_manual(values = c("#85070C", "darkgrey", "#164B6E"), name = NULL, guide = ggplot2::guide_legend(override.aes = list(size = 3), order = 1), drop = FALSE) +
@@ -80,6 +80,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
       ggrepel::geom_text_repel(data = data_labels, ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
       ggplot2::labs(x = bquote(~ Log[2] ~ "Fold change"), y = bquote(~ -Log[10] ~ "P-Value"))
   } else if (type == "plotly") {
+
     p <- p +
       ggplot2::labs(x = "Log2 Fold Change", y = "Log 10 P-Value")
 
@@ -91,7 +92,7 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
       )
 
     # Remove the "(, 1)" from legends
-    for (i in 1:6) {
+    for (i in seq_along(p$x$data)) {
       p$x$data[[i]]$name <- stringr::str_remove(p$x$data[[i]]$name, "\\(")
       p$x$data[[i]]$name <- stringr::str_remove(p$x$data[[i]]$name, ",1\\)")
     }
