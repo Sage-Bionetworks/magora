@@ -1,16 +1,11 @@
 phenotype,units,syn_id,version,file,field,stain_filter
-Plaque Density,#objects/ sqmm,syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",#objects/ sqmm,ThioS
-Plaque Size,mean object area (sqmm),syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",mean object area (squm),ThioS
-Soluble Ab40,pg/mg,syn22101767,1,"5xFAD 4, 8 12 and 18 months_ab levels soluble fraction_cortex and hippocampus .csv",Abeta40,NA
-Soluble Ab42,pg/mg,syn22101767,1,"5xFAD 4, 8 12 and 18 months_ab levels soluble fraction_cortex and hippocampus .csv",Abeta42,NA
-Insoluble Ab40,pg/mg,syn22101766,1,"5xFAD 4, 8 12 and 18 months_ab levels insoluble fraction_cortex and hippocampus .csv",Abeta40,NA
-Insoluble Ab42,pg/mg,syn22101766,1,"5xFAD 4, 8 12 and 18 months_ab levels insoluble fraction_cortex and hippocampus .csv",Abeta42,NA
-Microglia Density,#objects/ sqmm,syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",#objects/ sqmm,Iba1
-Microglia Size,mean object area (sqmm),syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",mean object area (squm),Iba1
-NeuN+ Cell Density,#objects/ sqmm,syn22049819,1,"5xFAD 4, 8 12 and 18 months_ ThioS-NeuN.csv",#objects/ sqmm,NeuN
-GFAP+ Cell Density,#objects/ sqmm,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",#objects/ sqmm,GFAP
-GFAP+ Cell Size,mean object area (sqmm),syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",mean object area (sqmm),GFAP
-S100b+ Cell Density,#objects/ sqmm,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",#objects/ sqmm,S100B
-Plasma Ab40,pg/mg,syn22101772,2,"5xFAD 4, 8, 12 and 18 months Plasma .csv",Abeta40,NA
-Plasma Ab42,pg/mg,syn22101772,2,"5xFAD 4, 8, 12 and 18 months Plasma .csv",Abeta42,NA
-LAMP1+ Percent Coverage,%,syn22049817,2,"5xFAD 4, 8 12 and 18 months_ ThioS-LAMP1.csv",Area %,LAMP1
+Plaque Density (Thio-S),#objects/ sqmm,syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",#objects/ sqmm,ThioS
+Plaque Size (Thio-S),mean object area (sqmm),syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",mean object area (squm),ThioS
+Abeta 40 (brain soluble),pg/mg,syn22101767,1,"5xFAD 4, 8 12 and 18 months_ab levels soluble fraction_cortex and hippocampus .csv",Abeta40,NA
+Abeta 42 (brain soluble),pg/mg,syn22101767,1,"5xFAD 4, 8 12 and 18 months_ab levels soluble fraction_cortex and hippocampus .csv",Abeta42,NA
+Abeta 40 (brain insoluble),pg/mg,syn22101766,1,"5xFAD 4, 8 12 and 18 months_ab levels insoluble fraction_cortex and hippocampus .csv",Abeta40,NA
+Abeta 42 (brain insoluble),pg/mg,syn22101766,1,"5xFAD 4, 8 12 and 18 months_ab levels insoluble fraction_cortex and hippocampus .csv",Abeta42,NA
+Microglia Cell Density (IBA1),#objects/ sqmm,syn22049825,2,"5xFAD 4, 8 12 and 18 months_ ThioS-IBA1.csv",#objects/ sqmm,Iba1
+Astrocyte Cell Density (GFAP),#objects/ sqmm,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",#objects/ sqmm,GFAP
+Astrocyte Cell Density (S100B),#objects/ sqmm,syn22049816,1,"5xFAD 4, 8 12 and 18 months_ ThioS-GFAP-s100B.csv",#objects/ sqmm,S100B
+Dystrophic Neurites (LAMP1),%,syn22049817,2,"5xFAD 4, 8 12 and 18 months_ ThioS-LAMP1.csv",Area %,LAMP1

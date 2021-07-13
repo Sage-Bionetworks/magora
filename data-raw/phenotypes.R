@@ -66,7 +66,7 @@ check_latest_version(biospecimen_id, biospecimen_version)
 
 synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
-biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_biospecimen_metadata.csv")) %>%
+biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "5xFAD biospecimen data_UCI.csv")) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, specimen_id, tissue)
@@ -137,8 +137,8 @@ individual_metadata %>% count(mouse_line, mouse_model)
 ## Combine data ----
 
 phenotypes <- phenotype_data %>%
-  left_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
-  left_join(individual_metadata, by = "individual_id") %>%
+  inner_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  inner_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value) %>%
   mutate(phenotype_units = glue::glue("{phenotype}\n({units})"))
 
