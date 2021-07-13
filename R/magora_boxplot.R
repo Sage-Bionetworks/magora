@@ -103,6 +103,10 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
       p$x$data[[i]]$marker$opacity <- 0
     }
 
+    # Disable clicking on legend to select / deselect groups
+    # Since the legends are only "turned on" for the box plots, not the points, e.g. deselecting "male" just removes the box plots, but keeps the points! Better to just not allow deselecting of anything via the legend.
+    p <- p %>%
+      plotly::layout(legend = list(itemclick = FALSE, itemdoubleclick = FALSE))
   }
 
   p
