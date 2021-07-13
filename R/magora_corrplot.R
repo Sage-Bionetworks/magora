@@ -1,6 +1,6 @@
 #' Correlation plot for nanostring versus AMPAD data
 #'
-#' Creates a correlation plot comparing nanostring data to human genetic data, faceted by age group and cluster.
+#' Creates a correlation plot comparing nanostring data to human genetic data, faceted by age and cluster.
 #'
 #' @param data Input data (\code{\link{nanostring_for_plot}}
 #'

@@ -10,7 +10,7 @@
 
 #' Nanostring data
 #'
-#' A data set containing the correlation of nanostring log fold-change and AMP-AD human gene log fold-change, by module, model, sex, and age group.
+#' A data set containing the correlation of nanostring log fold-change and AMP-AD human gene log fold-change, by module, model, sex, and age.
 "nanostring"
 
 #' Nanostring plotting data

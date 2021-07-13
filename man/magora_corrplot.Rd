@@ -13,5 +13,5 @@ magora_corrplot(data)
 A ggplot2 object.
 }
 \description{
-Creates a correlation plot comparing nanostring data to human genetic data, faceted by age group and cluster.
+Creates a correlation plot comparing nanostring data to human genetic data, faceted by age and cluster.
 }
