@@ -30,7 +30,7 @@ magora_corrplot <- function(data, use_theme_sage = TRUE) {
       labels = pvalue_breaks,
       range = c(1, 6)
     ) +
-    ggplot2::scale_fill_gradient2(limits = c(-0.5, 0.5), breaks = c(-0.5, 0, 0.5), low = "#85070C", high = "#164B6E", name = "Correlation") +
+    ggplot2::scale_fill_gradient2(limits = c(-0.6, 0.6), breaks = c(-0.6, 0, 0.6), low = "#85070C", high = "#164B6E", name = "Correlation") +
     ggplot2::labs(x = NULL, y = NULL) +
     ggplot2::facet_grid(rows = dplyr::vars(.data$age_group), cols = dplyr::vars(.data$cluster_label), scales = "free", space = "free") +
     ggplot2::guides(
