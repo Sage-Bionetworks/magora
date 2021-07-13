@@ -76,7 +76,7 @@ rm(list = modules)
 cluster_a <- tibble(
   module = c("TCXblue", "PHGyellow", "IFGyellow"),
   cluster = "Consensus Cluster A (ECM organization)",
-  cluster_label = "Consensus\nCluster\nA (ECM\norganization)"
+  cluster_label = "Consensus\nCluster\nA (ECM\norganiza-\ntion)"
 )
 
 cluster_b <- tibble(
@@ -100,7 +100,7 @@ cluster_d <- tibble(
 cluster_e <- tibble(
   module = c("FPbrown", "CBEblue", "DLPFCturquoise", "TCXbrown", "STGturquoise", "PHGblue"),
   cluster = "Consensus Cluster E (Organelle Biogensis, Cellular stress response)",
-  cluster_label = "Consensus Cluster\nE(Organelle\nBiogensis,\nCellular stress\nresponse)"
+  cluster_label = "Consensus Cluster\nE (Organelle\nBiogensis,\nCellular stress\nresponse)"
 )
 
 module_clusters <- cluster_a %>%
