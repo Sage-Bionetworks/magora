@@ -26,11 +26,25 @@ walk2(phenotype_files[["syn_id"]], phenotype_files[["version"]], check_latest_ve
 phenotype_distinct_files <- phenotype_files %>%
   distinct(syn_id, version)
 
-walk2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local"))
+phenotype_paths <- map2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local"))
+
+# Extract path and combine with phenotype_files df so that full path can be used, in case file name changes, rather than whatever is hardcoded in
+
+phenotype_paths <- phenotype_paths %>%
+  map("path") %>%
+  map(~ tibble(file = .x))
+
+names(phenotype_paths) <- phenotype_distinct_files[["syn_id"]]
+
+phenotype_paths <- phenotype_paths %>%
+  bind_rows(.id = "syn_id")
+
+phenotype_files <- phenotype_files %>%
+  left_join(phenotype_paths, by = "syn_id", suffix = c("_hardcoded", ""))
 
 # Function to read in, filter + clean data, and return relevant fields
 read_clean_phenotype <- function(field, stain_filter, file) {
-  res <- readr::read_csv(here::here("data-raw", "pathology", file), na = c("N/A", ""))
+  res <- readr::read_csv(file, na = c("N/A", ""))
 
   res <- res %>%
     janitor::clean_names()
@@ -64,9 +78,9 @@ biospecimen_version <- 8
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
-synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+biospecimen_metadata_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
-biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "5xFAD biospecimen data_UCI.csv")) %>%
+biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, specimen_id, tissue)
@@ -78,9 +92,9 @@ individual_version <- 10
 
 check_latest_version(individual_id, individual_version)
 
-synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+individual_metadata_path <- synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
-individual_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_individual_metadata.csv")) %>%
+individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_unit)

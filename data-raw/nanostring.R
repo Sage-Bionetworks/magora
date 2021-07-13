@@ -22,9 +22,9 @@ nanostring_version <- 2
 
 check_latest_version(nanostring_id, nanostring_version)
 
-synGet(nanostring_id, version = nanostring_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_raw_file <- synGet(nanostring_id, version = nanostring_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
-nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized_Allsamples.csv"))
+nanostring_raw <- read_csv(nanostring_raw_file[["path"]])
 
 ## Nanostring metadata ----
 
@@ -37,18 +37,18 @@ biospecimen_version <- 6
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
-synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_biospecimen_metadata_raw_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
-nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_biospecimen_metadata.csv"))
+nanostring_biospecimen_metadata_raw <- read_csv(nanostring_biospecimen_metadata_raw_path[["path"]])
 
 individual_id <- "syn22107818"
 individual_version <- 7
 
 check_latest_version(individual_id, individual_version)
 
-synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_individual_metadata_raw_path <- synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
-nanostring_individual_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_individual_metadata.csv")) %>%
+nanostring_individual_metadata_raw <- read_csv(nanostring_individual_metadata_raw_path[["path"]]) %>%
   remove_empty(c("rows", "cols"))
 
 ## AMP-AD Modules -----
@@ -58,9 +58,9 @@ ampad_modules_version <- 1
 
 check_latest_version(ampad_modules_id, ampad_modules_version)
 
-synGet(ampad_modules_id, version = ampad_modules_version, downloadLocation = here::here("data-raw", "nanostring"))
+ampad_modules_path <- synGet(ampad_modules_id, version = ampad_modules_version, downloadLocation = here::here("data-raw", "nanostring"))
 
-load(here::here("data-raw", "nanostring", "aggregateModules.rda"))
+load(ampad_modules_path[["path"]])
 
 modules <- c("cbe_mods", "dlpfc_mods", "fp_mods", "ifg_mods", "phg_mods", "stg_mods", "tcx_mods")
 
@@ -117,9 +117,9 @@ ampad_logfc_version <- 1
 
 check_latest_version(ampad_logfc_id, ampad_logfc_version)
 
-synGet(ampad_logfc_id, version = ampad_logfc_version, downloadLocation = here::here("data-raw", "nanostring"))
+ampad_fc_raw_path <- synGet(ampad_logfc_id, version = ampad_logfc_version, downloadLocation = here::here("data-raw", "nanostring"))
 
-ampad_fc_raw <- read.table(file = here::here("data-raw", "nanostring", "differentialExpressionSummary.tsv"), sep = "\t", header = TRUE)
+ampad_fc_raw <- read.table(file = ampad_fc_raw_path[["path"]], sep = "\t", header = TRUE)
 
 # Clean data ----
 
