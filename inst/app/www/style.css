@@ -246,3 +246,13 @@ div.divflex {
 .dropdown-too-small .dropdown-menu.open {
     min-width: 150%;
 }
+
+/* Hide "Select All" in gene selector in "Gene Expressions: Selected Genes" page, so that the only option is to clear the selected genes */
+
+#gene_expression_heatmap #gene_expression_heatmap_gene_column .actions-btn.bs-select-all.btn.btn-default {
+   display: none;
+}
+
+#gene_expression_heatmap #gene_expression_heatmap_gene_column .actions-btn.bs-deselect-all.btn.btn-default {
+   width: 100%;
+}

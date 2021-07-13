@@ -14,6 +14,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
     value = "GeneExpressionHeatmap",
     shiny::div(
       class = "magora-page",
+      id = "gene_expression_heatmap",
       shiny::div(
         shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
         shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_selected", "content.md")),
@@ -25,6 +26,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
         class = "magora-row",
         shiny::column(
           width = 3,
+          id = "gene_expression_heatmap_gene_column",
           shinyWidgets::pickerInput(
             ns("gene"),
             "Genes",
