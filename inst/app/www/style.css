@@ -126,6 +126,11 @@ body {
    margin-left: 0;
 }
 
+/* Cursor for plots that can be clicked on to get the interactive version should be a zoom-in, not a crosshair */
+.crosshair {
+   cursor: zoom-in;
+}
+
 /* ------ Start page elements ------ */
 .start-divider {
    height: 6px;
