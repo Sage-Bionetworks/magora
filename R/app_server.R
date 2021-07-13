@@ -12,6 +12,13 @@ app_server <- function(input, output, session) {
     }
   })
 
+  # Check for link click on start page to change page
+  shiny::observeEvent(
+    input$page_link, {
+      shiny::updateTabsetPanel(session, inputId = "page", selected = input$page_link)
+    }
+  )
+
   shiny::callModule(mod_pathology_server, "pathology")
 
   shiny::callModule(mod_gene_expression_volcano_server, "gene_expression_volcano")

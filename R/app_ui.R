@@ -5,6 +5,10 @@
 app_ui <- function(request) {
   shiny::tagList(
     shinyjs::useShinyjs(),
+    shiny::tags$script(shiny::HTML(
+      'function link(page) {
+      Shiny.onInputChange("page_link", page)
+      }')),
     golem_add_external_resources(),
     magoraPage(
       id = "page",
