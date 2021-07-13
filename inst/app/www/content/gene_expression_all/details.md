@@ -2,12 +2,12 @@ All MODEL-AD RNAseq is carried out using standardized protocols. Note that the t
 
 Log2 fold change has been computed for each model x sex x age combination in comparison to predefined controls, as follows:
 
-* 5XFAD vs C57BL6J
-* 3xTgAD vs B6129
-* Trem2 vs C57BL6J
-* APOE4Trem2 vs C57BL6J
-* APOE4 vs C57BL6J
-* hABKI vs C57BL6J
+* 5xFAD vs C57BL/6J
+* 3xTg-AD vs B6129
+* Trem2 vs C57BL/6J
+* APOE4/Trem2 vs C57BL/6J
+* APOE4 vs C57BL/6J
+* hABKI vs C57BL/6J
  
 Both UCI and IU/Jax/Pitt centers have characterized the 5XFAD model; other mouse models were characterized by only one of the two centers.
 

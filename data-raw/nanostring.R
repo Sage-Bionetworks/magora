@@ -325,6 +325,16 @@ nanostring <- ns_vs_ampad_fc %>%
   ) %>%
   select(cluster, cluster_label, module, mouse_model, sex, age_group, correlation = estimate, p_value, significant)
 
+# Recode mouse models
+
+nanostring <- nanostring %>%
+  mutate(mouse_model = case_when(
+    mouse_model == "5XFAD" ~ "5xFAD",
+    mouse_model == "LOAD1.ABCA7A1527G" ~ "LOAD1.Abca7A1527G",
+    mouse_model == "LOAD1.CEACAM1KO" ~ "LOAD1.Ceacam1KO",
+    TRUE ~ mouse_model
+  ))
+
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
 nanostring_for_plot <- nanostring %>%

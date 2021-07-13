@@ -37,7 +37,7 @@ mod_pathology_ui <- function(id) {
             "Mouse model",
             choices = as.character(levels(magora::phenotypes[["mouse_model"]])),
             multiple = TRUE,
-            selected = c("C57BL6J", "5XFAD")
+            selected = c("C57BL/6J", "5xFAD")
           )
         ),
         shiny::column(

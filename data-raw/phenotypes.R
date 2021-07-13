@@ -140,13 +140,24 @@ individual_metadata <- individual_metadata %>%
       str_ends(genotype, "_noncarrier") ~ genotype_background
     ),
     mouse_line = as_factor(mouse_line),
-    mouse_model = as_factor(individual_common_genotype)
+    mouse_model = individual_common_genotype
   ) %>%
   select(-genotype, -genotype_background) %>%
   rename(age = age_factor)
 
 # Check that mouse model matches method for deriving mouse line
 individual_metadata %>% count(mouse_line, mouse_model)
+
+# Recode mouse models
+
+individual_metadata <- individual_metadata %>%
+  mutate(
+    mouse_model = case_when(
+      mouse_model == "5XFAD" ~ "5xFAD",
+      mouse_model == "C57BL6J" ~ "C57BL/6J"
+    ),
+    mouse_model = as_factor(mouse_model)
+  )
 
 ## Combine data ----
 
