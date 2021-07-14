@@ -166,14 +166,11 @@ phenotypes <- phenotype_data %>%
   inner_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
 
-# Create a display name for phenotypes (with beta symbol instead of "Beta") and one with units to display on Y-Axis:
+# Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
 
 phenotypes <- phenotypes %>%
   mutate(
-    phenotype_display = case_when(
-      phenotype == "Plaque Size (Thio-S)" ~ "Plaque Size \u03B2",
-      TRUE ~ phenotype
-    ),
+    phenotype_display = str_replace(phenotype, "Abeta", "A\u03B2"),
     phenotype_units = glue::glue("{phenotype_display}\n({units})")
   ) %>%
   arrange(phenotype)
