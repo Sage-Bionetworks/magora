@@ -151,7 +151,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
   gene_expression_plot <- shiny::reactive({
     filtered_gene_expressions() %>%
       sample_gene_expressions(0.25) %>%
-      magora_volcano_plot(data_labels = filtered_gene_expressions_labels(), type = "ggplot2", facet = TRUE, use_theme_sage = FALSE)
+      magora_volcano_plot(data_labels = filtered_gene_expressions_labels(), type = "ggplot2", facet = TRUE, use_theme_sage = TRUE)
   })
 
   output$gene_expression_plot <- shiny::renderCachedPlot(gene_expression_plot(),
@@ -195,7 +195,7 @@ mod_gene_expression_volcano_server <- function(input, output, session, gene_expr
 
   output$drilldown_gene_expressions <- plotly::renderPlotly({
     drilldown_gene_expressions() %>%
-      magora_volcano_plot(type = "plotly", facet = FALSE, save_name = drilldown_gene_expressions_title())
+      magora_volcano_plot(type = "plotly", facet = FALSE, save_name = drilldown_gene_expressions_title(), use_theme_sage = TRUE)
   })
 
   shiny::observeEvent(input$plot_click, {

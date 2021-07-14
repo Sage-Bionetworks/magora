@@ -164,7 +164,7 @@ mod_pathology_server <- function(input, output, session) {
 
     filtered_phenotypes() %>%
       expand_mouse_model_factor_from_selection(input$mouse_model) %>%
-      magora_boxplot(use_theme_sage = FALSE)
+      magora_boxplot(use_theme_sage = TRUE)
   })
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)
@@ -209,7 +209,7 @@ mod_pathology_server <- function(input, output, session) {
   output$drilldown_phenotypes <- plotly::renderPlotly({
     drilldown_phenotypes() %>%
       expand_mouse_model_factor_from_selection(input$plot_click$panelvar1) %>%
-      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title())
+      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title(), use_theme_sage = TRUE)
   })
 
   shiny::observeEvent(input$plot_click, {

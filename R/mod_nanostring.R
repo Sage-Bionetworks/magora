@@ -144,7 +144,7 @@ mod_nanostring_server <- function(input, output, session) {
   # Generate plot ----
 
   nanostring_plot <- shiny::reactive({
-    magora_corrplot(filtered_nanostring_for_plot(), use_theme_sage = FALSE)
+    magora_corrplot(filtered_nanostring_for_plot(), use_theme_sage = TRUE)
   })
 
   output$nanostring_plot <- shiny::renderPlot(nanostring_plot(), res = 96)

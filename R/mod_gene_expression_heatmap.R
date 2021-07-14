@@ -160,7 +160,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     filtered_gene_expressions() %>%
       dplyr::filter(!is.na(.data$padj)) %>%
       complete_gene_expression_heatmap_data(input) %>%
-      magora_heatmap(use_theme_sage = FALSE)
+      magora_heatmap(use_theme_sage = TRUE)
   })
 
   output$gene_expression_heatmap <- shiny::renderCachedPlot(
