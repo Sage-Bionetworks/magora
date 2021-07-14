@@ -185,8 +185,9 @@ mod_pathology_server <- function(input, output, session) {
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%"),
-      click = ns("plot_click")
+      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      # Disable interactive plot for now
+      # click = ns("plot_click")
     ),
     color = "#D3DCEF"
     )
