@@ -27,7 +27,7 @@ mod_pathology_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("phenotype"),
             "Phenotype",
-            choices = setNames(unique(magora::phenotypes[["phenotype"]]), unique(magora::phenotypes[["phenotype_display"]]))
+            choices = stats::setNames(unique(magora::phenotypes[["phenotype"]]), unique(magora::phenotypes[["phenotype_display"]]))
           )
         ),
         shiny::column(
