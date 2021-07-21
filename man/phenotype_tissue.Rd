@@ -5,7 +5,7 @@
 \alias{phenotype_tissue}
 \title{Phenotypes tissues}
 \format{
-An object of class \code{list} of length 15.
+An object of class \code{list} of length 6.
 }
 \usage{
 phenotype_tissue

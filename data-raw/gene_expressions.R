@@ -81,14 +81,28 @@ gene_expressions <- gene_expressions %>%
 # Clean data ----
 
 gene_expressions <- gene_expressions %>%
-  rename(gene_id = geneid,
-         mouse_model = strain)
+  rename(
+    gene_id = geneid,
+    mouse_model = strain
+  )
 
 gene_expressions <- gene_expressions %>%
   mutate(
     tissue = str_to_title(tissue),
     mouse_model = str_to_upper(mouse_model)
   )
+
+# Recode mouse models
+
+gene_expressions <- gene_expressions %>%
+  mutate(mouse_model = case_when(
+    mouse_model == "3XTGAD" ~ "3xTg-AD",
+    mouse_model == "5XFAD" ~ "5xFAD",
+    mouse_model == "APOE4TREM2" ~ "APOE4/Trem2",
+    mouse_model == "TREM2" ~ "Trem2",
+    mouse_model == "HABKI" ~ "hABKI",
+    TRUE ~ mouse_model
+  ))
 
 # Query gene symbol to use in place of ID ----
 

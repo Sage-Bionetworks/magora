@@ -130,7 +130,7 @@ mod_nanostring_server <- function(input, output, session) {
 
   filtered_nanostring_for_plot <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and ages.")
     )
 
     magora::nanostring_for_plot %>%
@@ -144,7 +144,7 @@ mod_nanostring_server <- function(input, output, session) {
   # Generate plot ----
 
   nanostring_plot <- shiny::reactive({
-    magora_corrplot(filtered_nanostring_for_plot())
+    magora_corrplot(filtered_nanostring_for_plot(), use_theme_sage = TRUE)
   })
 
   output$nanostring_plot <- shiny::renderPlot(nanostring_plot(), res = 96)
@@ -161,7 +161,7 @@ mod_nanostring_server <- function(input, output, session) {
 
     # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
     shiny::validate(
-      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and age groups.")
+      shiny::need(!is.null(input$mouse_model) & !is.null(input$sex) & !is.null(input$age), message = "Please select one or more models, sexes, and ages.")
     )
 
     min_height <- 150 + 75 + 100 * length(input$age) # top labels, legend, each side facet label
@@ -188,7 +188,7 @@ mod_nanostring_server <- function(input, output, session) {
         Module = .data$module,
         `Mouse Model` = .data$mouse_model,
         Sex = .data$sex,
-        `Age Group` = .data$age_group,
+        Age = .data$age_group,
         Correlation = .data$correlation,
         `Adjusted P-Value` = .data$p_value
       )

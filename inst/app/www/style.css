@@ -1,4 +1,5 @@
-/* AD Model Explorer Styles */
+/* MODEL-AD Explorer Styles */
+@import url('//fonts.googleapis.com/css2?family=Lato:100,300,400');
 
 :root {
   --font: "Lato", Sans-Serif;
@@ -10,7 +11,6 @@
 }
 
 /* ------  Header and font styles ------ */
-@import url('//fonts.googleapis.com/css2?family=Lato:100,300,400');
 
 h1, h2, h3, h4, h5, h6 {
    font-family: var(--font);
@@ -124,6 +124,11 @@ body {
 .magora-row {
    margin-right: 0;
    margin-left: 0;
+}
+
+/* Cursor for plots that can be clicked on to get the interactive version should be a zoom-in, not a crosshair */
+.crosshair {
+   cursor: zoom-in;
 }
 
 /* ------ Start page elements ------ */
@@ -240,4 +245,14 @@ div.divflex {
 /* Increase the width of dropdowns that are too small for their content */
 .dropdown-too-small .dropdown-menu.open {
     min-width: 150%;
+}
+
+/* Hide "Select All" in gene selector in "Gene Expressions: Selected Genes" page, so that the only option is to clear the selected genes */
+
+#gene_expression_heatmap #gene_expression_heatmap_gene_column .actions-btn.bs-select-all.btn.btn-default {
+   display: none;
+}
+
+#gene_expression_heatmap #gene_expression_heatmap_gene_column .actions-btn.bs-deselect-all.btn.btn-default {
+   width: 100%;
 }

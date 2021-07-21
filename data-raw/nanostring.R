@@ -22,9 +22,9 @@ nanostring_version <- 2
 
 check_latest_version(nanostring_id, nanostring_version)
 
-synGet(nanostring_id, version = nanostring_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_raw_file <- synGet(nanostring_id, version = nanostring_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
-nanostring_raw <- read_csv(here::here("data-raw", "nanostring", "logHKNormalized_Allsamples.csv"))
+nanostring_raw <- read_csv(nanostring_raw_file[["path"]])
 
 ## Nanostring metadata ----
 
@@ -37,18 +37,18 @@ biospecimen_version <- 6
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
-synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_biospecimen_metadata_raw_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
-nanostring_biospecimen_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_biospecimen_metadata.csv"))
+nanostring_biospecimen_metadata_raw <- read_csv(nanostring_biospecimen_metadata_raw_path[["path"]])
 
 individual_id <- "syn22107818"
 individual_version <- 7
 
 check_latest_version(individual_id, individual_version)
 
-synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
+nanostring_individual_metadata_raw_path <- synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "nanostring"), ifcollision = "overwrite.local")
 
-nanostring_individual_metadata_raw <- read_csv(here::here("data-raw", "nanostring", "Jax.IU.Pitt_PrimaryScreen_individual_metadata.csv")) %>%
+nanostring_individual_metadata_raw <- read_csv(nanostring_individual_metadata_raw_path[["path"]]) %>%
   remove_empty(c("rows", "cols"))
 
 ## AMP-AD Modules -----
@@ -58,9 +58,9 @@ ampad_modules_version <- 1
 
 check_latest_version(ampad_modules_id, ampad_modules_version)
 
-synGet(ampad_modules_id, version = ampad_modules_version, downloadLocation = here::here("data-raw", "nanostring"))
+ampad_modules_path <- synGet(ampad_modules_id, version = ampad_modules_version, downloadLocation = here::here("data-raw", "nanostring"))
 
-load(here::here("data-raw", "nanostring", "aggregateModules.rda"))
+load(ampad_modules_path[["path"]])
 
 modules <- c("cbe_mods", "dlpfc_mods", "fp_mods", "ifg_mods", "phg_mods", "stg_mods", "tcx_mods")
 
@@ -76,7 +76,7 @@ rm(list = modules)
 cluster_a <- tibble(
   module = c("TCXblue", "PHGyellow", "IFGyellow"),
   cluster = "Consensus Cluster A (ECM organization)",
-  cluster_label = "Consensus\nCluster\nA (ECM\norganization)"
+  cluster_label = "Consensus\nCluster\nA (ECM\norganiza-\ntion)"
 )
 
 cluster_b <- tibble(
@@ -100,7 +100,7 @@ cluster_d <- tibble(
 cluster_e <- tibble(
   module = c("FPbrown", "CBEblue", "DLPFCturquoise", "TCXbrown", "STGturquoise", "PHGblue"),
   cluster = "Consensus Cluster E (Organelle Biogensis, Cellular stress response)",
-  cluster_label = "Consensus Cluster\nE(Organelle\nBiogensis,\nCellular stress\nresponse)"
+  cluster_label = "Consensus Cluster\nE (Organelle\nBiogensis,\nCellular stress\nresponse)"
 )
 
 module_clusters <- cluster_a %>%
@@ -117,9 +117,9 @@ ampad_logfc_version <- 1
 
 check_latest_version(ampad_logfc_id, ampad_logfc_version)
 
-synGet(ampad_logfc_id, version = ampad_logfc_version, downloadLocation = here::here("data-raw", "nanostring"))
+ampad_fc_raw_path <- synGet(ampad_logfc_id, version = ampad_logfc_version, downloadLocation = here::here("data-raw", "nanostring"))
 
-ampad_fc_raw <- read.table(file = here::here("data-raw", "nanostring", "differentialExpressionSummary.tsv"), sep = "\t", header = TRUE)
+ampad_fc_raw <- read.table(file = ampad_fc_raw_path[["path"]], sep = "\t", header = TRUE)
 
 # Clean data ----
 
@@ -177,15 +177,6 @@ nanostring_with_metadata <- nanostring_with_id %>%
     by = "individual_id"
   )
 
-# Create age groups
-
-nanostring_with_metadata <- nanostring_with_metadata %>%
-  mutate(age_group = case_when(
-    age %in% 2:5 ~ "2 - 5 Months",
-    age %in% 6:9 ~ "6 - 9 Months",
-    age %in% 10:14 ~ "10 - 14 Months"
-  ))
-
 ## AMP-AD Modules ----
 
 ampad_modules <- ampad_modules_raw %>%
@@ -223,18 +214,18 @@ ampad_modules_fc %>%
 
 ns_control <- nanostring_with_metadata %>%
   filter(mouse_model == "C57BL6J") %>%
-  select(gene, specimen_id, value, sex, age_group, mouse_model) %>%
+  select(gene, specimen_id, value, sex, age, mouse_model) %>%
   pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
-  group_by(sex, age_group, mouse_model) %>%
+  group_by(sex, age, mouse_model) %>%
   nest() %>%
   ungroup() %>%
   mutate(data = map(data, ~ remove_empty(.x, "cols")))
 
 ns_variant <- nanostring_with_metadata %>%
   filter(mouse_model != "C57BL6J") %>%
-  select(gene, specimen_id, value, sex, age_group, mouse_model) %>%
+  select(gene, specimen_id, value, sex, age, mouse_model) %>%
   pivot_wider(names_from = specimen_id, values_from = value, names_prefix = "value_") %>%
-  group_by(sex, age_group, mouse_model) %>%
+  group_by(sex, age, mouse_model) %>%
   nest() %>%
   ungroup() %>%
   mutate(data = map(data, ~ remove_empty(.x, "cols")))
@@ -244,14 +235,14 @@ ns_variant <- nanostring_with_metadata %>%
 # Summarise what combinations are available
 
 ns_variant %>%
-  distinct(sex, age_group, variant = mouse_model) %>%
+  distinct(sex, age, variant = mouse_model) %>%
   full_join(ns_control %>%
-    select(sex, age_group, control = mouse_model), by = c("sex", "age_group")) %>%
-  arrange(sex, age_group)
+    select(sex, age, control = mouse_model), by = c("sex", "age")) %>%
+  arrange(sex, age)
 
 ns_variant_control <- ns_variant %>%
-  inner_join(ns_control, by = c("sex", "age_group"), suffix = c("_variant", "_control")) %>%
-  select(mouse_model = mouse_model_variant, sex, age_group, data_variant, data_control)
+  inner_join(ns_control, by = c("sex", "age"), suffix = c("_variant", "_control")) %>%
+  select(mouse_model = mouse_model_variant, sex, age, data_variant, data_control)
 
 # For each group (model, sex, age), do the differential expression analysis with comparisons to the appropriate control
 
@@ -295,10 +286,10 @@ ns_fc <- ns_variant_control %>%
 # What combinations were lost?
 
 ns_fc_models <- ns_fc %>%
-  distinct(mouse_model, sex, age_group)
+  distinct(mouse_model, sex, age)
 
 ns_variant_control %>%
-  anti_join(ns_fc_models, by = c("mouse_model", "sex", "age_group"))
+  anti_join(ns_fc_models, by = c("mouse_model", "sex", "age"))
 
 # None!
 
@@ -310,8 +301,8 @@ ns_variant_control %>%
 ns_vs_ampad_fc <- ns_fc %>%
   mutate(gene = toupper(gene)) %>%
   inner_join(ampad_modules_fc, by = "gene") %>%
-  select(module, mouse_model, sex, age_group, gene, ns_fc, ampad_fc) %>%
-  group_by(module, mouse_model, sex, age_group) %>%
+  select(module, mouse_model, sex, age, gene, ns_fc, ampad_fc) %>%
+  group_by(module, mouse_model, sex, age) %>%
   nest(data = c(gene, ns_fc, ampad_fc)) %>%
   mutate(
     cor_test = map(data, ~ cor.test(.x[["ns_fc"]], .x[["ampad_fc"]], method = "pearson")),
@@ -323,12 +314,26 @@ ns_vs_ampad_fc <- ns_fc %>%
 
 # Process data for plotting ----
 
-# Flag for significant results, add cluster information to modules
+# Flag for significant results, add cluster information to modules, add label to ages
 
 nanostring <- ns_vs_ampad_fc %>%
   mutate(significant = p_value < 0.05) %>%
   left_join(module_clusters, by = "module") %>%
+  mutate(
+    age_group = glue::glue("{age} months"),
+    age_group = fct_reorder(age_group, age)
+  ) %>%
   select(cluster, cluster_label, module, mouse_model, sex, age_group, correlation = estimate, p_value, significant)
+
+# Recode mouse models
+
+nanostring <- nanostring %>%
+  mutate(mouse_model = case_when(
+    mouse_model == "5XFAD" ~ "5xFAD",
+    mouse_model == "LOAD1.ABCA7A1527G" ~ "LOAD1.Abca7A1527G",
+    mouse_model == "LOAD1.CEACAM1KO" ~ "LOAD1.Ceacam1KO",
+    TRUE ~ mouse_model
+  ))
 
 # Create a version of the data for plotting - clean up naming, order factors, etc
 
@@ -341,10 +346,8 @@ nanostring_for_plot <- nanostring %>%
   arrange(model_sex) %>%
   mutate(
     model_sex = fct_inorder(model_sex),
-    model_sex = fct_rev(model_sex),
-  ) %>%
-  separate(age_group, into = "min_age", sep = " -", remove = FALSE, convert = TRUE, extra = "drop") %>%
-  mutate(age_group = fct_reorder(age_group, min_age))
+    model_sex = fct_rev(model_sex)
+  )
 
 nanostring <- nanostring %>%
   select(-cluster_label)

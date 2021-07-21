@@ -6,12 +6,12 @@ MODEL-AD comprises two research centers with complementary approaches to generat
 
 ### How to use this site
 
-The AD Model Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
+The MODEL-AD Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
   
-**Pathology data**: View neuron and glial cell counts, plaque density and size, and amyloid levels by sex and age.  
+<a id = "link_pathology" href = "#" onclick="link('Pathology')">**Pathology data**</a>: View neuron and glial cell counts, plaque density and size, and amyloid levels by sex and age.  
 
-**Gene expression**: Explore all up- and down-regulated genes in a selected model or use the "Selected Genes" view to see which models show differential expression of a selected gene. 
+<a id = "link_gene_expression_volcano" href = "#" onclick="link('GeneExpressionVolcano')">**Gene expression**</a>: Explore all up- and down-regulated genes in a selected model or use the <a id = "link_gene_expression_heatmap" href = "#" onclick="link('GeneExpressionHeatmap')">"Selected Genes"</a> view to see which models show differential expression of a selected gene. 
 
-**Correlation with Human Disease**: Compare gene expression changes in mouse models with gene expression changes that occur in human disease. 
+<a id = "link_nanostring" href = "#" onclick="link('Nanostring')">**Correlation with Human Disease**</a>: Compare gene expression changes in mouse models with gene expression changes that occur in human disease. 
 
-Visit **Available Models and Data** to learn what data is currently available in the Explorer. New data and analyses will be incorporated as they are available. 
+Visit <a id = "link_available_models" href = "#" onclick="link('AvailableModels')">**Available Models and Data**</a> to learn what data is currently available in the Explorer. New data and analyses will be incorporated as they are available. 

@@ -14,6 +14,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
     value = "GeneExpressionHeatmap",
     shiny::div(
       class = "magora-page",
+      id = "gene_expression_heatmap",
       shiny::div(
         shiny::h3(class = "tab-title", glue::glue("Gene Expression: {title}")),
         shiny::includeMarkdown(app_sys("app", "www", "content", "gene_expression_selected", "content.md")),
@@ -25,6 +26,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
         class = "magora-row",
         shiny::column(
           width = 3,
+          id = "gene_expression_heatmap_gene_column",
           shinyWidgets::pickerInput(
             ns("gene"),
             "Genes",
@@ -32,6 +34,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
             multiple = TRUE,
             selected = "App",
             options = shinyWidgets::pickerOptions(
+              actionsBox = TRUE, deselectAllText = "Clear all",
               liveSearch = TRUE, size = 10,
               maxOptions = 5,
               noneSelectedText = "Enter gene(s) or select from list"
@@ -157,7 +160,7 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
     filtered_gene_expressions() %>%
       dplyr::filter(!is.na(.data$padj)) %>%
       complete_gene_expression_heatmap_data(input) %>%
-      magora_heatmap()
+      magora_heatmap(use_theme_sage = TRUE)
   })
 
   output$gene_expression_heatmap <- shiny::renderCachedPlot(

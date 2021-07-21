@@ -5,12 +5,12 @@
 \alias{nanostring}
 \title{Nanostring data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1860 rows and 8 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1800 rows and 8 columns.
 }
 \usage{
 nanostring
 }
 \description{
-A data set containing the correlation of nanostring log fold-change and AMP-AD human gene log fold-change, by module, model, sex, and age group.
+A data set containing the correlation of nanostring log fold-change and AMP-AD human gene log fold-change, by module, model, sex, and age.
 }
 \keyword{datasets}

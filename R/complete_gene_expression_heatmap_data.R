@@ -45,11 +45,15 @@ complete_gene_expression_heatmap_data <- function(data, input) {
     dplyr::arrange(.data$sex, .data$age_num) %>%
     dplyr::mutate(sex_age = forcats::fct_inorder(.data$sex_age))
 
-  # Split a long mouse model onto two lines if it's present
-
-  if ("APOE4TREM2" %in% input$mouse_model) {
+  # Split long mouse models onto two lines if they're present
+  if ("APOE4/Trem2" %in% input$mouse_model) {
     data <- data %>%
-      dplyr::mutate(mouse_model = forcats::fct_recode(.data$mouse_model, `APOE4\nTREM2` = "APOE4TREM2"))
+      dplyr::mutate(mouse_model = forcats::fct_recode(.data$mouse_model, `APOE4/\nTrem2` = "APOE4/Trem2"))
+  }
+
+  if ("3xTg-AD" %in% input$mouse_model) {
+    data <- data %>%
+      dplyr::mutate(mouse_model = forcats::fct_recode(.data$mouse_model, `3xTg-\nAD` = "3xTg-AD"))
   }
 
   data

@@ -4,12 +4,14 @@
 \alias{magora_heatmap}
 \title{Heatmap for gene expression data}
 \usage{
-magora_heatmap(data, log_foldchange_cutoff = 2.5)
+magora_heatmap(data, log_foldchange_cutoff = 2.5, use_theme_sage = TRUE)
 }
 \arguments{
 \item{data}{Input data (\code{\link{gene_expressions}}, filtered by a tissue and one or more genes.}
 
 \item{log_foldchange_cutoff}{Cutoff for log fold change, used in plot legend}
+
+\item{use_theme_sage}{Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.}
 }
 \value{
 A ggplot2 object.

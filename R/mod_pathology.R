@@ -27,7 +27,7 @@ mod_pathology_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("phenotype"),
             "Phenotype",
-            choices = sort(unique(magora::phenotypes[["phenotype"]]))
+            choices = stats::setNames(unique(magora::phenotypes[["phenotype"]]), unique(magora::phenotypes[["phenotype_display"]]))
           )
         ),
         shiny::column(
@@ -37,7 +37,7 @@ mod_pathology_ui <- function(id) {
             "Mouse model",
             choices = as.character(levels(magora::phenotypes[["mouse_model"]])),
             multiple = TRUE,
-            selected = c("C57BL6J", "5XFAD")
+            selected = c("C57BL/6J", "5xFAD")
           )
         ),
         shiny::column(
@@ -164,7 +164,7 @@ mod_pathology_server <- function(input, output, session) {
 
     filtered_phenotypes() %>%
       expand_mouse_model_factor_from_selection(input$mouse_model) %>%
-      magora_boxplot()
+      magora_boxplot(use_theme_sage = TRUE)
   })
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)
@@ -185,8 +185,9 @@ mod_pathology_server <- function(input, output, session) {
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%"),
-      click = ns("plot_click")
+      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      # Disable interactive plot for now
+      # click = ns("plot_click")
     ),
     color = "#D3DCEF"
     )
@@ -208,7 +209,7 @@ mod_pathology_server <- function(input, output, session) {
   output$drilldown_phenotypes <- plotly::renderPlotly({
     drilldown_phenotypes() %>%
       expand_mouse_model_factor_from_selection(input$plot_click$panelvar1) %>%
-      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title())
+      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title(), use_theme_sage = TRUE)
   })
 
   shiny::observeEvent(input$plot_click, {
