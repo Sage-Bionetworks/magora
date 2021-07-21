@@ -78,12 +78,15 @@ biospecimen_version <- 8
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
-biospecimen_metadata_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+# biospecimen_metadata_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
 
-biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
+# Using file from this issue for now: https://github.com/Sage-Bionetworks/magora/issues/79#issuecomment-883013873
+biospecimen_metadata <- read_csv(here::here("data-raw", "pathology", "UCI_5XFAD_biospecimen_metadata_mp.review.7.19.2021.csv")) %>%
+  # read_csv(biospecimen_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
-  select(individual_id, specimen_id, tissue)
+  select(individual_id, specimen_id, tissue) %>%
+  distinct()
 
 ## Individual metadata ----
 
@@ -98,6 +101,39 @@ individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_unit)
+
+# Additional mice that are missing from metadata
+# As per https://github.com/Sage-Bionetworks/magora/issues/79#issuecomment-883620298
+
+individual_metadata_additional <- c(4199, 4204, 4208, 4209, 4242, 4244, 4255, 4264, 4265, 4266, 4281, 4503)
+
+# Get their metadata from previous version:
+
+individual_previous_version <- 7
+
+individual_metadata_previous_path <- synGet(individual_id, version = individual_previous_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "keep.both")
+
+individual_metadata_previous <- read_csv(individual_metadata_previous_path[["path"]]) %>%
+  mutate(individualID = as.character(individualID)) %>%
+  clean_names()
+
+individual_metadata_additional <- individual_metadata_previous %>%
+  filter(individual_id %in% individual_metadata_additional) %>%
+  select(individual_id, sex, date_birth, genotype, genotype_background, date_death) %>%
+  mutate(across(c(date_birth, date_death), mdy),
+    age_interval = interval(date_birth, date_death),
+    age_death = round(age_interval / months(1))
+  ) %>%
+  select(-date_birth, -date_death, -age_interval) %>%
+  mutate(
+    individual_common_genotype = "5XFAD",
+    age_death_unit = "months"
+  )
+
+# Combine metadata
+
+individual_metadata <- individual_metadata %>%
+  bind_rows(individual_metadata_additional)
 
 ## Check missing IDs ----
 
@@ -166,6 +202,10 @@ phenotypes <- phenotype_data %>%
   inner_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
 
+# Check metadata didn't add any records (i.e. everything is 1 to 1)
+
+nrow(phenotypes) == nrow(phenotype_data)
+
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
 
 phenotypes <- phenotypes %>%
@@ -175,7 +215,6 @@ phenotypes <- phenotypes %>%
   ) %>%
   arrange(phenotype)
 
-
 # Save data ----
 
 usethis::use_data(phenotypes, overwrite = TRUE)
@@ -183,6 +222,10 @@ usethis::use_data(phenotypes, overwrite = TRUE)
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
 phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
-  map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
+  map(function(x) {
+    distinct(x, tissue) %>%
+      pull(tissue) %>%
+      sort()
+  })
 
 usethis::use_data(phenotype_tissue, overwrite = TRUE)
