@@ -13,10 +13,12 @@ synLogin()
 
 source(here::here("data-raw", "check_latest_version.R"))
 
-# Download and read phenotype data ----
+# 5xFAD ----
+
+## Download and read phenotype data ----
 
 # Read file that contains the phenotype name, synapse ID, field to use, and values of Stain to filter for
-phenotype_files <- read_csv(here::here("data-raw", "pathology", "5xfad_data_sources.csv"))
+phenotype_files <- read_csv(here::here("data-raw", "pathology", "5xFAD", "5xfad_data_sources.csv"))
 
 # Check that the latest version of all files is used
 walk2(phenotype_files[["syn_id"]], phenotype_files[["version"]], check_latest_version)
@@ -26,7 +28,7 @@ walk2(phenotype_files[["syn_id"]], phenotype_files[["version"]], check_latest_ve
 phenotype_distinct_files <- phenotype_files %>%
   distinct(syn_id, version)
 
-phenotype_paths <- map2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local"))
+phenotype_paths <- map2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology", "5xFAD"), ifcollision = "overwrite.local"))
 
 # Extract path and combine with phenotype_files df so that full path can be used, in case file name changes, rather than whatever is hardcoded in
 
@@ -69,37 +71,37 @@ phenotype_data <- phenotype_files %>%
   mutate(value = as.numeric(value)) %>%
   filter(!is.na(value))
 
-# Metadata ----
+## Metadata ----
 
-## Biospecimen metadata ----
+### Biospecimen metadata ----
 
 biospecimen_id <- "syn18876530"
 biospecimen_version <- 8
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
-biospecimen_metadata_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+biospecimen_metadata_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology", "5xFAD"), ifcollision = "overwrite.local")
 
 biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, specimen_id, tissue)
 
-## Individual metadata ----
+### Individual metadata ----
 
 individual_id <- "syn18880070"
 individual_version <- 10
 
 check_latest_version(individual_id, individual_version)
 
-individual_metadata_path <- synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology"), ifcollision = "overwrite.local")
+individual_metadata_path <- synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology", "5xFAD"), ifcollision = "overwrite.local")
 
 individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_unit)
 
-## Check missing IDs ----
+### Check missing IDs ----
 
 # Check which IDs are missing from metadata
 phenotype_data %>%
@@ -110,7 +112,7 @@ phenotype_data %>%
   anti_join(individual_metadata, by = "individual_id") %>%
   distinct(individual_id)
 
-# Clean data ----
+## Clean data ----
 
 biospecimen_metadata <- biospecimen_metadata %>%
   mutate(tissue = str_to_title(tissue))
@@ -159,7 +161,7 @@ individual_metadata <- individual_metadata %>%
     mouse_model = as_factor(mouse_model)
   )
 
-## Combine data ----
+### Combine data ----
 
 phenotypes <- phenotype_data %>%
   inner_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
@@ -174,7 +176,6 @@ phenotypes <- phenotypes %>%
     phenotype_units = glue::glue("{phenotype_display}\n({units})")
   ) %>%
   arrange(phenotype)
-
 
 # Save data ----
 
