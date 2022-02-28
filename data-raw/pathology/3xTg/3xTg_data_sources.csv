@@ -1,0 +1,13 @@
+phenotype,units,syn_id,version,file,field,stain_filter
+Microglia Cell Density ,#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,IBA1
+Plaque Density (Thio-S),#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,ThioS
+Plaque Size (Thio-S),mean object volume (cubic mm),syn26601504,1,UCI_3xTg-AD_pathology.csv,averageObjectVolume,ThioS
+Astrocyte Cell Density (GFAP),#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,GFAP
+Astrocyte Cell Density (S100B),#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,S100B
+phospho-tau (AT8),total object volume (cubic mm),syn26601504,1,UCI_3xTg-AD_pathology.csv,totalObjectVolume,AT8
+Tau (HT7),total object volume (cubic mm),syn26601504,1,UCI_3xTg-AD_pathology.csv,totalObjectVolume,HT7
+Dystrophic Neurites (LAMP1),total object volume (cubic mm),syn26601504,1,UCI_3xTg-AD_pathology.csv,totalObjectVolume,LAMP1
+Soluble Abeta40,pg/mg,syn25913411,7,UCI_3xtg_AD_assay_soluble_fraction_Abpanel.csv,Abeta40,
+Soluble Abeta42,pg/mg,syn25913411,7,UCI_3xtg_AD_assay_soluble_fraction_Abpanel.csv,Abeta42,
+Insoluble Abeta40,pg/mg,syn25913418,7,UCI_3xtg_AD_assay_insoluble_fraction_Abpanel.csv,Abeta40,
+Insoluble Abeta42,pg/mg,syn25913418,7,UCI_3xtg_AD_assay_insoluble_fraction_Abpanel.csv,Abeta42,
