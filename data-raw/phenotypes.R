@@ -163,19 +163,10 @@ individual_metadata <- individual_metadata %>%
 
 ### Combine data ----
 
-phenotypes <- phenotype_data %>%
+phenotypes_5xfad <- phenotype_data %>%
   inner_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
   inner_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
-
-# Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
-
-phenotypes <- phenotypes %>%
-  mutate(
-    phenotype_display = str_replace(phenotype, "Abeta", "A\u03B2"),
-    phenotype_units = glue::glue("{phenotype_display}\n({units})")
-  ) %>%
-  arrange(phenotype)
 
 # 3xTg ----
 
@@ -346,15 +337,16 @@ phenotypes_pool <- phenotype_data %>%
   inner_join(pool_metadata, by = "specimen_id") %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
 
-phenotypes <- phenotypes_non_pool %>%
+phenotypes_3xtg <- phenotypes_non_pool %>%
   bind_rows(phenotypes_pool)
 
 # Check none were lost
-nrow(phenotypes) == nrow(phenotype_data)
+nrow(phenotypes_3xtg) == nrow(phenotype_data)
 
 # Combine models ----
 
-# TODO
+phenotypes <- phenotypes_5xfad %>%
+  bind_rows(phenotypes_3xtg)
 
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
 
@@ -364,6 +356,9 @@ phenotypes <- phenotypes %>%
     phenotype_units = glue::glue("{phenotype_display}\n({units})")
   ) %>%
   arrange(phenotype)
+
+phenotypes <- phenotypes %>%
+  mutate(mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129F3")))
 
 # Save data ----
 
