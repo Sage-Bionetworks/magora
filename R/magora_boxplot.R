@@ -1,6 +1,6 @@
 #' Boxplot for phenotype data
 #'
-#' @param data Input data (\code{\link{phenotypes}} filtered by phenotype, mouse model, and tissue, with mouse models expanded via \code{\link{expand_mouse_model_factor_from_selection}}).
+#' @param data Input data (\code{\link{pathology}} filtered by phenotype, mouse model, and tissue, with mouse models expanded via \code{\link{expand_mouse_model_factor_from_selection}}).
 #' @inheritParams magora_volcano_plot
 #' @param use_theme_sage Whether to use \code{\link[sagethemes]{theme_sage}}. Defaults to TRUE.
 #'

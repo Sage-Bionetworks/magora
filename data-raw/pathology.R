@@ -350,12 +350,12 @@ phenotypes_3xtg <- phenotypes_3xtg %>%
 
 # Combine models ----
 
-phenotypes <- phenotypes_5xfad %>%
+pathology <- phenotypes_5xfad %>%
   bind_rows(phenotypes_3xtg)
 
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
 
-phenotypes <- phenotypes %>%
+pathology <- pathology %>%
   mutate(
     phenotype_display = str_replace(phenotype, "Abeta", "A\u03B2"),
     phenotype_units = glue::glue("{phenotype_display}\n({units})")
@@ -367,11 +367,11 @@ phenotypes <- phenotypes %>%
 
 # Save data ----
 
-usethis::use_data(phenotypes, overwrite = TRUE)
+usethis::use_data(pathology, overwrite = TRUE)
 
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
-phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
+pathology_tissue <- split(pathology, pathology$phenotype) %>%
   map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
 
-usethis::use_data(phenotype_tissue, overwrite = TRUE)
+usethis::use_data(pathology_tissue, overwrite = TRUE)

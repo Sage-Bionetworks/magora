@@ -13,7 +13,7 @@ magora_boxplot(
 )
 }
 \arguments{
-\item{data}{Input data (\code{\link{phenotypes}} filtered by phenotype, mouse model, and tissue, with mouse models expanded via \code{\link{expand_mouse_model_factor_from_selection}}).}
+\item{data}{Input data (\code{\link{pathology}} filtered by phenotype, mouse model, and tissue, with mouse models expanded via \code{\link{expand_mouse_model_factor_from_selection}}).}
 
 \item{type}{Type of plot - one of "ggplot2" or "plotly". Defaults to "ggplot2".}
 
