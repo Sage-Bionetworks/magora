@@ -343,6 +343,11 @@ phenotypes_3xtg <- phenotypes_non_pool %>%
 # Check none were lost
 nrow(phenotypes_3xtg) == nrow(phenotype_data)
 
+# Manually recode control to B6129
+
+phenotypes_3xtg <- phenotypes_3xtg %>%
+  mutate(mouse_model = ifelse(mouse_model == "B6129F3", "B6129", mouse_model))
+
 # Combine models ----
 
 phenotypes <- phenotypes_5xfad %>%
@@ -358,7 +363,7 @@ phenotypes <- phenotypes %>%
   arrange(phenotype)
 
 phenotypes <- phenotypes %>%
-  mutate(mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129F3")))
+  mutate(mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129")))
 
 # Save data ----
 
