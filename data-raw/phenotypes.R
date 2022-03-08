@@ -69,6 +69,44 @@ phenotype_data <- phenotype_files %>%
   mutate(value = as.numeric(value)) %>%
   filter(!is.na(value))
 
+# Convert IDs to lowercase, strip any punctuation, spaces
+
+tidy_ids <- function(data) {
+  if ("specimen_id" %in% names(data)) {
+    data %>%
+      mutate(
+        specimen_id_original = specimen_id,
+        individual_id_original = individual_id
+      ) %>%
+      mutate(across(
+        c(specimen_id, individual_id),
+        function(x) {
+          x %>%
+            tolower() %>%
+            str_remove_all("[[:punct:]]") %>%
+            str_remove_all(" ")
+        }
+      ))
+  } else {
+    data %>%
+      mutate(
+        individual_id_original = individual_id
+      ) %>%
+      mutate(across(
+        c(individual_id),
+        function(x) {
+          x %>%
+            tolower() %>%
+            str_remove_all("[[:punct:]]") %>%
+            str_remove_all(" ")
+        }
+      ))
+  }
+}
+
+phenotype_data <- phenotype_data %>%
+  tidy_ids()
+
 # Metadata ----
 
 ## Biospecimen metadata ----
@@ -85,6 +123,9 @@ biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
   clean_names() %>%
   select(individual_id, specimen_id, tissue)
 
+biospecimen_metadata <- biospecimen_metadata %>%
+  tidy_ids()
+
 ## Individual metadata ----
 
 individual_id <- "syn18880070"
@@ -98,6 +139,9 @@ individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
   select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_units)
+
+individual_metadata <- individual_metadata %>%
+  tidy_ids()
 
 ## Check missing IDs ----
 
@@ -183,6 +227,10 @@ usethis::use_data(phenotypes, overwrite = TRUE)
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
 phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
-  map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
+  map(function(x) {
+    distinct(x, tissue) %>%
+      pull(tissue) %>%
+      sort()
+  })
 
 usethis::use_data(phenotype_tissue, overwrite = TRUE)
