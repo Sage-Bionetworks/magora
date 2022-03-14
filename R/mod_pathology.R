@@ -33,11 +33,11 @@ mod_pathology_ui <- function(id) {
         shiny::column(
           width = 4,
           shinyWidgets::pickerInput(
-            ns("mouse_model"),
+            ns("mouse_model_group"),
             "Mouse model",
-            choices = as.character(levels(magora::pathology[["mouse_model"]])),
+            choices = as.character(levels(magora::pathology[["mouse_model_group"]])),
             multiple = TRUE,
-            selected = c("C57BL/6J", "5xFAD")
+            selected = c("5xFAD")
           )
         ),
         shiny::column(
@@ -142,15 +142,19 @@ mod_pathology_server <- function(input, output, session) {
 
   filtered_pathology <- shiny::reactive({
     shiny::validate(
-      shiny::need(!is.null(input$mouse_model), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_model_group), message = "Please select one or more mouse lines.")
     )
 
     magora::pathology %>%
       dplyr::filter(
         .data$phenotype %in% input$phenotype,
-        .data$mouse_model %in% input$mouse_model,
+        .data$mouse_model_group %in% input$mouse_model_group,
         .data$tissue %in% input$tissue
       )
+  })
+
+  mouse_models <- shiny::reactive({
+    unlist(magora::pathology_mouse_models[input$mouse_model_group])
   })
 
   # Generate plot ----
@@ -163,7 +167,7 @@ mod_pathology_server <- function(input, output, session) {
     )
 
     filtered_pathology() %>%
-      expand_mouse_model_factor_from_selection(input$mouse_model) %>%
+      expand_mouse_model_factor_from_selection(mouse_models()) %>%
       magora_boxplot(use_theme_sage = TRUE)
   })
 
@@ -171,8 +175,8 @@ mod_pathology_server <- function(input, output, session) {
 
   phenotype_plot_dims <- shiny::reactive({
     list(
-      nrow = ceiling(length(input$mouse_model) / 2),
-      ncol = ifelse(length(input$mouse_model) == 1, 1, 2)
+      nrow = ceiling(length(mouse_models()) / 2),
+      ncol = ifelse(length(mouse_models()) == 1, 1, 2)
     )
   })
 
@@ -180,7 +184,7 @@ mod_pathology_server <- function(input, output, session) {
 
     # Validating mouse line input twice, otherwise there's a quartz error in computing the plot height below
     shiny::validate(
-      shiny::need(!is.null(input$mouse_model), message = "Please select one or more mouse lines.")
+      shiny::need(!is.null(input$mouse_model_group), message = "Please select one or more mouse lines.")
     )
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
@@ -250,7 +254,7 @@ mod_pathology_server <- function(input, output, session) {
   })
 
   save_name <- shiny::reactive({
-    download_name("phenotype", input$phenotype, input$mouse_model, input$tissue)
+    download_name("phenotype", input$phenotype, input$mouse_model_group, input$tissue)
   })
 
   # Data
