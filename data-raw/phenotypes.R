@@ -69,43 +69,19 @@ phenotype_data <- phenotype_files %>%
   mutate(value = as.numeric(value)) %>%
   filter(!is.na(value))
 
-# Convert IDs to lowercase, strip any punctuation, spaces
+# Pull identifier (c, h, p) out of specimen_id
 
-tidy_ids <- function(data) {
-  if ("specimen_id" %in% names(data)) {
-    data %>%
-      mutate(
-        specimen_id_original = specimen_id,
-        individual_id_original = individual_id
-      ) %>%
-      mutate(across(
-        c(specimen_id, individual_id),
-        function(x) {
-          x %>%
-            tolower() %>%
-            str_remove_all("[[:punct:]]") %>%
-            str_remove_all(" ")
-        }
-      ))
-  } else {
-    data %>%
-      mutate(
-        individual_id_original = individual_id
-      ) %>%
-      mutate(across(
-        c(individual_id),
-        function(x) {
-          x %>%
-            tolower() %>%
-            str_remove_all("[[:punct:]]") %>%
-            str_remove_all(" ")
-        }
-      ))
-  }
+add_specimen_identifier <- function(data) {
+  data %>%
+  mutate(specimen_identifier = case_when(
+    str_detect(specimen_id, "h") ~ "h",
+    str_detect(specimen_id, "c") ~ "c",
+    str_detect(specimen_id, "p") ~ "p"
+  ))
 }
 
 phenotype_data <- phenotype_data %>%
-  tidy_ids()
+  add_specimen_identifier()
 
 # Metadata ----
 
@@ -124,7 +100,7 @@ biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
   select(individual_id, specimen_id, tissue)
 
 biospecimen_metadata <- biospecimen_metadata %>%
-  tidy_ids()
+  add_specimen_identifier()
 
 ## Individual metadata ----
 
@@ -143,12 +119,70 @@ individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
 individual_metadata <- individual_metadata %>%
   tidy_ids()
 
+## Pull identifier information out of specimen_id ----
+
+# Only relevant info is whether it contains "c" or "h" - the rest of the specimen_id info after the individual_id is not needed
+
+# Check that none contain BOTH "h" and "c"
+
+phenotype_data %>%
+  filter(
+    str_detect(specimen_id, "h"),
+    str_detect(specimen_id, "c")
+  ) %>%
+  nrow() == 0
+
+biospecimen_metadata %>%
+  filter(
+    str_detect(specimen_id, "h"),
+    str_detect(specimen_id, "c")
+  ) %>%
+  nrow() == 0
+
+# Derive identifier column
+
+phenotype_data <- phenotype_data %>%
+  mutate(specimen_identifier = case_when(
+    str_detect(specimen_id, "h") ~ "h",
+    str_detect(specimen_id, "c") ~ "c"
+  ))
+
+biospecimen_metadata <- biospecimen_metadata %>%
+  mutate(specimen_identifier = case_when(
+    str_detect(specimen_id, "h") ~ "h",
+    str_detect(specimen_id, "c") ~ "c"
+  ))
+
+# Check identifier is present for all records
+
+phenotype_data %>%
+  filter(is.na(specimen_identifier)) %>%
+  nrow() == 0
+
+biospecimen_metadata %>%
+  filter(is.na(specimen_identifier)) %>%
+  nrow() == 0
+
+# Some of the biospecimen have "p" instead, but they're not present in the actual data, so seems fine
+
+# Check there is no duplication of identifiers for a given individual_id
+
+phenotype_data %>%
+  distinct(phenotype, individual_id, specimen_id, specimen_identifier) %>%
+  get_dupes(phenotype, individual_id, specimen_identifier)
+
+biospecimen_metadata %>%
+  get_dupes(individual_id, specimen_identifier)
+
 ## Check missing IDs ----
 
 # Check which IDs are missing from metadata
+# Join on individual_id and specimen_identifier (c/h) only, instead of using specimen_id
 phenotype_data %>%
-  anti_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
-  distinct(individual_id, specimen_id)
+  anti_join(biospecimen_metadata, by = c("individual_id", "specimen_identifier")) %>%
+  distinct(individual_id, specimen_identifier)
+
+# Only the 4XXX series is missing, those will get added into the metadata soon
 
 phenotype_data %>%
   anti_join(individual_metadata, by = "individual_id") %>%
