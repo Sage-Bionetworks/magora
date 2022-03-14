@@ -37,7 +37,7 @@ mod_pathology_ui <- function(id) {
             "Mouse model",
             choices = as.character(levels(magora::pathology[["mouse_model_group"]])),
             multiple = TRUE,
-            selected = c("5xFAD")
+            selected = c("5xFAD", "3xTg-AD")
           )
         ),
         shiny::column(
