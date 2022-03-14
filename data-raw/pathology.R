@@ -358,7 +358,7 @@ pathology <- bind_rows(
 ) %>%
   mutate(
     mouse_model_group = as_factor(mouse_model_group),
-    mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129F3"))
+    mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129"))
   )
 
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
@@ -370,7 +370,7 @@ pathology <- pathology %>%
   ) %>%
   arrange(phenotype)
 
-phenotypes <- phenotypes %>%
+pathology <- pathology %>%
   mutate(mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129")))
 
 # Save data ----
