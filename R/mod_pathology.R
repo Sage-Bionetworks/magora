@@ -125,7 +125,7 @@ mod_pathology_server <- function(input, output, session) {
   # Update tissue options available based on phenotype selected -----
   shiny::observeEvent(input$phenotype, {
     shiny::req(pathology_r() == 1) # Only updating the tissue when the reactive flag says to
-    available_tissue <- magora::phenotype_tissue[[input$phenotype]]
+    available_tissue <- magora::pathology_tissue[[input$phenotype]]
 
     # If the tissue previously selected is still available, keep it selected
     selected_tissue <- ifelse(input$tissue %in% available_tissue, input$tissue, available_tissue[[1]])
@@ -160,7 +160,7 @@ mod_pathology_server <- function(input, output, session) {
   # Generate plot ----
 
   phenotype_plot <- shiny::reactive({
-    shiny::req(input$tissue %in% magora::phenotype_tissue[[input$phenotype]])
+    shiny::req(input$tissue %in% magora::pathology_tissue[[input$phenotype]])
 
     shiny::validate(
       shiny::need(nrow(filtered_pathology()) > 0, message = "There is no data for the selected combination.")
