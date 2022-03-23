@@ -350,28 +350,43 @@ phenotypes_3xtg <- phenotypes_3xtg %>%
 
 # Combine models ----
 
-phenotypes <- phenotypes_5xfad %>%
-  bind_rows(phenotypes_3xtg)
+pathology <- bind_rows(
+  phenotypes_5xfad %>%
+    mutate(mouse_model_group = "5xFAD"),
+  phenotypes_3xtg %>%
+    mutate(mouse_model_group = "3xTg-AD")
+) %>%
+  mutate(
+    mouse_model_group = as_factor(mouse_model_group),
+    mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129"))
+  )
 
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
 
-phenotypes <- phenotypes %>%
+pathology <- pathology %>%
   mutate(
     phenotype_display = str_replace(phenotype, "Abeta", "A\u03B2"),
     phenotype_units = glue::glue("{phenotype_display}\n({units})")
   ) %>%
   arrange(phenotype)
 
-phenotypes <- phenotypes %>%
+pathology <- pathology %>%
   mutate(mouse_model = fct_relevel(mouse_model, c("5xFAD", "C57BL/6J", "3xTg-AD", "B6129")))
 
 # Save data ----
 
-usethis::use_data(phenotypes, overwrite = TRUE)
+usethis::use_data(pathology, overwrite = TRUE)
 
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
-phenotype_tissue <- split(phenotypes, phenotypes$phenotype) %>%
+pathology_tissue <- split(pathology, pathology$phenotype) %>%
   map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
 
-usethis::use_data(phenotype_tissue, overwrite = TRUE)
+usethis::use_data(pathology_tissue, overwrite = TRUE)
+
+# Separately save mouse model (variant and control) for each group, for easily selecting just variant & getting both
+
+pathology_mouse_models <- split(pathology, pathology$mouse_model_group) %>%
+  map(function(x) x %>% arrange(mouse_model) %>% pull(mouse_model) %>% unique() %>% as.character())
+
+usethis::use_data(pathology_mouse_models, overwrite = TRUE)

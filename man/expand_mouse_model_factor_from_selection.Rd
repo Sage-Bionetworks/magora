@@ -7,7 +7,7 @@
 expand_mouse_model_factor_from_selection(data, mouse_model)
 }
 \arguments{
-\item{data}{Input data (e.g. \code{\link{phenotypes}} filtered by phenotype, mouse model, and tissue).}
+\item{data}{Input data (e.g. \code{\link{pathology}} filtered by phenotype, mouse model, and tissue).}
 
 \item{mouse_model}{Mouse models to use as factor levels.}
 }
