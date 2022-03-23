@@ -1,12 +1,12 @@
-### About MODEL-AD
+### About Model AD
 
-MODEL-AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer's disease in humans. Mouse models are phenotyped using standardized neuropathology, 'omics, and behavioral measures.
+Model AD comprises two research centers with complementary approaches to generating new mouse models that more faithfully recapitulate features of Alzheimer's disease in humans. Mouse models are phenotyped using standardized neuropathology, 'omics, and behavioral measures.
 
 <div class = "start-divider"></div>
 
 ### How to use this site
 
-The MODEL-AD Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
+The Model AD Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
   
 <a id = "link_pathology" href = "#" onclick="link('Pathology')">**Pathology data**</a>: View neuron and glial cell counts, plaque density and size, and amyloid levels by sex and age.  
 
