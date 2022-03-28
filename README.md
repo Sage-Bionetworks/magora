@@ -31,7 +31,7 @@ magora::run_app()
 If you use data from magora, please acknowledge the source of this data
 in any publications by including the following statement in your
 manuscript: “The results published here are in whole or in part based on
-data obtained from the MODEL-AD Mouse Explorer. The MODEL-AD Centers
+data obtained from the Model AD Mouse Explorer. The Model AD Centers
 were established with funding from The National Institute on Aging (U54
 AG054345-01 and AG054349). Aging studies are also supported by the
 Nathan Shock Center of Excellence in the Basic Biology of Aging (NIH P30
