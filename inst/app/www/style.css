@@ -223,6 +223,19 @@ div.divflex {
    background-color: transparent;
 }
 
+/* Collapsed navbar in small layout */
+/* Say "MENU" instead of hamburger menu icon, which a lot of people don't understand */
+
+/* Hide hamburger */
+.icon-bar {
+  display: none !important;
+}
+
+/* Text instead */
+.navbar-toggle:before {
+  content: "Menu";
+}
+
 /* ------ Dropdown menu ------ */
 
 .dropdown-menu {
