@@ -102,10 +102,6 @@ b, strong {
    margin-bottom: 100px;
 }
 
-body {
-   min-width: 800px;
-}
-
 .magora-topbar {
    height: 6px;
    background: transparent linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) repeat scroll 0 0;
