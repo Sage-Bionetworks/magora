@@ -184,14 +184,20 @@ div.divflex {
 
 /* ------ Navbar ------ */
 
-/* Manually setting width so navbar items are centred - this isn't perfect yet */
-.navbar .navbar-nav {
-    display: inline-block;
-    float: none;
-}
+/* Center navbar items - only when navbar isn't collapsed, allow them to stack on top of each other when it is collapsed */
 
-.navbar .navbar-container {
-    text-align: center;
+@media (min-width: 768px) {
+   .navbar-nav {
+      float: none;
+      margin: 0 auto;
+      display: block;
+      text-align: center;
+   }
+
+   .navbar-nav > li {
+      display: inline-block;
+      float:none;
+   }
 }
 
 /* Bold active tab name */
@@ -224,7 +230,7 @@ div.divflex {
 }
 
 /* Collapsed navbar in small layout */
-/* Say "MENU" instead of hamburger menu icon, which a lot of people don't understand */
+/* "Menu" instead of hamburger menu icon, which a lot of people don't understand */
 
 /* Hide hamburger */
 .icon-bar {

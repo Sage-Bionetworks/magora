@@ -12,7 +12,8 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     shiny::navbarPage(
       id = "page",
-      title = mod_header_ui(),
+      title = NULL,
+      header = mod_header_ui(),
       collapsible = TRUE,
       mod_start_ui(),
       mod_pathology_ui("pathology"),

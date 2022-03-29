@@ -1,10 +1,8 @@
 #' Header UI
 #'
 mod_header_ui <- function() {
-  shiny::div(
-    class = "container-fluid",
     shiny::div(
-      id = "header",
+      class = "container-fluid magora-header",
       shiny::div(class = "magora-topbar"),
       shiny::div(
         class = "magora-brand",
@@ -20,5 +18,4 @@ mod_header_ui <- function() {
         )
       )
     )
-  )
 }
