@@ -271,3 +271,19 @@ div.divflex {
 #gene_expression_heatmap #gene_expression_heatmap_gene_column .actions-btn.bs-deselect-all.btn.btn-default {
    width: 100%;
 }
+
+/* Handle overflow of bookmark/download buttons text, cut off with ellipsis */
+.magora-button {
+   width: 100%;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+/* Give buttons margin and decrease width on collapsed layout */
+
+@media (max-width: 767px) {
+   .magora-button {
+      width: 50%;
+      margin-bottom: 15px;
+   }
+}

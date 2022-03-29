@@ -49,30 +49,28 @@ mod_pathology_ui <- function(id) {
           )
         )
       ),
-      shiny::fluidRow(
-        class = "magora-row",
-        shiny::column(
-          width = 6,
-          offset = 6,
-          shiny::column(
-            width = 4,
-            shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
-          ),
-          shiny::column(
-            width = 4,
-            mod_download_data_ui(ns("download_data"))
-          ),
-          shiny::column(
-            width = 4,
-            mod_download_plot_ui(ns("download_plot"))
-          )
+      shiny::column(
+        width = 2,
+        offset = 6,
+        shiny::bookmarkButton(
+          id = ns("bookmark"),
+          label = "Bookmark",
+          class = "magora-button"
         )
       ),
       shiny::column(
-        width = 12,
-        align = "center",
-        shiny::uiOutput(ns("phenotype_plot_ui"))
+        width = 2,
+        mod_download_data_ui(ns("download_data"))
+      ),
+      shiny::column(
+        width = 2,
+        mod_download_plot_ui(ns("download_plot"))
       )
+    ),
+    shiny::column(
+      width = 12,
+      align = "center",
+      shiny::uiOutput(ns("phenotype_plot_ui"))
     )
   )
 }
