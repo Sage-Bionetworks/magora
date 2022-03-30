@@ -65,12 +65,12 @@ mod_pathology_ui <- function(id) {
       shiny::column(
         width = 2,
         mod_download_plot_ui(ns("download_plot"))
+      ),
+      shiny::column(
+        width = 12,
+        align = "center",
+        shiny::uiOutput(ns("phenotype_plot_ui"))
       )
-    ),
-    shiny::column(
-      width = 12,
-      align = "center",
-      shiny::uiOutput(ns("phenotype_plot_ui"))
     )
   )
 }
@@ -187,7 +187,7 @@ mod_pathology_server <- function(input, output, session) {
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-      width = ifelse(phenotype_plot_dims()[["ncol"]] == 1, "60%", "100%")
+      width = "800px"
       # Disable interactive plot for now
       # click = ns("plot_click")
     ),
