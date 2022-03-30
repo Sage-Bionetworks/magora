@@ -187,7 +187,7 @@ mod_pathology_server <- function(input, output, session) {
 
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
-      width = "800px"
+      width = "800px" # We always show the model with the control, so it's fine to fix at 800px
       # Disable interactive plot for now
       # click = ns("plot_click")
     ),

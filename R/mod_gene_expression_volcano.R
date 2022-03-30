@@ -40,26 +40,26 @@ mod_gene_expression_volcano_ui <- function(id) {
             multiple = FALSE
           )
         ),
-        shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", class = "magora-button")
+        shiny::div(
+          class = "top-align-to-input",
+          shiny::column(
+            width = 2,
+            shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", class = "magora-button")
+          ),
+          shiny::column(
+            width = 2,
+            mod_download_data_ui(ns("download_data"))
+          ),
+          shiny::column(
+            width = 2,
+            mod_download_plot_ui(ns("download_plot"))
+          ),
         ),
         shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_data_ui(ns("download_data"))
-        ),
-        shiny::column(
-          width = 2,
-          style = "margin-top: 27.85px;",
-          mod_download_plot_ui(ns("download_plot"))
-        ),
-      ),
-      shiny::column(
-        width = 12,
-        align = "center",
-        shiny::uiOutput(ns("gene_expression_plot_ui"))
+          width = 12,
+          align = "center",
+          shiny::uiOutput(ns("gene_expression_plot_ui"))
+        )
       )
     )
   )

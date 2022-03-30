@@ -279,11 +279,21 @@ div.divflex {
    text-overflow: ellipsis;
 }
 
+.top-align-to-input .magora-button {
+   margin-top: 31px;
+}
+
 /* Give buttons margin and decrease width on collapsed layout */
 
 @media (max-width: 767px) {
    .magora-button {
-      width: 50%;
+      width: 300px; /* Same as other bootstrap inputs in this layout */
       margin-bottom: 15px;
+      margin-top: 0;
+   }
+
+   /* Removes top margin set on Gene Expression: All Genes page, which vertically aligns the buttons with the other inputs - not necessary in the collapsed layout since they are all flowing vertically */
+   .top-align-to-input .magora-button {
+      margin-top: 0;
    }
 }
