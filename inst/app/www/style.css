@@ -116,6 +116,12 @@ b, strong {
    padding-bottom: 24px;
 }
 
+.magora-hr {
+   margin-top: 20px;
+   margin-bottom: 20px;
+   border-top: 1px solid #eee;
+}
+
 /* Class "row" has margin-right and -left -15px - set to 0 to retain consistent widths with other divs */
 .magora-row {
    margin-right: 0;

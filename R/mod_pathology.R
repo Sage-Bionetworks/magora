@@ -12,6 +12,7 @@ mod_pathology_ui <- function(id) {
   shiny::tabPanel(
     title,
     value = title,
+    shiny::div(class = "magora-hr"),
     shiny::div(
       class = "magora-page",
       shiny::div(

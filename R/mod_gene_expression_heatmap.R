@@ -12,6 +12,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
   shiny::tabPanel(
     title,
     value = "GeneExpressionHeatmap",
+    shiny::div(class = "magora-hr"),
     shiny::div(
       class = "magora-page",
       id = "gene_expression_heatmap",

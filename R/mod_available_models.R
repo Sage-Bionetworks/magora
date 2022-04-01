@@ -14,6 +14,7 @@ mod_available_models_ui <- function(id) {
   shiny::tabPanel(
     title,
     value = "AvailableModels",
+    shiny::div(class = "magora-hr"),
     shiny::div(
       class = "magora-page",
       shiny::div(
