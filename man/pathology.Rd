@@ -5,7 +5,7 @@
 \alias{pathology}
 \title{Pathology data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1964 rows and 12 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3423 rows and 12 columns.
 }
 \usage{
 pathology
