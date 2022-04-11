@@ -75,8 +75,8 @@ phenotype_data <- phenotype_files %>%
 
 ### Biospecimen metadata ----
 
-biospecimen_id <- "syn28559120"
-biospecimen_version <- 2
+biospecimen_id <- "syn18876530"
+biospecimen_version <- 9
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
