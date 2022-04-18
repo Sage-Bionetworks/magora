@@ -82,8 +82,7 @@ mod_download_plot_server <- function(input, output, session, plotId, data, save_
 magora_download_button <- function(outputId, label = "Download", class = NULL) {
   shiny::tags$a(
     id = outputId,
-    class = paste("btn btn-default shiny-download-link", class),
-    style = "width: 100%",
+    class = paste("btn btn-default shiny-download-link magora-button", class),
     href = "", target = "_blank", download = NA, shiny::icon("download", lib = "glyphicon"), label
   )
 }
@@ -94,8 +93,7 @@ magora_download_plot_button <- function(id, plotId, save_name) {
     id = id,
     shiny::icon("download", lib = "glyphicon"),
     "Save plot",
-    class = paste("btn btn-default shiny-download-link"),
-    style = "width: 100%",
+    class = paste("btn btn-default shiny-download-link magora-button"),
     onclick = glue::glue('var a = document.createElement("a"); a.href = $("#{plotId}").find("img").attr("src"); a.download = "{save_name()}.png"; a.click(); ')
   )
 }

@@ -10,9 +10,12 @@ app_ui <- function(request) {
       Shiny.onInputChange("page_link", page)
       }')),
     golem_add_external_resources(),
-    magoraPage(
+    mod_header_ui(),
+    shiny::navbarPage(
       id = "page",
-      header = mod_header_ui(),
+      title = NULL,
+      header = NULL,
+      collapsible = TRUE,
       mod_start_ui(),
       mod_pathology_ui("pathology"),
       shiny::navbarMenu(
