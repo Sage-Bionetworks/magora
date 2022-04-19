@@ -76,7 +76,7 @@ phenotype_data <- phenotype_files %>%
 ### Biospecimen metadata ----
 
 biospecimen_id <- "syn18876530"
-biospecimen_version <- 8
+biospecimen_version <- 9
 
 check_latest_version(biospecimen_id, biospecimen_version)
 
@@ -87,10 +87,35 @@ biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
   clean_names() %>%
   select(individual_id, specimen_id, tissue)
 
+#### Check metadata has correct tissue identifier ---
+
+correct_tissue_identifier <- tibble::tribble(
+  ~tissue, ~specimen_identifier,
+  "hippocampus", "h",
+  "cerebral cortex", "c",
+  "plasma", "p"
+)
+
+biospecimen_metadata %>%
+  mutate(
+    specimen_id = tolower(specimen_id),
+    specimen_identifier = case_when(
+      str_detect(specimen_id, "c") ~ "c",
+      str_detect(specimen_id, "h") ~ "h",
+      str_detect(specimen_id, "p") ~ "p"
+    )
+  ) %>%
+  anti_join(correct_tissue_identifier, by = c("tissue", "specimen_identifier"))
+
+# There is only one issue, 463rc - but it does not appear in the actual data, so no issue.
+
+phenotype_data %>%
+  filter(specimen_id == "463rc")
+
 ### Individual metadata ----
 
 individual_id <- "syn18880070"
-individual_version <- 10
+individual_version <- 12
 
 check_latest_version(individual_id, individual_version)
 
@@ -99,7 +124,7 @@ individual_metadata_path <- synGet(individual_id, version = individual_version, 
 individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
   mutate(individualID = as.character(individualID)) %>%
   clean_names() %>%
-  select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_unit)
+  select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_units)
 
 ### Check missing IDs ----
 
@@ -107,6 +132,19 @@ individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
 phenotype_data %>%
   anti_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
   distinct(individual_id, specimen_id)
+
+# 290Icdf and 278Icis are known to be missing - for these two, use the fact that the "c" in the identifier is "cerebral cortex", and manually add it to the metadata
+
+missing_biospecimen_metdata <- tribble(
+  ~individual_id, ~specimen_id, ~tissue,
+  "290", "290Icdf", "cerebral cortex",
+  "278", "278Icis", "cerebral cortex"
+)
+
+biospecimen_metadata <- biospecimen_metadata %>%
+  bind_rows(
+    missing_biospecimen_metdata
+  )
 
 phenotype_data %>%
   anti_join(individual_metadata, by = "individual_id") %>%
@@ -120,8 +158,8 @@ biospecimen_metadata <- biospecimen_metadata %>%
 # Check that all age death units are "months"
 
 individual_metadata %>%
-  count(age_death_unit) %>%
-  pull(age_death_unit) == "months"
+  count(age_death_units) %>%
+  pull(age_death_units) == "months"
 
 # Check ages
 
@@ -380,13 +418,23 @@ usethis::use_data(pathology, overwrite = TRUE)
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
 pathology_tissue <- split(pathology, pathology$phenotype) %>%
-  map(function(x) distinct(x, tissue) %>% pull(tissue) %>% sort())
+  map(function(x) {
+    distinct(x, tissue) %>%
+      pull(tissue) %>%
+      sort()
+  })
 
 usethis::use_data(pathology_tissue, overwrite = TRUE)
 
 # Separately save mouse model (variant and control) for each group, for easily selecting just variant & getting both
 
 pathology_mouse_models <- split(pathology, pathology$mouse_model_group) %>%
-  map(function(x) x %>% arrange(mouse_model) %>% pull(mouse_model) %>% unique() %>% as.character())
+  map(function(x) {
+    x %>%
+      arrange(mouse_model) %>%
+      pull(mouse_model) %>%
+      unique() %>%
+      as.character()
+  })
 
 usethis::use_data(pathology_mouse_models, overwrite = TRUE)
