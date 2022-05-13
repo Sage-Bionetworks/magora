@@ -1,5 +1,5 @@
 phenotype,units,syn_id,version,file,field,stain_filter
-Microglia Cell Density ,#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,IBA1
+Microglia Cell Density (IBA1),#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,IBA1
 Plaque Density (Thio-S),#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,ThioS
 Plaque Size (Thio-S),mean object volume (cubic mm),syn26601504,1,UCI_3xTg-AD_pathology.csv,averageObjectVolume,ThioS
 Astrocyte Cell Density (GFAP),#objects/ sqmm,syn26601504,1,UCI_3xTg-AD_pathology.csv,objectDensity,GFAP
