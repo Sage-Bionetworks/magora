@@ -557,21 +557,21 @@ phenotypes_trem2_r47h_nss <- phenotype_data %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
 
 # Combine models ----
-# Also set factor order, for plots (individually for each model)
+# Also set mouse model factor order, for plots (individually for each model)
 
 pathology <- list(
   "5xFAD" = phenotypes_5xfad %>%
     mutate(
       mouse_model_group = "5xFAD",
       mouse_model = fct_relevel(mouse_model, c(
-        "5xFAD", "C57BL/6J"
+        "C57BL/6J", "5xFAD"
       ))
     ),
   "3xTg-AD" = phenotypes_3xtg %>%
     mutate(
       mouse_model_group = "3xTg-AD",
       mouse_model = fct_relevel(mouse_model, c(
-        "3xTg-AD", "B6129"
+        "B6129", "3xTg-AD"
       ))
     ),
   "Trem2-R47H_NSS" = phenotypes_trem2_r47h_nss %>%
@@ -582,6 +582,20 @@ pathology <- list(
       ))
     )
 )
+
+# Set age factor (collectively, for all data)
+
+age_levels <- pathology %>%
+  bind_rows() %>%
+  pull(age) %>%
+  levels()
+
+pathology <- pathology %>%
+  map(function(x) {
+    x %>%
+      mutate(age = fct_expand(age, age_levels),
+             age = fct_relevel(age, age_levels))
+  })
 
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
 
@@ -602,6 +616,8 @@ usethis::use_data(pathology, overwrite = TRUE)
 # Separately save tissue available for each phenotype, for easily changing inputs available
 
 pathology_tissue <- pathology %>%
+  bind_rows() %>%
+  split(.$phenotype) %>%
   map(function(x) {
     distinct(x, tissue) %>%
       pull(tissue) %>%

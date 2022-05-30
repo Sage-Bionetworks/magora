@@ -28,7 +28,7 @@ mod_pathology_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("phenotype"),
             "Phenotype",
-            choices = stats::setNames(unique(magora::pathology[["phenotype"]]), unique(magora::pathology[["phenotype_display"]]))
+            choices = stats::setNames(unique(dplyr::bind_rows(magora::pathology)[["phenotype"]]), unique(dplyr::bind_rows(magora::pathology)[["phenotype_display"]]))
           )
         ),
         shiny::column(
@@ -36,9 +36,9 @@ mod_pathology_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("mouse_model_group"),
             "Mouse model",
-            choices = as.character(levels(magora::pathology[["mouse_model_group"]])),
+            choices = names(magora::pathology),
             multiple = TRUE,
-            selected = c("5xFAD", "3xTg-AD")
+            selected = c("5xFAD", "3xTg-AD", "Trem2-R47H_NSS")
           )
         ),
         shiny::column(
@@ -46,7 +46,7 @@ mod_pathology_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("tissue"),
             "Tissue",
-            choices = unique(magora::pathology[["tissue"]])
+            choices = unique(dplyr::bind_rows(magora::pathology)[["tissue"]])
           )
         )
       ),
@@ -144,11 +144,15 @@ mod_pathology_server <- function(input, output, session) {
       shiny::need(!is.null(input$mouse_model_group), message = "Please select one or more mouse lines.")
     )
 
-    magora::pathology %>%
-      dplyr::filter(
-        .data$phenotype %in% input$phenotype,
-        .data$mouse_model_group %in% input$mouse_model_group,
-        .data$tissue %in% input$tissue
+    magora::pathology[input$mouse_model_group] %>%
+      purrr::map(
+        function(x) {
+          x %>%
+          dplyr::filter(
+            .data$phenotype %in% input$phenotype,
+            .data$tissue %in% input$tissue
+          )
+        }
       )
   })
 
@@ -161,12 +165,17 @@ mod_pathology_server <- function(input, output, session) {
   phenotype_plot <- shiny::reactive({
     shiny::req(input$tissue %in% magora::pathology_tissue[[input$phenotype]])
 
+    models_with_data <- filtered_pathology() %>%
+      purrr::map_lgl(function(x) {
+        nrow(x) > 0
+      }) %>%
+      sum()
+
     shiny::validate(
-      shiny::need(nrow(filtered_pathology()) > 0, message = "There is no data for the selected combination.")
+      shiny::need(models_with_data > 0, message = "There is no data for the selected combination.")
     )
 
     filtered_pathology() %>%
-      expand_mouse_model_factor_from_selection(mouse_models()) %>%
       magora_boxplot(input$mouse_model_group, use_theme_sage = TRUE)
   })
 
@@ -199,6 +208,7 @@ mod_pathology_server <- function(input, output, session) {
   phenotype_data_download <- shiny::reactive({
     # Select and rename columns
     data_cols <- filtered_pathology() %>%
+      dplyr::bind_rows() %>%
       dplyr::select(
         `Mouse Model` = .data$mouse_model,
         Tissue = .data$tissue,
