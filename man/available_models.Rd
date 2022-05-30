@@ -5,7 +5,7 @@
 \alias{available_models}
 \title{Available models and data}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 16 rows and 9 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 9 columns.
 }
 \usage{
 available_models
