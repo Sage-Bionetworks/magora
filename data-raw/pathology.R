@@ -70,8 +70,11 @@ phenotype_data <- phenotype_files %>%
   mutate(data = pmap(list(field, stain_filter, file), read_clean_phenotype)) %>%
   select(syn_id, phenotype, units, data) %>%
   unnest(cols = data) %>%
-  mutate(value = as.numeric(value)) %>%
-  filter(!is.na(value))
+  mutate(
+    value = as.numeric(value),
+    # Convert any NAs to 0s for 5xFAD case only
+    value = coalesce(value, 0)
+  )
 
 ## Metadata ----
 
@@ -593,8 +596,10 @@ age_levels <- pathology %>%
 pathology <- pathology %>%
   map(function(x) {
     x %>%
-      mutate(age = fct_expand(age, age_levels),
-             age = fct_relevel(age, age_levels))
+      mutate(
+        age = fct_expand(age, age_levels),
+        age = fct_relevel(age, age_levels)
+      )
   })
 
 # Create a display name for phenotypes (with beta symbol instead of "beta") and one with units to display on Y-Axis:
