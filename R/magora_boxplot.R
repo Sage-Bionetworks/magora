@@ -34,7 +34,7 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
   measured_annotation <- data %>%
     dplyr::count(.data$mouse_model, .drop = FALSE) %>%
     dplyr::filter(.data$n == 0) %>%
-    dplyr::mutate(label = "This phenotype cannot be\nmeasured in this mouse model.")
+    dplyr::mutate(label = "Data Not Available")
 
   # If data only contains one sex, generate fake data and set alpha and color so that boxplot legend/dodging are correct
   data <- data %>%
