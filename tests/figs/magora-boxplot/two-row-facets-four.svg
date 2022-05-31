@@ -235,8 +235,8 @@
 <polyline points='479.21,278.12 479.21,57.33 ' style='stroke-width: 1.55; stroke: #EBEBEB; stroke-linecap: butt;' clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)' />
 <polyline points='530.38,278.12 530.38,57.33 ' style='stroke-width: 1.55; stroke: #EBEBEB; stroke-linecap: butt;' clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)' />
 <polyline points='581.55,278.12 581.55,57.33 ' style='stroke-width: 1.55; stroke: #EBEBEB; stroke-linecap: butt;' clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)' />
-<g clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)'><text x='397.39' y='162.37' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='163.62px' lengthAdjust='spacingAndGlyphs'>This phenotype cannot be</text></g>
-<g clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)'><text x='380.43' y='182.86' style='font-size: 14.23px; font-family: Liberation Sans;' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>measured in this mouse model.</text></g>
+<g clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)'><text x='413.75' y='163.44' style='font-size: 11.38px; font-family: Liberation Sans;' textLength='130.92px' lengthAdjust='spacingAndGlyphs'>This phenotype cannot be</text></g>
+<g clip-path='url(#cpMzQ2LjE1fDYxMi4yNnwyNzguMTJ8NTcuMzM=)'><text x='400.18' y='179.83' style='font-size: 11.38px; font-family: Liberation Sans;' textLength='158.05px' lengthAdjust='spacingAndGlyphs'>measured in this mouse model.</text></g>
 <defs>
   <clipPath id='cpMC4wMHw3MjAuMDB8NTc2LjAwfDAuMDA='>
     <rect x='0.00' y='0.00' width='720.00' height='576.00' />
