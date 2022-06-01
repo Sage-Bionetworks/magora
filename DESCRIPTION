@@ -38,7 +38,8 @@ Imports:
     purrr,
     curl,
     tidyr,
-    reactable
+    reactable,
+    patchwork
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz

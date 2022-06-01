@@ -2,6 +2,7 @@ library(vdiffr)
 context("magora_boxplot") # Required by vdiffr still
 
 pathology_mouse_models <- levels(pathology[["mouse_model"]])
+pathology_mouse_model_groups <- levels(pathology[["mouse_model_group"]])
 
 test_that("magora_boxplot produces box plots comparing the phenotype by mouse model, age, and sex", {
   p <- pathology %>%
@@ -11,29 +12,29 @@ test_that("magora_boxplot produces box plots comparing the phenotype by mouse mo
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("faceted-box-plots", p)
 })
 
 test_that("magora_boxplot produces two rows of facets when 3-4 mouse models are selected", {
   p <- pathology %>%
     dplyr::filter(
-      .data$phenotype %in% "Plaque Size (Thio-S)",
+      .data$phenotype %in% "Dystrophic Neurites (LAMP1)",
       .data$mouse_model %in% pathology_mouse_models[1:3],
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models[1:3]) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("two-row-facets-three", p)
 
   p <- pathology %>%
     dplyr::filter(
-      .data$phenotype %in% "Plaque Size (Thio-S)",
+      .data$phenotype %in% "Dystrophic Neurites (LAMP1)",
       .data$mouse_model %in% pathology_mouse_models,
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("two-row-facets-four", p)
 })
 
@@ -45,7 +46,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("no-data-experiment", p)
 
   p <- pathology %>%
@@ -55,7 +56,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("no-data-control", p)
 
   p <- pathology %>%
@@ -65,17 +66,7 @@ test_that("magora_boxplot adds text to any facet without data", {
       .data$tissue %in% "Cerebral Cortex"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
-  expect_doppelganger("no-data-interaction", p)
-
-  p <- pathology %>%
-    dplyr::filter(mouse_model %in% pathology_mouse_models[1:2]) %>%
-    dplyr::filter(
-      .data$phenotype %in% "Plaque Size (Thio-S)",
-      .data$tissue %in% "Cerebral Cortex"
-    ) %>%
-    expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("no-data-both", p)
 })
 
@@ -87,7 +78,7 @@ test_that("All levels of age are shown in the plot even if not present in the fi
       .data$tissue %in% "Hippocampus"
     ) %>%
     expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
   expect_doppelganger("not-all-ages", p)
 })
 
@@ -98,6 +89,36 @@ test_that("magora_boxplot shows facets in the order selected", {
       mouse_model %in% pathology_mouse_models
     ) %>%
     expand_mouse_model_factor_from_selection(rev(pathology_mouse_models)) %>%
-    magora_boxplot(use_theme_sage = FALSE)
+    magora_boxplot(rev(pathology_mouse_model_groups), use_theme_sage = FALSE)
   expect_doppelganger("pathology-different-order", p)
+})
+
+test_that("magora_boxplot has different y axes across rows, but shared within a row", {
+  p <- pathology %>%
+    dplyr::filter(
+      phenotype %in% "Astrocyte Cell Density (GFAP)"
+    ) %>%
+    expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
+  expect_doppelganger("pathology-y-axes-scaled-by-model", p)
+})
+
+test_that("magora_boxplot y-axes are shared within a row even if one facet is missing data", {
+  p <- pathology %>%
+    dplyr::filter(
+      phenotype %in% "Dystrophic Neurites (LAMP1)"
+    ) %>%
+    expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
+  expect_doppelganger("pathology-y-axes-scaled-by-model-facet-inherit-from-row-if-missing-data", p)
+})
+
+test_that("magora_boxplot have no axes showing if both model/control are missing data", {
+  p <- pathology %>%
+    dplyr::filter(
+      phenotype %in% "phospho-tau (AT8)"
+    ) %>%
+    expand_mouse_model_factor_from_selection(pathology_mouse_models) %>%
+    magora_boxplot(pathology_mouse_model_groups, use_theme_sage = FALSE)
+  expect_doppelganger("pathology-y-axes-scaled-by-model-facet-inherit-from-plot-if-missing-data", p)
 })

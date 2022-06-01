@@ -167,7 +167,7 @@ mod_pathology_server <- function(input, output, session) {
 
     filtered_pathology() %>%
       expand_mouse_model_factor_from_selection(mouse_models()) %>%
-      magora_boxplot(use_theme_sage = TRUE)
+      magora_boxplot(input$mouse_model_group, use_theme_sage = TRUE)
   })
 
   output$phenotype_plot <- shiny::renderPlot(phenotype_plot(), res = 96)
@@ -189,46 +189,8 @@ mod_pathology_server <- function(input, output, session) {
     shinycssloaders::withSpinner(shiny::plotOutput(ns("phenotype_plot"),
       height = paste0(phenotype_plot_dims()[["nrow"]] * 400, "px"),
       width = "800px" # We always show the model with the control, so it's fine to fix at 800px
-      # Disable interactive plot for now
-      # click = ns("plot_click")
     ),
     color = "#D3DCEF"
-    )
-  })
-
-  # Modal ----
-
-  drilldown_pathology <- shiny::reactive({
-    shiny::req(input$plot_click)
-    panel_filter <- glue::glue('{input$plot_click$mapping$panelvar1} == "{input$plot_click$panelvar1}"')
-    filtered_pathology() %>%
-      dplyr::filter(eval(rlang::parse_expr(panel_filter)))
-  })
-
-  drilldown_title <- shiny::reactive({
-    glue::glue("Phenotype: {input$phenotype}, Mouse line: {input$plot_click$panelvar1}, Tissue: {input$tissue}")
-  })
-
-  output$drilldown_pathology <- plotly::renderPlotly({
-    drilldown_pathology() %>%
-      expand_mouse_model_factor_from_selection(input$plot_click$panelvar1) %>%
-      magora_boxplot(type = "plotly", facet = FALSE, save_name = drilldown_title(), use_theme_sage = TRUE)
-  })
-
-  shiny::observeEvent(input$plot_click, {
-    shiny::showModal(
-      shiny::modalDialog(
-        title = drilldown_title(),
-        size = "l",
-        easyClose = TRUE,
-        footer = shiny::modalButton("Close"),
-        shinycssloaders::withSpinner(plotly::plotlyOutput(
-          height = "600px",
-          ns("drilldown_pathology")
-        ),
-        color = "#D3DCEF"
-        )
-      )
     )
   })
 
