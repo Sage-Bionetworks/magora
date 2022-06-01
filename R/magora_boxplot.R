@@ -61,7 +61,7 @@ magora_boxplot <- function(data, type = "ggplot2", facet = TRUE, save_name, use_
     x_mid <- length(levels(data[["age"]])) / 2 + 0.5
 
     p <- p +
-      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 4, vjust = 0.5, family = ifelse(use_theme_sage, "Lato", ""))
+      ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 5, vjust = 0.5, family = ifelse(use_theme_sage, "Lato", ""))
   }
 
   p <- p +
