@@ -80,7 +80,8 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
   }
   p <- p +
     ggplot2::labs(x = "Age (Months)", y = unique(data[["phenotype_units"]]), fill = "Sex", color = "Sex") +
-    sagethemes::scale_fill_sage_d()
+    sagethemes::scale_fill_sage_d() +
+    ggplot2::scale_y_continuous(limits = c(0, NA))
 
   # Annotations
   if (nrow(measured_annotation) > 0) {
