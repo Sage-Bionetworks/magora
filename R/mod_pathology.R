@@ -28,7 +28,7 @@ mod_pathology_ui <- function(id) {
           shinyWidgets::pickerInput(
             ns("phenotype"),
             "Phenotype",
-            choices = stats::setNames(unique(dplyr::bind_rows(magora::pathology)[["phenotype"]]), unique(dplyr::bind_rows(magora::pathology)[["phenotype_display"]]))
+            choices = stats::setNames(sort(unique(dplyr::bind_rows(magora::pathology)[["phenotype"]])), sort(unique(dplyr::bind_rows(magora::pathology)[["phenotype_display"]])))
           )
         ),
         shiny::column(
@@ -38,7 +38,7 @@ mod_pathology_ui <- function(id) {
             "Mouse model",
             choices = names(magora::pathology),
             multiple = TRUE,
-            selected = c("5xFAD", "3xTg-AD", "Trem2-R47H_NSS")
+            selected = c("5xFAD", "3xTg-AD", "Trem2-R47H_NSS", "Abca7-V1599M")
           )
         ),
         shiny::column(
