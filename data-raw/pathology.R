@@ -428,7 +428,7 @@ phenotype_files <- phenotype_files %>%
 
 # Function to read in, filter + clean data, and return relevant fields
 read_clean_phenotype <- function(field, stain_filter, file) {
-  res <- readr::read_csv(file, na = c("N/A", ""))
+  res <- readr::read_csv(file, na = c("N/A", "", "NA"))
 
   res <- res %>%
     janitor::clean_names()
@@ -559,6 +559,154 @@ phenotypes_trem2_r47h_nss <- phenotype_data %>%
   inner_join(individual_metadata, by = "individual_id") %>%
   select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
 
+# Abca7-V1599M ----
+
+model <- "Abca7-V1599M"
+
+## Download and read phenotype data ----
+
+# Read file that contains the phenotype name, synapse ID, field to use, and values of Stain to filter for
+phenotype_files <- read_csv(here::here("data-raw", "pathology", model, glue::glue("{model}_data_sources.csv")))
+
+# Check that the latest version of all files is used
+walk2(phenotype_files[["syn_id"]], phenotype_files[["version"]], check_latest_version)
+
+# Download data - synapser checks the version locally and does not redownload if the version is up to date, so we can safely run all of this without worrying about redownloading.
+
+phenotype_distinct_files <- phenotype_files %>%
+  distinct(syn_id, version)
+
+phenotype_paths <- map2(phenotype_distinct_files[["syn_id"]], phenotype_distinct_files[["version"]], ~ synapser::synGet(.x, version = .y, downloadLocation = here::here("data-raw", "pathology", model), ifcollision = "overwrite.local"))
+
+# Extract path and combine with phenotype_files df so that full path can be used, in case file name changes, rather than whatever is hardcoded in
+
+phenotype_paths <- phenotype_paths %>%
+  map("path") %>%
+  map(~ tibble(file = .x))
+
+names(phenotype_paths) <- phenotype_distinct_files[["syn_id"]]
+
+phenotype_paths <- phenotype_paths %>%
+  bind_rows(.id = "syn_id")
+
+phenotype_files <- phenotype_files %>%
+  left_join(phenotype_paths, by = "syn_id", suffix = c("_hardcoded", ""))
+
+# Read in data
+
+phenotype_data <- phenotype_files %>%
+  mutate(data = pmap(list(field, stain_filter, file), read_clean_phenotype)) %>%
+  select(syn_id, phenotype, units, data) %>%
+  unnest(cols = data) %>%
+  mutate(value = as.numeric(value)) %>%
+  filter(!is.na(value))
+
+## Metadata ----
+
+### Biospecimen metadata ----
+
+biospecimen_id <- "syn30859390"
+biospecimen_version <- 1
+
+check_latest_version(biospecimen_id, biospecimen_version)
+
+biospecimen_metadata_path <- synGet(biospecimen_id, version = biospecimen_version, downloadLocation = here::here("data-raw", "pathology", model), ifcollision = "overwrite.local")
+
+biospecimen_metadata <- read_csv(biospecimen_metadata_path[["path"]]) %>%
+  mutate(individualID = as.character(individualID)) %>%
+  clean_names() %>%
+  select(individual_id, specimen_id, tissue)
+
+#### Check metadata has correct tissue identifier ---
+
+correct_tissue_identifier <- tibble::tribble(
+  ~tissue, ~specimen_identifier,
+  "hippocampus", "h",
+  "cerebral cortex", "c",
+  "plasma", "p"
+)
+
+biospecimen_metadata %>%
+  mutate(
+    specimen_id = tolower(specimen_id),
+    specimen_identifier = case_when(
+      str_detect(specimen_id, "c") ~ "c",
+      str_detect(specimen_id, "h") ~ "h",
+      str_detect(specimen_id, "p") ~ "p"
+    )
+  ) %>%
+  anti_join(correct_tissue_identifier, by = c("tissue", "specimen_identifier"))
+
+### Individual metadata ----
+
+individual_id <- "syn30859394"
+individual_version <- 1
+
+check_latest_version(individual_id, individual_version)
+
+individual_metadata_path <- synGet(individual_id, version = individual_version, downloadLocation = here::here("data-raw", "pathology", model), ifcollision = "overwrite.local")
+
+individual_metadata <- read_csv(individual_metadata_path[["path"]]) %>%
+  mutate(individualID = as.character(individualID)) %>%
+  clean_names() %>%
+  select(individual_id, sex, genotype, genotype_background, individual_common_genotype, age_death, age_death_units)
+
+### Check missing IDs ----
+
+# Check which IDs are missing from metadata
+phenotype_data %>%
+  anti_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  distinct(individual_id, specimen_id)
+
+phenotype_data %>%
+  anti_join(individual_metadata, by = "individual_id") %>%
+  distinct(individual_id)
+
+## Clean data ----
+
+biospecimen_metadata <- biospecimen_metadata %>%
+  mutate(tissue = str_to_title(tissue))
+
+# Check that all age death units are "months"
+
+individual_metadata %>%
+  count(age_death_units) %>%
+  pull(age_death_units) == "months"
+
+# Check ages
+
+individual_metadata %>%
+  count(age_death)
+
+## Clean up factors etc
+
+individual_metadata <- individual_metadata %>%
+  mutate(
+    sex = str_to_title(sex),
+    sex = as_factor(sex),
+    age_factor = as_factor(age_death),
+    age_factor = fct_reorder(age_factor, age_death),
+    mouse_model = individual_common_genotype
+  ) %>%
+  select(-genotype, -genotype_background, -individual_common_genotype) %>%
+  rename(age = age_factor)
+
+# Recode mouse models
+
+individual_metadata <- individual_metadata %>%
+  mutate(
+    mouse_model = str_replace_all(mouse_model, "5XFAD", "5xFAD"),
+    mouse_model = str_replace_all(mouse_model, "C57BL6J", "C57BL/6J"),
+    mouse_model = as_factor(mouse_model)
+  )
+
+### Combine data ----
+
+phenotypes_abca7_v1599m <- phenotype_data %>%
+  inner_join(biospecimen_metadata, by = c("individual_id", "specimen_id")) %>%
+  inner_join(individual_metadata, by = "individual_id") %>%
+  select(individual_id, specimen_id, mouse_model, sex, age, tissue, phenotype, units, value)
+
 # Combine models ----
 # Also set mouse model factor order, for plots (individually for each model)
 
@@ -582,6 +730,13 @@ pathology <- list(
       mouse_model_group = "Trem2-R47H_NSS",
       mouse_model = fct_relevel(mouse_model, c(
         "5xFADTrem2-R47H_NSS", "Trem2-R47H_NSS", "5xFAD", "C57BL/6J"
+      ))
+    ),
+  "Abca7-V1599M" = phenotypes_abca7_v1599m %>%
+    mutate(
+      mouse_model_group = "Abca7-V1599M",
+      mouse_model = fct_relevel(mouse_model, c(
+        "5xFADAbca7-V1599M", "Abca7-V1599M", "5xFAD", "C57BL/6J"
       ))
     )
 )
