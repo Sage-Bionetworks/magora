@@ -153,13 +153,15 @@ gene_expressions <- gene_expressions %>%
 # Flag as significant for plotting ----
 
 gene_expressions <- gene_expressions %>%
-  dplyr::mutate(diff_expressed = dplyr::case_when(
-    log2foldchange > 1 & padj < 0.05 ~ "Upregulated",
-    log2foldchange < -1 & padj < 0.05 ~ "Downregulated",
-    is.na(log2foldchange) | is.na(padj) ~ NA_character_,
-    TRUE ~ "Not Significant"
-  ),
-  diff_expressed = fct_relevel(diff_expressed, "Downregulated", "Not Significant", "Upregulated"))
+  dplyr::mutate(
+    diff_expressed = dplyr::case_when(
+      log2foldchange > 1 & padj < 0.05 ~ "Upregulated",
+      log2foldchange < -1 & padj < 0.05 ~ "Downregulated",
+      is.na(log2foldchange) | is.na(padj) ~ NA_character_,
+      TRUE ~ "Not Significant"
+    ),
+    diff_expressed = fct_relevel(diff_expressed, "Downregulated", "Not Significant", "Upregulated")
+  )
 
 # Remove p-values - again, they will be reconstructed
 

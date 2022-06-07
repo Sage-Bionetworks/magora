@@ -148,10 +148,10 @@ mod_pathology_server <- function(input, output, session) {
       purrr::map(
         function(x) {
           x %>%
-          dplyr::filter(
-            .data$phenotype %in% input$phenotype,
-            .data$tissue %in% input$tissue
-          )
+            dplyr::filter(
+              .data$phenotype %in% input$phenotype,
+              .data$tissue %in% input$tissue
+            )
         }
       )
   })

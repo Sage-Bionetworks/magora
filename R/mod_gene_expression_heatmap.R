@@ -174,7 +174,6 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   )
 
   gene_expression_plot_dims <- shiny::reactive({
-
     list(
       ncol = length(input$gene) * length(input$mouse_model),
       nrow = length(input$age) * length(input$sex) * length(unique(magora::gene_expressions[["tissue"]]))

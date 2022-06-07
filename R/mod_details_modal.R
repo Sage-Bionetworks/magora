@@ -5,7 +5,7 @@
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd
-mod_details_modal_ui <- function(id){
+mod_details_modal_ui <- function(id) {
   ns <- NS(id)
   shiny::p(
     shiny::actionLink(ns("details"), "More details")
@@ -15,7 +15,7 @@ mod_details_modal_ui <- function(id){
 #' "More Details" Modal  Server Function
 #'
 #' @noRd
-mod_details_modal_server <- function(input, output, session){
+mod_details_modal_server <- function(input, output, session) {
   ns <- session$ns
   shiny::observeEvent(input$details, {
     page <- stringr::str_replace(ns(""), pattern = ".*-([^-]*)-.*", replacement = "\\1")
@@ -36,4 +36,3 @@ mod_details_modal_server <- function(input, output, session){
 
 ## To be copied in the server
 # callModule(mod_details_modal_server, "pathology")
-
