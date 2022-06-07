@@ -8,14 +8,9 @@
 #' @export
 magora_boxplot <- function(data, mouse_model_groups, use_theme_sage = TRUE) {
 
-  phenotype_units <- unique(data[["phenotype_units"]])
-
   # Generate a set of boxplots for each mouse_model_group
-  data <- data %>%
-    split(.$mouse_model_group)
-
   p <- data[mouse_model_groups] %>%
-    purrr::imap(~ magora_boxplot_single(.x, .y, phenotype_units = phenotype_units, use_theme_sage))
+    purrr::imap(~ magora_boxplot_single(.x, .y, use_theme_sage))
 
   # Set height proportions based on number of models within each
   model_heights <- magora::pathology_mouse_models[names(p)] %>%
@@ -30,7 +25,7 @@ magora_boxplot <- function(data, mouse_model_groups, use_theme_sage = TRUE) {
     patchwork::plot_layout(ncol = 1, heights = model_heights)
 }
 
-magora_boxplot_single <- function(data, mouse_model_group, phenotype_units, use_theme_sage = TRUE) {
+magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE) {
 
   data <- data %>%
     expand_mouse_model_factor_from_selection(magora::pathology_mouse_models[[mouse_model_group]])
@@ -39,7 +34,7 @@ magora_boxplot_single <- function(data, mouse_model_group, phenotype_units, use_
   measured_annotation <- data %>%
     dplyr::count(.data$mouse_model, .drop = FALSE) %>%
     dplyr::filter(.data$n == 0) %>%
-    dplyr::mutate(label = "This phenotype cannot be\nmeasured in this mouse model.")
+    dplyr::mutate(label = "Data Not Available")
 
   # If data only contains one sex, generate fake data and set alpha and color so that boxplot legend/dodging are correct
   data <- data %>%
@@ -84,7 +79,7 @@ magora_boxplot_single <- function(data, mouse_model_group, phenotype_units, use_
       ggplot2::scale_x_discrete(drop = FALSE)
   }
   p <- p +
-    ggplot2::labs(x = "Age (Months)", y = phenotype_units, fill = "Sex", color = "Sex") +
+    ggplot2::labs(x = "Age (Months)", y = unique(data[["phenotype_units"]]), fill = "Sex", color = "Sex") +
     sagethemes::scale_fill_sage_d()
 
   # Annotations

@@ -5,7 +5,7 @@
 \alias{pathology_tissue}
 \title{Pathology tissues}
 \format{
-An object of class \code{list} of length 12.
+An object of class \code{list} of length 14.
 }
 \usage{
 pathology_tissue
