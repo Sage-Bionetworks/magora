@@ -8,7 +8,8 @@ app_ui <- function(request) {
     shiny::tags$script(shiny::HTML(
       'function link(page) {
       Shiny.onInputChange("page_link", page)
-      }')),
+      }'
+    )),
     golem_add_external_resources(),
     mod_header_ui(),
     shiny::navbarPage(

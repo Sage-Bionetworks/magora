@@ -26,7 +26,6 @@ magora_boxplot <- function(data, mouse_model_groups, use_theme_sage = TRUE) {
 }
 
 magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE) {
-
   data <- data %>%
     expand_mouse_model_factor_from_selection(magora::pathology_mouse_models[[mouse_model_group]])
 
@@ -85,7 +84,6 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
 
   # Annotations
   if (nrow(measured_annotation) > 0) {
-
     if (nrow(data) == 0) { # If there is no data (all panels will have the annotation), manually set placement to 0/0
       x_mid <- y_mid <- 0
     } else {
@@ -114,8 +112,10 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
   # Axes manually set to 0/0 if no data, but don't show them
   if (nrow(data) == 0) {
     p <- p +
-      ggplot2::theme(axis.text.x = ggplot2::element_blank(),
-                     axis.text.y = ggplot2::element_blank())
+      ggplot2::theme(
+        axis.text.x = ggplot2::element_blank(),
+        axis.text.y = ggplot2::element_blank()
+      )
   }
 
   p <- p +

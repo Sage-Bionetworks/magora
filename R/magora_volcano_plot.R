@@ -57,8 +57,8 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
     p <- p +
       sagethemes::theme_sage()
   } else {
-   p <- p +
-     ggplot2::theme_minimal()
+    p <- p +
+      ggplot2::theme_minimal()
   }
 
   p <- p +
@@ -80,7 +80,6 @@ magora_volcano_plot <- function(data, data_labels, type = "ggplot2", facet = TRU
       ggrepel::geom_text_repel(data = data_labels, ggplot2::aes(x = .data$log2foldchange, y = .data$neg_log10_padj, colour = .data$diff_expressed, label = .data$label), show.legend = FALSE, seed = 1234, max.overlaps = 5, point.size = NA) +
       ggplot2::labs(x = bquote(~ Log[2] ~ "Fold change"), y = bquote(~ -Log[10] ~ "P-Value"))
   } else if (type == "plotly") {
-
     p <- p +
       ggplot2::labs(x = "Log2 Fold Change", y = "Log 10 P-Value")
 

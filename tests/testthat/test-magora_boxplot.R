@@ -66,7 +66,7 @@ test_that("magora_boxplot adds text to any facet without data", {
           .data$tissue %in% "Cerebral Cortex"
         )
     }) %>%
-  magora_boxplot(pathology_mouse_model_groups[1], use_theme_sage = FALSE)
+    magora_boxplot(pathology_mouse_model_groups[1], use_theme_sage = FALSE)
   expect_doppelganger("no-data-control", p)
 
   p <- pathology[pathology_mouse_model_groups[1:2]] %>%

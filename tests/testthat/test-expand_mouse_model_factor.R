@@ -50,4 +50,3 @@ test_that("expand_mouse_model_factor_from_selection returns factor levels in the
     expand_mouse_model_factor_from_selection(mouse_model_selection)
   expect_equal(levels(output[["mouse_model"]]), mouse_model_selection)
 })
-
