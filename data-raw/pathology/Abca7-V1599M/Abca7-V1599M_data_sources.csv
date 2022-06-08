@@ -1,11 +1,11 @@
 phenotype,units,syn_id,version,file,field,stain_filter
 Soluble Abeta40,pg/mg,syn30859377,1,UCI_ABCA7 12mo Abeta CTX_HIPP SF.csv,Abeta40,NA
-Soluble Abeta41,pg/mg,syn30859386,1,UCI_ABCA7 4mo Abeta CTX_HIPP SF.csv,Abeta40,NA
+Soluble Abeta40,pg/mg,syn30859386,1,UCI_ABCA7 4mo Abeta CTX_HIPP SF.csv,Abeta40,NA
 Soluble Abeta42,pg/mg,syn30859377,1,UCI_ABCA7 12mo Abeta CTX_HIPP SF.csv,Abeta42,NA
-Soluble Abeta43,pg/mg,syn30859386,1,UCI_ABCA7 4mo Abeta CTX_HIPP SF.csv,Abeta42,NA
+Soluble Abeta42,pg/mg,syn30859386,1,UCI_ABCA7 4mo Abeta CTX_HIPP SF.csv,Abeta42,NA
 Insoluble Abeta40,pg/mg,syn30859387,1,UCI_ABCA7 12mo Abeta CTX_HIPP IF.csv,Abeta40,NA
-Insoluble Abeta41,pg/mg,syn30859383,1,UCI_ABCA7 4mo Abeta CTX_HIPP IF.csv,Abeta40,NA
+Insoluble Abeta40,pg/mg,syn30859383,1,UCI_ABCA7 4mo Abeta CTX_HIPP IF.csv,Abeta40,NA
 Insoluble Abeta42,pg/mg,syn30859387,1,UCI_ABCA7 12mo Abeta CTX_HIPP IF.csv,Abeta42,NA
-Insoluble Abeta43,pg/mg,syn30859383,1,UCI_ABCA7 4mo Abeta CTX_HIPP IF.csv,Abeta42,NA
+Insoluble Abeta42,pg/mg,syn30859383,1,UCI_ABCA7 4mo Abeta CTX_HIPP IF.csv,Abeta42,NA
 Brain NFL,pg/mg,syn30859379,1,UCI_ABCA7 4-12mo NfL CTX IF.csv,nf_l,NA
 Plasma NFL,pg/ml,syn30859380,1,UCI_ABCA7 4-12mo plasma NfL.csv,nf_l,NA
