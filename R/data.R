@@ -1,12 +1,17 @@
-#' Phenotypes data
+#' Pathology data
 #'
 #' A data set containing mouse phenotypes along with tissue, sex, age, and mouse line.
-"phenotypes"
+"pathology"
 
-#' Phenotypes tissues
+#' Pathology tissues
 #'
 #' A data set containing the tissues available for each mouse phenotype.
-"phenotype_tissue"
+"pathology_tissue"
+
+#' Pathology mouse models
+#'
+#' A data set containing the variant and control for each mouse model in the pathology data.
+"pathology_mouse_models"
 
 #' Nanostring data
 #'

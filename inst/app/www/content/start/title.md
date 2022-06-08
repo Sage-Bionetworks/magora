@@ -1,1 +1,1 @@
-# MODEL-AD Explorer
+# Model AD Explorer

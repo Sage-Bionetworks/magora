@@ -1,5 +1,4 @@
 complete_gene_expression_heatmap_data <- function(data, input) {
-
   tissues <- magora::gene_expressions_tissue %>%
     unlist() %>%
     unique() %>%

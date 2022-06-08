@@ -1,4 +1,4 @@
-All MODEL-AD RNAseq is carried out using standardized protocols. Note that the two centers use slightly different protocols. UCI performs RNAseq on both hippocampus and cortex, while IU/Jax/Pitt performs RNAseq on hemibrains.
+All Model AD RNAseq is carried out using standardized protocols. Note that the two centers use slightly different protocols. UCI performs RNAseq on both hippocampus and cortex, while IU/Jax/Pitt performs RNAseq on hemibrains.
 
 Log2 fold change has been computed for each model x sex x age combination in comparison to predefined controls, as follows:
 

@@ -1,9 +1,9 @@
 #' Start page UI Function
 #'
 mod_start_ui <- function() {
-
   shiny::tabPanel(
     "Start",
+    shiny::div(class = "magora-hr"),
     shiny::div(
       class = "magora-page",
       shiny::div(

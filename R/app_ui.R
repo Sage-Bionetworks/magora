@@ -8,11 +8,15 @@ app_ui <- function(request) {
     shiny::tags$script(shiny::HTML(
       'function link(page) {
       Shiny.onInputChange("page_link", page)
-      }')),
+      }'
+    )),
     golem_add_external_resources(),
-    magoraPage(
+    mod_header_ui(),
+    shiny::navbarPage(
       id = "page",
-      header = mod_header_ui(),
+      title = NULL,
+      header = NULL,
+      collapsible = TRUE,
       mod_start_ui(),
       mod_pathology_ui("pathology"),
       shiny::navbarMenu(
@@ -38,10 +42,10 @@ golem_add_external_resources <- function() {
   )
 
   shiny::tags$head(
-    golem::favicon(ext = "png"),
+    golem::favicon(ext = "ico"),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "MODEL-AD Explorer"
+      app_title = "Model AD Explorer"
     )
   )
 }

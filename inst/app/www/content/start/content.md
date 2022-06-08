@@ -6,7 +6,7 @@ MODEL-AD comprises two research centers with complementary approaches to generat
 
 ### How to use this site
 
-The MODEL-AD Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
+The Model AD Explorer shares summaries of phenotypic data for available mouse models. Currently available data include:
   
 <a id = "link_pathology" href = "#" onclick="link('Pathology')">**Pathology data**</a>: View neuron and glial cell counts, plaque density and size, and amyloid levels by sex and age.  
 

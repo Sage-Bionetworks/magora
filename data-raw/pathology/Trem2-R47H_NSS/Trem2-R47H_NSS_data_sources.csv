@@ -1,0 +1,11 @@
+phenotype,units,syn_id,version,file,field,stain_filter
+Soluble Abeta40,pg/mg,syn29568621,2,UCI_Trem2R47H_NSS 4mo Abeta CTX_HIPP SF.csv,Abeta40,NA
+Soluble Abeta40,pg/mg,syn29568624,2,UCI_Trem2R47H_NSS 12mo ABeta CTX_HIPP SF.csv,Abeta40,NA
+Soluble Abeta42,pg/mg,syn29568621,2,UCI_Trem2R47H_NSS 4mo Abeta CTX_HIPP SF.csv,Abeta42,NA
+Soluble Abeta42,pg/mg,syn29568624,2,UCI_Trem2R47H_NSS 12mo ABeta CTX_HIPP SF.csv,Abeta42,NA
+Insoluble Abeta40,pg/mg,syn29568619,1,UCI_Trem2R47H_NSS 4mo Abeta CTX_HIPP IF.csv,Abeta40,NA
+Insoluble Abeta40,pg/mg,syn29568622,1,UCI_Trem2R47H_NSS 12mo Abeta CTX_HIPP IF.csv,Abeta40,NA
+Insoluble Abeta42,pg/mg,syn29568619,1,UCI_Trem2R47H_NSS 4mo Abeta CTX_HIPP IF.csv,Abeta42,NA
+Insoluble Abeta42,pg/mg,syn29568622,1,UCI_Trem2R47H_NSS 12mo Abeta CTX_HIPP IF.csv,Abeta42,NA
+Brain NFL,pg/mg,syn29568489,2,UCI_Trem2R47H_NSS 4-12mo NfL CTX IF.csv,nf_l,NA
+Plasma NFL,pg/ml,syn29568490,1,UCI_Trem2R47H_NSS 4-12mo NfL Plasma.csv,nf_l,NA

@@ -102,10 +102,6 @@ b, strong {
    margin-bottom: 100px;
 }
 
-body {
-   min-width: 800px;
-}
-
 .magora-topbar {
    height: 6px;
    background: transparent linear-gradient(to right, #D3DCEF 0%, #D5E9F0 100%) repeat scroll 0 0;
@@ -118,6 +114,12 @@ body {
    height: auto;
    padding-top: 26px;
    padding-bottom: 24px;
+}
+
+.magora-hr {
+   margin-top: 20px;
+   margin-bottom: 20px;
+   border-top: 1px solid #eee;
 }
 
 /* Class "row" has margin-right and -left -15px - set to 0 to retain consistent widths with other divs */
@@ -188,14 +190,20 @@ div.divflex {
 
 /* ------ Navbar ------ */
 
-/* Manually setting width so navbar items are centred - this isn't perfect yet */
-.navbar .navbar-nav {
-    display: inline-block;
-    float: none;
-}
+/* Center navbar items - only when navbar isn't collapsed, allow them to stack on top of each other when it is collapsed */
 
-.navbar .navbar-container {
-    text-align: center;
+@media (min-width: 768px) {
+   .navbar-nav {
+      float: none;
+      margin: 0 auto;
+      display: block;
+      text-align: center;
+   }
+
+   .navbar-nav > li {
+      display: inline-block;
+      float:none;
+   }
 }
 
 /* Bold active tab name */
@@ -227,6 +235,19 @@ div.divflex {
    background-color: transparent;
 }
 
+/* Collapsed navbar in small layout */
+/* "Menu" instead of hamburger menu icon, which a lot of people don't understand */
+
+/* Hide hamburger */
+.icon-bar {
+  display: none !important;
+}
+
+/* Text instead */
+.navbar-toggle:before {
+  content: "Menu";
+}
+
 /* ------ Dropdown menu ------ */
 
 .dropdown-menu {
@@ -255,4 +276,30 @@ div.divflex {
 
 #gene_expression_heatmap #gene_expression_heatmap_gene_column .actions-btn.bs-deselect-all.btn.btn-default {
    width: 100%;
+}
+
+/* Handle overflow of bookmark/download buttons text, cut off with ellipsis */
+.magora-button {
+   width: 100%;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.top-align-to-input .magora-button {
+   margin-top: 31px;
+}
+
+/* Give buttons margin and decrease width on collapsed layout */
+
+@media (max-width: 767px) {
+   .magora-button {
+      width: 300px; /* Same as other bootstrap inputs in this layout */
+      margin-bottom: 15px;
+      margin-top: 0;
+   }
+
+   /* Removes top margin set on Gene Expression: All Genes page, which vertically aligns the buttons with the other inputs - not necessary in the collapsed layout since they are all flowing vertically */
+   .top-align-to-input .magora-button {
+      margin-top: 0;
+   }
 }

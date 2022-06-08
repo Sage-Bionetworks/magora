@@ -12,6 +12,7 @@ mod_gene_expression_heatmap_ui <- function(id) {
   shiny::tabPanel(
     title,
     value = "GeneExpressionHeatmap",
+    shiny::div(class = "magora-hr"),
     shiny::div(
       class = "magora-page",
       id = "gene_expression_heatmap",
@@ -75,24 +76,18 @@ mod_gene_expression_heatmap_ui <- function(id) {
           )
         )
       ),
-      shiny::fluidRow(
-        class = "magora-row",
-        shiny::column(
-          width = 6,
-          offset = 6,
-          shiny::column(
-            width = 4,
-            shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", style = "width: 100%")
-          ),
-          shiny::column(
-            width = 4,
-            mod_download_data_ui(ns("download_data"))
-          ),
-          shiny::column(
-            width = 4,
-            mod_download_plot_ui(ns("download_plot"))
-          )
-        )
+      shiny::column(
+        width = 2,
+        offset = 6,
+        shiny::bookmarkButton(id = ns("bookmark"), label = "Bookmark", class = "magora-button")
+      ),
+      shiny::column(
+        width = 2,
+        mod_download_data_ui(ns("download_data"))
+      ),
+      shiny::column(
+        width = 2,
+        mod_download_plot_ui(ns("download_plot"))
       ),
       shiny::column(
         width = 12,
@@ -179,7 +174,6 @@ mod_gene_expression_heatmap_server <- function(input, output, session, gene_expr
   )
 
   gene_expression_plot_dims <- shiny::reactive({
-
     list(
       ncol = length(input$gene) * length(input$mouse_model),
       nrow = length(input$age) * length(input$sex) * length(unique(magora::gene_expressions[["tissue"]]))

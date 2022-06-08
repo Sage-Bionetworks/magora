@@ -1,8 +1,8 @@
 #' Expand mouse model factor from selection
 #'
-#' Expand \code{data[["mouse_model"]]} factor levels to include all mouse models selected in \code{mouse_model}, even if there is not data for all. Used before \code{\link{magora_boxplot}} to ensure that facets are shown for all relevant mouse models.
+#' Expand \code{data[["mouse_model"]]} factor levels to include all mouse models selected in \code{mouse_model}, even if there is not data for all. Used within \code{\link{magora_boxplot}} to ensure that facets are shown for all relevant mouse models.
 #'
-#' @param data Input data (e.g. \code{\link{phenotypes}} filtered by phenotype, mouse model, and tissue).
+#' @param data Input data (e.g. \code{\link{pathology}} filtered by phenotype, mouse model, and tissue).
 #' @param mouse_model Mouse models to use as factor levels.
 #'
 #' @export
