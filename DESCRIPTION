@@ -26,7 +26,7 @@ Imports:
     magrittr,
     rlang,
     pkgload,
-    shinycssloaders,
+    shinycssloaders (>= 1.0.0.9000),
     here,
     stringr,
     readr,
@@ -49,7 +49,8 @@ Depends:
 URL: https://github.com/Sage-Bionetworks/magora
 BugReports: https://github.com/Sage-Bionetworks/magora/issues
 Remotes: 
-    Sage-Bionetworks/sagethemes@main
+    Sage-Bionetworks/sagethemes@main,
+    daattali/shinycssloaders
 Suggests: 
     testthat,
     vdiffr
