@@ -697,6 +697,7 @@ individual_metadata <- individual_metadata %>%
   mutate(
     mouse_model = str_replace_all(mouse_model, "5XFAD", "5xFAD"),
     mouse_model = str_replace_all(mouse_model, "C57BL6J", "C57BL/6J"),
+    mouse_model = str_replace_all(mouse_model, "Abca7-V1599M", "Abca7*V1599M"),
     mouse_model = as_factor(mouse_model)
   )
 
@@ -732,11 +733,11 @@ pathology <- list(
         "5xFADTrem2-R47H_NSS", "Trem2-R47H_NSS", "5xFAD", "C57BL/6J"
       ))
     ),
-  "Abca7-V1599M" = phenotypes_abca7_v1599m %>%
+  "Abca7*V1599M" = phenotypes_abca7_v1599m %>%
     mutate(
-      mouse_model_group = "Abca7-V1599M",
+      mouse_model_group = "Abca7*V1599M",
       mouse_model = fct_relevel(mouse_model, c(
-        "5xFADAbca7-V1599M", "Abca7-V1599M", "5xFAD", "C57BL/6J"
+        "5xFADAbca7*V1599M", "Abca7*V1599M", "5xFAD", "C57BL/6J"
       ))
     )
 )
