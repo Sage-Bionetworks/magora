@@ -58,6 +58,10 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
       )
   }
 
+  # Check if data is all zeros for setting axis from 0-10
+  # Do this before generating "fake" data, so those panels aren't affected
+  all_zeros <- nrow(data) > 0 & all(data[["value"]] == 0)
+
   # If there is no data at all, generate "fake" data that won't be shown, but ensures panels are the same size and appearance of if there was data
   no_data <- nrow(data) == 0
 
@@ -95,8 +99,17 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
   # Axes and scales
   p <- p +
     ggplot2::labs(x = "Age (Months)", y = unique(data[["phenotype_units"]]), fill = "Sex", color = "Sex") +
-    sagethemes::scale_fill_sage_d() +
-    ggplot2::scale_y_continuous(limits = c(0, NA))
+    sagethemes::scale_fill_sage_d()
+
+  # Set limits - start at 0 and go to range
+  # Unless all 0s, then start at 0 and go to 10
+  if (all_zeros) {
+    p <- p +
+      ggplot2::scale_y_continuous(limits = c(0, 10), breaks = scales::pretty_breaks())
+  } else {
+    p <- p +
+      ggplot2::scale_y_continuous(limits = c(0, NA))
+  }
 
   # Annotations
   if (nrow(measured_annotation) > 0) {
