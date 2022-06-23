@@ -1,0 +1,19 @@
+Mouse Model,Matched Control,Model Type,Center,Pathology,Gene Expression,Correlation with Human Disease,Source Data,Source Data URL,Model Information,ModelInformationURL
+3xTg-AD,B6129,Familial,UCI,X,X,,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn22964685,View model details,https://www.jax.org/strain/004807
+5xFAD,C57BL6J,Familial,UCI,X,X,,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn16798076,View model details,https://www.jax.org/strain/008730
+5xFAD,C57BL6J,Familial,IU/Jax/Pitt,,X,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21983020,View model details,https://www.jax.org/strain/008730
+APOE4,C57BL6J,APOE,IU/Jax/Pitt,,X,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn17095980,View model details,https://www.jax.org/strain/027894
+hAbKI,C57BL6J,APP,UCI,,X,,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn18634479,View model details,https://www.jax.org/strain/030898
+LOAD1,C57BL6J,APOE,IU/Jax/Pitt,,X,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn17095980,View model details,https://www.jax.org/strain/028709
+Abca7*V1599M,"C57BL6J, 5xFAD",LOAD Variant,UCI,X,,,,,View model details,https://www.jax.org/strain/035316
+LOAD1.ABCA7A1527G,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/030283
+LOAD1.CEACAM1KO,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/030673
+LOAD1.Clasp2L163P,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/031944
+LOAD1.CR1long,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/031668
+LOAD1.Il1rapExon2KO,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/030304
+LOAD1.MthfrC677T,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/030922
+LOAD1.Plcg2M28L,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/030674
+LOAD1.Snx1D465N,C57BL6J,LOAD Variant,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/031942
+LOAD2,C57BL6J,LOAD Related,IU/Jax/Pitt,,,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn21595258,View model details,https://www.jax.org/strain/030670
+Trem2R47H,C57BL6J,Trem2,IU/Jax/Pitt,,X,X,View data,https://adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn17095980,View model details,https://www.jax.org/strain/027918
+Trem2-R47H_NSS,"C57BL6J, 5xFAD",Trem2,UCI,X,,,,,View model details,https://www.jax.org/strain/034036
