@@ -157,3 +157,18 @@ test_that("magora_boxplot panels with no data has same appearance as panels with
 
   expect_doppelganger("pathology-panel-no-data-matches-panel-with-data", p)
 })
+
+test_that("magora_boxplot with all 0s have y axis go from 0 to 10", {
+
+  p <- pathology["3xTg-AD"] %>%
+    purrr::map(function(x) {
+      x %>%
+        dplyr::filter(
+          phenotype %in% "Plaque Size (Thio-S)" &
+            tissue %in% "Cerebral Cortex"
+        )
+    }) %>%
+    magora_boxplot("3xTg-AD", use_theme_sage = FALSE)
+
+  expect_doppelganger("pathology-all-zeros", p)
+})
