@@ -22,10 +22,18 @@ mod_available_models_ui <- function(id) {
         reactable::reactable(magora::available_models,
           columns = list(
             `Source Data` = reactable::colDef(cell = function(value) {
-              shiny::tags$a(href = value, target = "_blank", "View data")
+              if (is.na(value)) {
+                ""
+              } else {
+                shiny::tags$a(href = value, target = "_blank", "View data")
+              }
             }),
             `Model Information` = reactable::colDef(cell = function(value) {
-              shiny::tags$a(href = value, target = "_blank", "Model details")
+              if (is.na(value)) {
+                ""
+              } else {
+                shiny::tags$a(href = value, target = "_blank", "Model details")
+              }
             }),
             Pathology = reactable::colDef(cell = function(value) {
               ifelse(is.na(value), "", "\u2713")
