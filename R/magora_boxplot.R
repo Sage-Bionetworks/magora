@@ -58,6 +58,30 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
       )
   }
 
+  # Check if data is all zeros for setting axis from 0-10
+  # Do this before generating "fake" data, so those panels aren't affected
+  all_zeros <- nrow(data) > 0 & all(data[["value"]] == 0)
+
+  # If there is no data at all, generate "fake" data that won't be shown, but ensures panels are the same size and appearance of if there was data
+  no_data <- nrow(data) == 0
+
+  if (no_data) {
+    age_levels <- levels(data[["age"]])
+    sex_levels <- levels(data[["sex"]])
+
+    data <- tidyr::crossing(
+      age = age_levels,
+      sex = sex_levels,
+      mouse_model = magora::pathology_mouse_models[[mouse_model_group]]
+    ) %>%
+      dplyr::mutate(
+        value = 0, alpha = 0, color = NA_character_,
+        age = forcats::fct_relevel(.data$age, age_levels),
+        sex = forcats::fct_relevel(.data$sex, sex_levels),
+        mouse_model = forcats::fct_relevel(.data$mouse_model, magora::pathology_mouse_models[[mouse_model_group]])
+      )
+  }
+
   p <- ggplot2::ggplot(data) +
     ggplot2::facet_wrap(ggplot2::vars(.data$mouse_model),
       ncol = 2,
@@ -69,28 +93,29 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
     ggplot2::geom_boxplot(ggplot2::aes(x = .data$age, y = .data$value, fill = .data$sex, color = .data$color, alpha = .data$alpha), position = ggplot2::position_dodge2(preserve = "single"), outlier.shape = NA) +
     ggplot2::geom_point(ggplot2::aes(x = .data$age, y = .data$value, fill = .data$sex, alpha = .data$alpha, text = .data$value), position = ggplot2::position_jitterdodge(jitter.width = 0.1, seed = 1234)) +
     ggplot2::scale_alpha_identity() +
-    ggplot2::scale_color_identity()
+    ggplot2::scale_color_identity() +
+    ggplot2::scale_x_discrete(drop = FALSE)
 
   # Axes and scales
-
-  if (nrow(data) != 0) {
-    p <- p +
-      ggplot2::scale_x_discrete(drop = FALSE)
-  }
   p <- p +
     ggplot2::labs(x = "Age (Months)", y = unique(data[["phenotype_units"]]), fill = "Sex", color = "Sex") +
-    sagethemes::scale_fill_sage_d() +
-    ggplot2::scale_y_continuous(limits = c(0, NA))
+    sagethemes::scale_fill_sage_d()
+
+  # Set limits - start at 0 and go to range
+  # Unless all 0s, then start at 0 and go to 10
+  if (all_zeros) {
+    p <- p +
+      ggplot2::scale_y_continuous(limits = c(0, 10), breaks = scales::pretty_breaks())
+  } else {
+    p <- p +
+      ggplot2::scale_y_continuous(limits = c(0, NA))
+  }
 
   # Annotations
   if (nrow(measured_annotation) > 0) {
-    if (nrow(data) == 0) { # If there is no data (all panels will have the annotation), manually set placement to 0/0
-      x_mid <- y_mid <- 0
-    } else {
-      y_range <- ggplot2::layer_scales(p)$y$range$range
-      y_mid <- (y_range[[2]] + y_range[[1]]) / 2
-      x_mid <- length(levels(data[["age"]])) / 2 + 0.5
-    }
+    y_range <- ggplot2::layer_scales(p)$y$range$range
+    y_mid <- (y_range[[2]] + y_range[[1]]) / 2
+    x_mid <- length(levels(data[["age"]])) / 2 + 0.5
 
     p <- p +
       ggplot2::geom_text(data = measured_annotation, mapping = ggplot2::aes(x = x_mid, y = y_mid, label = .data$label), size = 5, vjust = 0.5, family = ifelse(use_theme_sage, "Lato", ""))
@@ -109,13 +134,15 @@ magora_boxplot_single <- function(data, mouse_model_group, use_theme_sage = TRUE
       legend.key = ggplot2::element_blank()
     )
 
-  # Axes manually set to 0/0 if no data, but don't show them
-  if (nrow(data) == 0) {
+  # Axes set to blank fake data if there is no data, but don't actually want to show the axes
+  # Also hide legend, which exists because of fake data
+  if (no_data) {
     p <- p +
       ggplot2::theme(
         axis.text.x = ggplot2::element_blank(),
         axis.text.y = ggplot2::element_blank()
-      )
+      ) +
+      ggplot2::guides(fill = FALSE)
   }
 
   p <- p +

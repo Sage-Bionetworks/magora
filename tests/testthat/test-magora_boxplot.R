@@ -144,3 +144,31 @@ test_that("magora_boxplot have no axes showing if both model/control are missing
     magora_boxplot(pathology_mouse_model_groups[3], use_theme_sage = FALSE)
   expect_doppelganger("pathology-y-axes-scaled-by-model-facet-inherit-from-plot-if-missing-data", p)
 })
+
+test_that("magora_boxplot panels with no data has same appearance as panels with data", {
+  p <- pathology[c("5xFAD", "Trem2-R47H_NSS")] %>%
+    purrr::map(function(x) {
+      x %>%
+        dplyr::filter(
+          phenotype %in% "Astrocyte Cell Density (GFAP)"
+        )
+    }) %>%
+    magora_boxplot(c("5xFAD", "Trem2-R47H_NSS"), use_theme_sage = FALSE)
+
+  expect_doppelganger("pathology-panel-no-data-matches-panel-with-data", p)
+})
+
+test_that("magora_boxplot with all 0s have y axis go from 0 to 10", {
+
+  p <- pathology["3xTg-AD"] %>%
+    purrr::map(function(x) {
+      x %>%
+        dplyr::filter(
+          phenotype %in% "Plaque Size (Thio-S)" &
+            tissue %in% "Cerebral Cortex"
+        )
+    }) %>%
+    magora_boxplot("3xTg-AD", use_theme_sage = FALSE)
+
+  expect_doppelganger("pathology-all-zeros", p)
+})
